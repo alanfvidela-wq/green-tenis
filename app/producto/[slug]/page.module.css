@@ -14,27 +14,10 @@
   }
 }
 
-/* Frente: la foto sobre un fondo suave del color de la categoría */
-.frente {
-  position: relative;
-  align-self: start;
-  display: grid;
-  place-items: center;
-  aspect-ratio: 1;
-  border-radius: var(--radio);
-  background: color-mix(in srgb, var(--acento) 16%, var(--papel));
-}
-
-.foto {
-  position: relative;
-  width: 84%;
-  aspect-ratio: 1;
-}
-
+/* El sello de la categoría va en la información, nunca sobre la vitrina */
 .sello {
-  position: absolute;
-  top: var(--espacio-6);
-  right: var(--espacio-6);
+  align-self: flex-start;
+  margin-block: var(--espacio-2);
   padding: var(--espacio-2) var(--espacio-4);
   border-radius: 50%;
   background: var(--sobre-acento);
@@ -44,7 +27,7 @@
   font-style: italic;
   font-weight: 400;
   line-height: 1;
-  transform: rotate(6deg);
+  transform: rotate(-4deg);
 }
 
 .info {
@@ -90,11 +73,4 @@
 
 .fila dt {
   font-weight: 700;
-}
-
-@media (min-width: 860px) {
-  .frente {
-    position: sticky;
-    top: calc(var(--alto-header) + var(--espacio-6));
-  }
 }

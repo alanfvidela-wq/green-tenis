@@ -1,6 +1,27 @@
-/* Productos separados por aire, sin estante */
-.grilla {
+/* Vitrina: sin espacio entre celdas. El hueco de 1px lo pinta el contorno de
+   cada celda, así una fila incompleta termina limpia. */
+.vitrina {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
-  gap: var(--espacio-12) var(--espacio-6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  list-style: none;
+}
+
+/* En mobile la vitrina va de borde a borde */
+@media (max-width: 699px) {
+  .vitrina {
+    margin-inline: calc(var(--gutter) * -1);
+  }
+}
+
+@media (min-width: 700px) {
+  .vitrina {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .cuatro {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }

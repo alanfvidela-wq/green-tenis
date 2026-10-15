@@ -88,19 +88,26 @@
   text-align: center;
 }
 
+/* La vitrina vacía: las mismas celdas de estudio y las mismas líneas de 1px */
 .gondola {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
-  gap: var(--espacio-12) var(--espacio-6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
   align-self: stretch;
   margin-top: var(--espacio-8);
 }
 
-/* Lugar vacío de un producto: el mismo fondo suave, sin dibujo */
+@media (min-width: 700px) {
+  .gondola {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Lugar vacío de un producto: la celda de estudio, sin dibujo */
 .hueco {
-  aspect-ratio: 1;
-  border-radius: var(--radio);
-  background: color-mix(in srgb, var(--verde) 12%, var(--papel));
+  aspect-ratio: 4 / 5;
+  outline: 1px solid var(--linea-vitrina);
+  background: var(--estudio);
 }
 
 @media (prefers-reduced-motion: no-preference) {

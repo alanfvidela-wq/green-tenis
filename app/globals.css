@@ -16,6 +16,10 @@
   --verde-claro: color-mix(in srgb, var(--verde) 22%, #c8e3a0);
   /* Verde yerba vivo: acción principal (tinta encima, 7,95:1) */
   --verde-vivo: #7dc243;
+  /* Vitrina: papel con un punto de gris (≈ #f4f1ea), como el papel sin fin
+     de un estudio, y las líneas de 1px que separan las celdas */
+  --estudio: color-mix(in srgb, var(--kraft) 30%, #f6f6f6);
+  --linea-vitrina: color-mix(in srgb, var(--tinta) 10%, var(--estudio));
 
   /* Color por categoría (se redefine con data-categoria) */
   --acento: var(--verde);

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Hero from "@/components/Hero";
 import Marquesina from "@/components/Marquesina";
-import TarjetaProducto from "@/components/TarjetaProducto";
+import GrillaProductos from "@/components/GrillaProductos";
 import FotoProducto from "@/components/FotoProducto";
 import { Hojita, RamaYerba } from "@/components/Ilustraciones";
 import { LEYENDAS, MOMENTOS, RECETA } from "@/lib/home";
@@ -51,11 +51,7 @@ export default async function Home() {
           <h2 id="titulo-destacados" className={styles.subtitulo}>
             Lo que más sale
           </h2>
-          <div className={styles.estante}>
-            {destacados.map((producto) => (
-              <TarjetaProducto key={producto.id} producto={producto} />
-            ))}
-          </div>
+          <GrillaProductos productos={destacados} columnas={3} />
         </div>
       </section>
 

@@ -1,0 +1,36 @@
+/* Llena la celda de la vitrina. Sin sombra, sin radio, sin degradado. */
+.foto {
+  position: absolute;
+  inset: 0;
+  background: var(--estudio);
+}
+
+/* Foto de estudio: trae su fondo y ocupa la celda entera */
+.llena {
+  position: absolute;
+  inset: 0;
+}
+
+/* Caja de producto: del 14% al 86% del ancho y del 26% al 86% del alto.
+   Arriba queda el nombre; abajo, el precio. */
+.caja {
+  position: absolute;
+  top: 26%;
+  left: 14%;
+  width: 72%;
+  height: 60%;
+}
+
+.estudio {
+  object-fit: cover;
+}
+
+.recorte {
+  object-fit: contain;
+}
+
+/* Placeholder: la silueta de la categoría, plana y apenas más oscura que el
+   fondo */
+.silueta {
+  fill: color-mix(in srgb, var(--tinta) 8%, var(--estudio));
+}

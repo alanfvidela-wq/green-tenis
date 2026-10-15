@@ -1,100 +1,124 @@
+/* Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md).
+   El contorno de 1px cae en el espacio de 1px de la grilla: son las líneas
+   que separan las celdas. */
+.celda {
+  min-width: 0;
+  container-type: inline-size;
+  outline: 1px solid var(--linea-vitrina);
+  background: var(--estudio);
+}
+
 .producto {
+  position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  padding: var(--espacio-3);
+  color: var(--tinta);
 }
 
-/* Mancha suave del color de la categoría: una forma orgánica que contiene
-   al producto, sin borde. Cada tarjeta de la fila tiene su propia forma. */
-.fondo {
-  --mancha: 46% 54% 52% 48% / 56% 44% 56% 44%;
-  --mancha-hover: 54% 46% 44% 56% / 48% 56% 44% 52%;
+/* Foco por dentro de la celda: no lo tapa la vecina */
+.producto:focus-visible {
+  outline: 3px solid var(--tinta);
+  outline-offset: -3px;
+}
+
+/* El texto va sobre la foto */
+.rotulo,
+.pie {
   position: relative;
-  align-self: stretch;
-  display: flex;
-  justify-content: center;
-  margin-bottom: var(--espacio-4);
-  padding: var(--espacio-4);
-  border-radius: var(--mancha);
-  background: color-mix(in srgb, var(--acento) 16%, var(--papel));
-  transition:
-    background-color var(--transicion),
-    border-radius 700ms var(--suave);
 }
 
-.producto:nth-child(3n + 2) .fondo {
-  --mancha: 58% 42% 40% 60% / 48% 60% 40% 52%;
-  --mancha-hover: 44% 56% 58% 42% / 58% 44% 56% 42%;
-}
-
-.producto:nth-child(3n) .fondo {
-  --mancha: 40% 60% 56% 44% / 60% 42% 58% 40%;
-  --mancha-hover: 56% 44% 42% 58% / 44% 58% 42% 56%;
-}
-
-.producto:hover .fondo {
-  border-radius: var(--mancha-hover);
-  background: color-mix(in srgb, var(--acento) 30%, var(--papel));
-}
-
-.foto {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1;
-}
-
-/* Al pasar el mouse el producto se levanta y se ladea apenas */
-.producto:hover .foto {
-  transform: translateY(-6px) rotate(-3deg);
-}
-
-/* Sello ovalado rojo, relleno */
-.sinStock {
-  position: absolute;
-  top: 12%;
-  right: 6%;
-  padding: var(--espacio-1) var(--espacio-3);
-  border-radius: 50%;
-  background: var(--rojo);
-  color: var(--papel);
-  font-family: var(--fuente-titulos);
-  font-size: 1.375rem;
-  font-style: italic;
-  font-weight: 400;
-  transform: rotate(-12deg);
-}
-
-/* Mismo estilo de título aunque cambie el nivel del encabezado.
-   Dos líneas como máximo y alto fijo: marca y precio quedan a la misma
-   altura en todas las tarjetas de una fila. */
 .nombre {
   display: -webkit-box;
-  height: 1.9em;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  font-family: var(--fuente-titulos);
-  font-size: var(--t-titulo-3);
-  font-weight: 400;
-  line-height: 0.95;
-  text-wrap: balance;
+  font-family: var(--fuente-texto);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: normal;
+  text-wrap: pretty;
 }
 
-.marca {
-  margin-top: var(--espacio-1);
+.variante {
+  overflow: hidden;
+  color: var(--tinta-suave);
+  font-size: var(--t-dato);
+  line-height: 1.35;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pie {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  font-family: var(--fuente-datos);
+  font-weight: 700;
+}
+
+/* En celdas angostas, precio y «Comprar» uno abajo del otro en todas las
+   celdas, para que no salte de línea solo en algunas */
+@container (max-width: 240px) {
+  .pie {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+  }
 }
 
 .precio {
-  margin-top: var(--espacio-2);
-  font-family: var(--fuente-datos);
-  font-size: 1.125rem;
-  font-weight: 700;
+  font-size: 0.875rem;
   white-space: nowrap;
 }
 
+/* Link discreto: tinta, sin fondo; se subraya con el mouse o el foco */
+.comprar {
+  font-size: var(--t-dato);
+  text-underline-offset: 3px;
+}
+
+.producto:hover .comprar,
+.producto:focus-visible .comprar {
+  text-decoration: underline;
+}
+
+/* Sin stock: el producto pierde su color, que es lo único con color */
+.agotado .foto {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.agotado:hover .comprar,
+.agotado:focus-visible .comprar {
+  text-decoration: none;
+}
+
+@media (min-width: 1000px) {
+  .producto {
+    padding: var(--espacio-4);
+  }
+
+  .nombre {
+    font-size: 0.9375rem;
+  }
+}
+
+/* Al pasar el mouse o con el foco, el producto se acerca apenas */
 @media (prefers-reduced-motion: no-preference) {
   .foto {
     transition: transform 400ms var(--suave);
+  }
+
+  .producto:hover .foto,
+  .producto:focus-visible .foto {
+    transform: scale(1.04);
   }
 }

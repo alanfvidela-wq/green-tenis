@@ -1,35 +1,42 @@
 import Link from "next/link";
-import FotoProducto from "./FotoProducto";
-import { formatearPrecio } from "@/lib/formato";
+import FotoVitrina from "./FotoVitrina";
+import { describirVariante, formatearPrecio } from "@/lib/formato";
 import { tieneStock, tienePreciosDistintos } from "@/lib/productos";
 import styles from "./TarjetaProducto.module.css";
 
-// Producto: foto sobre un fondo suave del color de su categoría y, debajo,
-// nombre, marca y precio. Sin recuadro.
-export default function TarjetaProducto({ producto }) {
+// Celda de la vitrina: el producto sobre el fondo de estudio, el nombre chico
+// arriba a la izquierda y abajo el precio y un «Comprar» discreto.
+// Toda la celda es un solo link. Va dentro de GrillaProductos.
+export default function TarjetaProducto({ producto, sizes }) {
   const disponible = tieneStock(producto);
 
   return (
-    <Link
-      href={`/producto/${producto.slug}`}
-      className={styles.producto}
-      data-categoria={producto.categoria}
-    >
-      <div className={styles.fondo}>
-        <div className={styles.foto}>
-          <FotoProducto
-            src={producto.imagen}
-            sizes="(max-width: 640px) 45vw, (max-width: 1000px) 30vw, 260px"
-          />
+    <li className={styles.celda}>
+      <Link
+        href={`/producto/${producto.slug}`}
+        className={`${styles.producto} ${disponible ? "" : styles.agotado}`}
+      >
+        <FotoVitrina
+          foto={producto.fotos?.[0]}
+          recorte={producto.imagen}
+          categoria={producto.categoria}
+          sizes={sizes}
+          className={styles.foto}
+        />
+        <div className={styles.rotulo}>
+          <h3 className={styles.nombre}>{producto.nombre}</h3>
+          <p className={styles.variante}>{describirVariante(producto)}</p>
         </div>
-        {!disponible && <span className={styles.sinStock}>Sin stock</span>}
-      </div>
-      <h3 className={styles.nombre}>{producto.nombre}</h3>
-      <p className={`dato ${styles.marca}`}>{producto.marca}</p>
-      <p className={styles.precio}>
-        {tienePreciosDistintos(producto) && "desde "}
-        {formatearPrecio(producto.precioBase)}
-      </p>
-    </Link>
+        <div className={styles.pie}>
+          <p className={styles.precio}>
+            {tienePreciosDistintos(producto) && "desde "}
+            {formatearPrecio(producto.precioBase)}
+          </p>
+          <span className={styles.comprar}>
+            {disponible ? "Comprar" : "Sin stock"}
+          </span>
+        </div>
+      </Link>
+    </li>
   );
 }

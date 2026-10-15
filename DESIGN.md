@@ -14,8 +14,9 @@ La vara es el header y el hero. Todo el sitio cumple estas reglas; si algo no
 las cumple, se corrige.
 
 1. **Sin líneas.** Nada de bordes, contornos, líneas divisorias, subrayados
-   de sección ni cajas con sombra. La única línea permitida es el contorno de
-   foco del teclado.
+   de sección ni cajas con sombra. Las únicas líneas permitidas son el
+   contorno de foco del teclado y las de 1px que separan las celdas de la
+   vitrina (ver «Vitrina de productos»).
 2. **Bloques de color a todo el ancho.** Cada sección es un bloque de fondo
    de lado a lado, con el contenido alineado a `--ancho-max` y `--gutter`. Los
    fondos alternan entre el claro de base (avena o papel), el verde yerba, la
@@ -39,12 +40,10 @@ las cumple, se corrige.
    con texto en tinta. Mínimo 48px de alto (56px en el hero).
 7. **El patrón del hero.** Cada bloque importante dice una cosa: un título,
    una frase corta (34–46ch como máximo) y, si hace falta, una acción.
-8. **Productos sin recuadro.** La foto (sin fondo) va sobre una **mancha**
-   suave del color de su categoría (una forma orgánica, distinta en cada
-   tarjeta de la fila), sin borde, con una sombra de contacto sutil debajo del
-   producto. Debajo, el nombre en Instrument Serif
-   (dos líneas como máximo, alto fijo), la marca como `.dato` y el precio en
-   Courier Prime: marca y precio quedan alineados en toda la fila.
+8. **Productos en vitrina.** Las grillas de productos y la galería de la
+   página de producto siguen «Vitrina de productos»: fondo de estudio, celdas
+   pegadas separadas por líneas de 1px, el nombre en texto chico arriba a la
+   izquierda y un «Comprar» discreto. El producto es lo único con color.
 9. **Listas sin líneas.** «Qué hay en el almacén», la ficha de producto y
    cualquier lista se separan con espacio o con fondos alternados.
 10. **Footer como bloque.** Verde yerba sólido, el logo «Amargo» grande, los
@@ -65,8 +64,8 @@ las cumple, se corrige.
 3. **Manifiesto** (avena): «Un mate bien cebado / arregla casi todo.» en dos
    líneas gigantes, la segunda corrida a la derecha y en verde, como en un
    afiche. Debajo, una rama de yerba que se dibuja sola y una frase.
-4. **Lo que más sale** (papel, con ola): los destacados en una fila, cada uno
-   sobre su mancha.
+4. **Lo que más sale** (papel, con ola): los seis destacados en la vitrina,
+   en tres columnas (dos filas llenas).
 5. **Cómo cebar un buen mate** (tinta, con ola): la receta de la casa. La foto
    de la ronda (dos manos pasándose el mate) queda fija a la izquierda
    mientras se leen, a la derecha, los datos (rinde, tiempo, dificultad), lo
@@ -132,15 +131,14 @@ Secuencia de fondos de la home: foto → verde → avena → papel → tinta →
 - **Bloques en vez de bordes.** Las secciones se separan con color de fondo
   (avena, papel, verde, tinta, el acento de la categoría) y con espacio
   generoso. No hay bordes, contornos, filetes ni estantes.
-- **El producto en su mancha.** Cada producto es una foto real sobre una
-  mancha suave del color de su categoría (acento al 16% sobre papel; al 30% al
-  pasar el mouse, cuando además cambia de forma). Debajo: nombre, marca y precio a
-  máquina. Ver «Fotos de producto».
+- **El producto en vitrina.** Donde se muestran productos para elegir, el
+  sitio se calla: fondo de estudio, líneas de 1px y texto chico. El color lo
+  pone el producto. Ver «Vitrina de productos».
 - **La etiqueta.** La ficha de producto se lee como el dorso de un paquete:
   un bloque papel con filas alternadas, sin líneas.
 - **Sellos** ovalados y rellenos (no contorneados), en serif itálica:
-  «Sin stock», «Próximamente», «404», el sello de la categoría y el número de
-  cada paso de la receta.
+  «Próximamente», «404», el sello de la categoría y el número de cada paso
+  de la receta. Nunca encima de la vitrina.
 
 ## Paleta
 
@@ -162,7 +160,10 @@ Derivados: `--papel` (avena con blanco: header sólido, bloques de producto,
 ficha, botones secundarios), `--kraft-oscuro` (avena con tinta: texto
 secundario), `--verde-vivo` (`#7DC243`, verde yerba vivo y saturado: la acción
 principal, `.boton`) y `--verde-claro` (verde yerba aclarado, ≈ `#A3C388`:
-hover del carrito y de los botones secundarios, hojitas).
+hover del carrito y de los botones secundarios, hojitas). Para la vitrina:
+`--estudio` (avena con un gris muy claro, ≈ `#F4F1EA`: el fondo de estudio)
+y `--linea-vitrina` (tinta al 10% sobre estudio, ≈ `#DFDBD5`: las líneas de
+1px).
 
 ### Color por categoría
 
@@ -180,8 +181,8 @@ en el `<main>`.
 
 Contrastes medidos (WCAG): tinta sobre avena 13:1, tinta sobre verde vivo
 7,95:1, tinta sobre verde claro 8,8:1, papel sobre rojo 6,9:1, tinta sobre amarillo 8,6:1, papel sobre azul
-7,8:1, papel sobre verde 9:1 y rojo sobre avena 4,6:1 (solo texto grande o en
-negrita).
+7,8:1, papel sobre verde 9:1, tinta sobre estudio 15:1, tinta suave sobre
+estudio 8,6:1 y rojo sobre avena 4,6:1 (solo texto grande o en negrita).
 
 ## Tipografía
 
@@ -220,31 +221,150 @@ Interlineado: 0.88–0.95 para los títulos y 1.55 para el texto.
 
 ## Formas
 
-- **Sin bordes ni líneas.** Nada se contornea ni se subraya con filetes. La
-  única línea que queda es el contorno de foco del teclado (accesibilidad).
+- **Sin bordes ni líneas.** Nada se contornea ni se subraya con filetes.
+  Quedan el contorno de foco del teclado (accesibilidad) y las líneas de 1px
+  de la vitrina.
 - **Píldoras** (`border-radius: 999px`) para botones, CTA y carrito.
   `.boton` es la acción principal en verde yerba vivo; `.boton-secundario`,
   papel.
-- **Manchas** para los productos: radios elípticos distintos en cada tarjeta
-  de la fila (tres formas que se repiten), que cambian de forma al pasar el
-  mouse.
-- **Fondos redondeados** (`--radio`, 16px) para opciones del selector, ficha
-  y frente del producto; `--radio-grande` (28px) para las fotos de la home y
-  las filas de categorías.
+- **Ángulos rectos** en la vitrina: celdas, fotos y galería, sin radio.
+- **Fondos redondeados** (`--radio`, 16px) para opciones del selector y
+  ficha; `--radio-grande` (28px) para las fotos de la home y las filas de
+  categorías.
 - **Ola** (`.ola`) en el borde de arriba de los bloques de la home y del
   footer.
 - **Círculos** para los botones de ícono (pausa del video) y el sello de la
   portada.
 - **Óvalo relleno** para los sellos y los números de la receta.
 - **Sin sombras de caja.** La profundidad sale de los bloques de color planos.
-  La única sombra es la de contacto debajo de cada foto de producto (sigue
-  la forma del producto, nunca la de la tarjeta).
+  La única sombra es la de contacto debajo de los recortes de producto fuera
+  de la vitrina (encabezado de categoría y «Qué hay en el almacén»); sigue la
+  forma del producto, nunca la de una caja. En la vitrina no hay ninguna.
+
+## Vitrina de productos
+
+La forma de mostrar productos de teenage engineering
+(`docs/referencias/teenage-engineering.md`), pasada a Amargo. De esa
+referencia se toma **solo** esto: un catálogo industrial bajo luz de estudio,
+donde el producto es el único objeto rico y todo lo demás se dice en voz
+baja. Tipografías, colores, logo y voz siguen siendo los de este documento.
+Es el único lugar del sitio con líneas: el resto son bloques de color; la
+vitrina es la góndola.
+
+**Dónde va.** La grilla de cada categoría y cualquier listado de productos
+(`GrillaProductos` + `TarjetaProducto`), «Lo que más sale» en la home y la
+galería de `/producto/[slug]` (`GaleriaProducto`). La foto de cada celda la
+pone `FotoVitrina`. La pantalla de carga dibuja la misma grilla vacía.
+
+### La grilla
+
+- **Celdas pegadas.** Sin espacio entre celdas: las separa una línea de 1px
+  en `--linea-vitrina`. Cada celda lleva su propio contorno de 1px que cae en
+  el espacio de 1px de la grilla, así una fila incompleta termina limpia, sin
+  huecos rayados.
+- **Columnas.** Mobile: 2, a todo el ancho de la pantalla (la vitrina se
+  come el gutter). Desde 700px: 3. Desde 1000px: 4 en los listados; la home
+  se queda en 3 porque son seis destacados (dos filas llenas).
+- **Proporción.** Cada celda es 4:5 vertical, la misma proporción que la foto.
+
+### La celda
+
+- **Fondo de estudio.** Plano liso en `--estudio` (≈ `#F4F1EA`): el papel de
+  la casa con un punto de gris, como el papel sin fin de un estudio. Tibio
+  para que conviva con la avena y el papel (un blanco frío como el
+  `#F6F8F7` de la referencia se vería celeste al lado de la avena), y un
+  poco más gris que el papel para que se lea como el fondo de la foto y no
+  como un bloque más. Sobre la avena de la categoría se ve más claro; sobre
+  el papel de la home, apenas más gris.
+- **Arriba a la izquierda, en texto chico:** el nombre en Work Sans 500
+  (0.875rem, 0.9375rem desde 1000px; dos líneas como máximo) y, debajo, la
+  variante en Work Sans 400 a `--t-dato`, en tinta suave y en una línea: la
+  marca y las opciones («Stanley, en verde, negro o crema»). Sin título
+  serif: en la vitrina el que habla es el producto.
+- **Abajo:** el precio a la izquierda, en Courier Prime bold, y «Comprar» a la
+  derecha, en Courier Prime bold a `--t-dato`. Es un link discreto: tinta,
+  sin fondo ni píldora, se subraya al pasar el mouse. En celdas de menos de
+  240px (mobile y tres columnas en tablet) van uno abajo del otro, en todas
+  las celdas por igual. Toda la celda es un solo link a la página del
+  producto (un solo paso de Tab por producto).
+- **Cero sombras, cero bordes redondeados, cero degradados.** Ni la sombra de
+  contacto, ni manchas, ni sellos encima. Ningún texto ni línea lleva color:
+  **el producto es el único objeto con color** de la vitrina.
+
+### Estados
+
+- **Hover.** El producto se acerca apenas (escala 1,04, 400ms con `--suave`)
+  y «Comprar» se subraya. No cambia el fondo: la foto lo trae puesto.
+- **Foco.** Lo mismo que el hover, más el contorno de foco de 3px en tinta
+  dibujado **por dentro** de la celda (`outline-offset: -3px`), para que no
+  lo tape la celda vecina ni se confunda con las líneas de 1px.
+- **Sin stock.** El producto pierde el color: queda en escala de grises y
+  lavado (opacidad 0,5) sobre el mismo fondo, y «Sin stock» ocupa el lugar
+  de «Comprar», con el mismo estilo. Si el color es del producto, sacárselo
+  dice que no está. Sin sello rojo ni borde; el texto lo dice también para
+  lectores de pantalla.
+- Con `prefers-reduced-motion`, el producto no se mueve: quedan el subrayado
+  y el contorno de foco.
+
+### La galería del producto
+
+En `/producto/[slug]` las fotos van en las mismas celdas de estudio 4:5, con
+sus líneas de 1px y sin texto encima (el nombre ya está al lado). La primera
+vista va grande; si hay más, van de a dos debajo. En mobile la galería va de
+borde a borde; en escritorio queda fija mientras se lee la ficha y nunca es
+más alta que la pantalla. El sello de la categoría pasa a la columna de
+información. Acá el producto no se apaga aunque no haya stock: eso lo dice el
+selector de opciones, al lado.
 
 ## Fotos de producto
 
-El catálogo usa fotos reales, al nivel de las fotos de la home: en las tarjetas,
-en la página de producto, en el encabezado de cada categoría y en «Qué hay en
-el almacén» (una foto representativa por categoría, en `CATEGORIAS`).
+### Especificación de las fotos de estudio
+
+Todas las fotos de la vitrina salen de la misma sesión: puestas una al lado
+de la otra, tienen que parecer la misma foto con distinto producto.
+
+- **Fondo.** Papel sin fin liso, sin textura, viñeta ni degradado. En la
+  edición se lleva a `#F4F1EA` (`--estudio`) parejo en toda la foto (±2
+  niveles en los bordes): así la foto se funde con la celda y no se ve dónde
+  termina.
+- **Proporción.** 4:5 vertical. Se entrega a 1600×2000 px, WebP calidad 82,
+  sRGB.
+- **Producto centrado.** Una sola pieza, sin props ni contexto, centrada en
+  la **caja de producto**: del 14% al 86% del ancho y del 26% al 86% del alto
+  (en 1600×2000: x 224–1376, y 520–1720). El producto toca la caja por su
+  lado más largo. Arriba queda aire para el nombre y abajo para el precio:
+  nada del producto entra en esas franjas.
+- **Misma luz.** Una fuente grande y difusa arriba a la izquierda (a 45°),
+  relleno suave desde la derecha, 5000 K, la misma exposición para todo el
+  catálogo. Sin sombras proyectadas: solo la sombra natural, corta y suave,
+  donde el producto apoya. Sin reflejos duros en el acero ni en el vidrio.
+- **Misma cámara.** Equivalente a 100 mm, a la altura del centro del
+  producto, de frente con un giro de 15° (los paquetes de yerba, de frente
+  plano). Nada de cenitales ni contrapicados.
+- **Vistas.** La primera es la de catálogo (la de la grilla). Se pueden sumar
+  vistas de detalle para la galería (la virola, el filtro, el pico), con la
+  misma luz, el mismo fondo y la misma caja.
+- **Archivos.** `public/productos/estudio/<slug>-1.webp`, `-2.webp`, etc.,
+  listados en `fotos` del producto en `lib/productos.js`. Con `fotos`
+  cargadas, `FotoVitrina` las usa enteras (`object-fit: cover`).
+
+### Mientras tanto
+
+- **Recortes.** Hoy cada producto tiene un recorte sin fondo (`imagen`, ver
+  «Recortes»). En la vitrina va sobre el fondo de estudio, dentro de la misma
+  caja de producto y sin sombra: cumple el fondo, la proporción y el
+  centrado; la luz todavía no es pareja porque vienen de fuentes distintas.
+- **Placeholder.** Un producto sin foto de estudio ni recorte muestra el
+  placeholder de `FotoVitrina`, que respeta la especificación: celda 4:5 en
+  `--estudio` y la silueta plana de su categoría (mate, bombilla, termo,
+  paquete o lata) en tinta al 8%, centrada en la caja de producto. Sin
+  texto, sin ícono de imagen rota, sin líneas ni degradados.
+
+### Recortes
+
+Los recortes son fotos reales, al nivel de las de la home. Además de la
+vitrina, van en el encabezado de cada categoría y en «Qué hay en el almacén»
+(una foto representativa por categoría, en `CATEGORIAS`).
 
 - **Origen.** Productos de marca: foto del modelo, de la marca o de una tienda
   conocida (Carrefour, Jumbo, Mercado Libre). Artesanales: foto del tipo de
@@ -255,9 +375,9 @@ el almacén» (una foto representativa por categoría, en `CATEGORIAS`).
   fondo, limpia restos sueltos, recorta al contorno y centra el producto en
   1000×1000 con fondo transparente, todos a la misma escala (caja de 820px) y
   con el mismo margen. Sale WebP en `public/productos/<slug>.webp`.
-- **En pantalla.** `FotoProducto` usa `next/image` con `fill` y
+- **Fuera de la vitrina.** `FotoProducto` usa `next/image` con `fill` y
   `object-fit: contain`, y le pone la sombra de contacto (`drop-shadow` en
-  tinta, muy suave).
+  tinta, muy suave). En la vitrina, `FotoVitrina` los pone sin sombra.
 
 ## Fotos y video
 
@@ -304,8 +424,8 @@ que muestra. Nada entra con fundido y desplazamiento genérico.
 - **Manifiesto**: la rama de yerba se dibuja con el scroll: primero el tallo,
   después cada hoja cuando el tallo pasa por su lugar, y al final brotan los
   frutitos.
-- **Lo que más sale**: la mancha cambia de forma y el producto se levanta y se
-  ladea al pasar el mouse.
+- **Vitrina** («Lo que más sale», categorías y galería): el producto se
+  acerca apenas al pasar el mouse o con el foco. Nada más se mueve.
 - **Receta**: la foto se acomoda al entrar y los números de los pasos se
   estampan como un sello de goma.
 - **Para cada ronda**: las fotos se revelan como un rollo recién salido (de
@@ -325,7 +445,8 @@ que muestra. Nada entra con fundido y desplazamiento genérico.
 1. **El mate es la estrella.** En la portada, la mesa con el mate; en la
    receta, el mate pasando de mano en mano; en el pie, el Cimarrón.
 2. **Color y aire, no líneas.** Si algo necesita separarse, se le cambia el
-   fondo o se le da espacio; nunca un borde.
+   fondo o se le da espacio; nunca un borde. La excepción es la vitrina,
+   donde el color es solo del producto.
 3. **El color tiene significado.** El color de acento dice en qué categoría
    estás; no está para decorar.
 4. **La máquina de escribir es para hacer cosas.** Navegación, botones,
@@ -343,7 +464,7 @@ que muestra. Nada entra con fundido y desplazamiento genérico.
 | Fondo crema + serif + píldora                           | Avena con textura de papel, manchas de color orgánicas, olas, dibujos a mano, el Cimarrón, máquina de escribir y fotos propias |
 | Etiquetas en mayúsculas con tracking sobre los títulos  | No hay antetítulos. Los datos chicos van en minúscula y abajo del título                                                       |
 | Resaltar una palabra del título                         | Cada línea va en un solo color y un solo estilo (la segunda línea del manifiesto es entera verde)                              |
-| Grillas de tarjetas iguales con el mismo radio y sombra | Sin sombra de tarjeta; cada producto tiene su propia mancha, y el precio, el nombre y la marca quedan afuera                    |
+| Grillas de tarjetas iguales con el mismo radio y sombra | La vitrina no tiene tarjetas: es una hoja rayada de celdas pegadas, sin radio ni sombra, donde lo único con color es el producto |
 | Gradientes o resplandores                               | Solo colores planos y textura de papel. El único degradado es el velo de avena de la portada, por legibilidad                  |
 | «→» en botones y «·» como separador                     | Sin flechas de texto. El separador es una hojita de yerba en SVG; en el sello, comas                                           |
 | Fade + slide up por sección                             | No hay. Cada bloque tiene su movimiento propio (ver «Movimiento»)                                                              |

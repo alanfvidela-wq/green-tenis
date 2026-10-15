@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import FotoProducto from "@/components/FotoProducto";
+import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorVariante from "@/components/SelectorVariante";
 import { getFicha, SELLOS } from "@/lib/fichas";
 import { getCategoria, getProductoPorSlug } from "@/lib/productos";
@@ -35,22 +35,13 @@ export default async function PaginaProducto({ params }) {
       </nav>
 
       <div className={styles.detalle}>
-        <div className={styles.frente}>
-          <div className={styles.foto}>
-            <FotoProducto
-              src={producto.imagen}
-              alt={`${producto.nombre} ${producto.marca}`}
-              sizes="(max-width: 860px) 90vw, 560px"
-              prioridad
-            />
-          </div>
-          <p className={styles.sello}>{SELLOS[categoria.slug]}</p>
-        </div>
+        <GaleriaProducto producto={producto} />
 
         <div className={styles.info}>
           <p className="dato">{producto.marca}</p>
           <h1 className={styles.nombre}>{producto.nombre}</h1>
           <p className={styles.descripcion}>{producto.descripcion}</p>
+          <p className={styles.sello}>{SELLOS[categoria.slug]}</p>
 
           <section className={styles.etiqueta} aria-labelledby="titulo-ficha">
             <h2 id="titulo-ficha" className={styles.etiquetaTitulo}>
