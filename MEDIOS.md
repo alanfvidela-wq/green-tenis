@@ -31,6 +31,29 @@ un recorte fijo de 9:16. Por eso el recorte de mobile tiene puntos clave cada
 empieza, así el paneo también cierra el loop. La fuente no tiene cortes: entre
 cuadros vecinos la similitud baja y sube de a poco (cámara en mano y grano).
 
+## Modelo 3D de la raqueta
+
+| Archivo                     | Origen                                   | Proceso                  |
+| --------------------------- | ---------------------------------------- | ------------------------ |
+| `public/models/raqueta.glb` | `modelos-fuente/raqueta.glb` (fuera de git) | `npm run modelo:raqueta` |
+
+**Fuente**: export de Sketchfab, 19,13 MB. Tres mallas con un solo material
+(`M_TAILS_MG05`) y tres texturas de 4096px (color, normales y
+oclusión/rugosidad/metal):
+
+- `Tails_PowerShoot_r_low`: el marco entero, con la garganta, el mango, el
+  grip y la tapa (1.217 vértices).
+- `Tails_PowerShoot_l_low` y `Tails_PowerShoot_lt_low`: el encordado, en dos
+  mallas (1.986 y 1.400 vértices).
+
+Viene acostado por una rotación en la raíz, que el código saca. Ya enderezada
+mide 70,5 cm de la tapa a la punta y 28 cm de ancho, con el encordado de y = 32
+a 69.
+
+**Proceso**: gltf-transform `optimize` con meshopt, texturas WebP de 2048px,
+sin simplificar ni unir mallas (así el encordado sigue aparte). Sale de
+19,13 MB a 364 KB.
+
 ## Fotos de producto
 
 Todavía no hay: la vitrina muestra el placeholder. Cuando estén, se anotan acá

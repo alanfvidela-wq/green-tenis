@@ -146,7 +146,7 @@ radio es del marco, no de cada celda.
 2. **Lo que más sale** (blanco): los seis destacados en la vitrina, en tres
    columnas (dos filas llenas).
 3. **Anatomía de una raqueta** (azul de cancha, de borde a borde): la
-   raqueta inflada, fija, y un paso por parte con el scroll. Es la única
+   raqueta 3D, fija, y un paso por parte con el scroll. Es la única
    sección con otro estilo; ver «Excepción: Anatomía de una raqueta».
 4. **Categorías** (blanco): una fila por categoría, separadas por líneas de
    1px: nombre, bajada y cantidad. Al pasar el mouse, la fila se pinta lima.
@@ -233,8 +233,8 @@ aunque no haya stock: eso lo dice el selector de opciones, al lado.
 ## Componente `Raqueta`
 
 La raqueta de frente y vertical, dibujada en SVG con código
-(`components/Raqueta.js`). Es reutilizable: la usa la anatomía y la va a usar
-«Armá tu raqueta».
+(`components/Raqueta.js`). Es reutilizable: la anatomía la usa como versión
+sin 3D y la va a usar «Armá tu raqueta».
 
 - **Partes**: cada una es un grupo (`data-parte`) que se puede resaltar o animar
   por separado: aro, encordado (16 verticales × 19 horizontales, calculadas
@@ -275,7 +275,30 @@ ilustraciones de esa referencia, ni su arcoíris de colores.
 - Contrastes: negro sobre el azul 11,6:1. El blanco sobre el azul (1,8:1) solo
   se usa en el nombre gigante, que es decorativo y repite el título del paso.
 
-### La raqueta inflada
+### La raqueta 3D
+
+- **Modelo**: `public/models/raqueta.glb`, una raqueta de tenis realista (marco
+  azul, garganta y grip negros, encordado modelado). Sale de
+  `modelos-fuente/raqueta.glb` (fuera de git) con `npm run modelo:raqueta`:
+  gltf-transform con meshopt y texturas WebP de 2048px como máximo, de 19 MB a
+  364 KB. Trae tres mallas: el marco entero (con garganta, mango, grip y tapa)
+  y el encordado en dos mallas. Viene acostado y se endereza en el código.
+- **Resaltar**: lo que es una malla aparte se pone lima con un emissive suave
+  (el encordado). Lo que no lo es (contorno, garganta, mango y grip, overgrip,
+  tapa) se marca solo con el sticker anclado a su posición 3D y la línea guía.
+  El punto dulce es un disco lima semitransparente que late sobre el encordado.
+- **Luz de estudio suave**: un entorno chico armado con `Lightformer` de drei
+  (no baja ningún HDR), una luz principal arriba a la derecha y una sombra de
+  contacto debajo de la tapa.
+- **La pelota**: una pelota de tenis inflada (SVG), lima con contorno y
+  costuras negras, flota arriba a la izquierda.
+
+### La raqueta inflada (SVG)
+
+Es la versión dibujada (`Raqueta` con `estilo="inflada"`) y se ve cuando no va
+el 3D: con `prefers-reduced-motion`, sin WebGL, sin JavaScript y mientras carga
+el modelo. Ocupa la misma caja que el 3D, así que el cambio de una a otra no
+mueve el layout.
 
 - **Plástico blando**: cada parte tiene cuerpo, con degradados suaves (blanco
   que va a un azul muy pálido, con la luz arriba a la izquierda; cilindros más
@@ -283,18 +306,14 @@ ilustraciones de esa referencia, ni su arcoíris de colores.
   negro grueso** (2,6 unidades por lado, unos 3px).
 - **Textura de ruido**: un PNG chico y estático (`public/texturas/ruido.png`)
   aplicado como patrón sobre los cuerpos. No es un filtro SVG y no se anima.
-- **Resaltar es pasar a lima**: la parte activa cambia a su versión lima
-  (degradado lima con el mismo volumen); el resto queda al 35% de opacidad.
-- **La pelota**: una pelota de tenis inflada, lima con contorno y costuras
-  negras, flota arriba a la izquierda. Es lo único lima cuando no hay paso
-  activo.
+- **Quieta y completa**: sin parte activa, con todos los stickers a la vista.
 
 ### Stickers y tipografía
 
 - **Stickers**: cada parte se nombra con un sticker: borde negro de 3px, forma
   de píldora o de esquinas redondeadas (14px), apenas rotado (±2 a 4°), en
-  mayúsculas, Inter Tight 800. El del paso activo es lima; sin JavaScript o
-  sin movimiento, todos son blancos. Lo une a su parte una línea guía negra de
+  mayúsculas, Inter Tight 800. Con el 3D se ve solo el del paso activo, en
+  lima; en la versión SVG se ven todos, en blanco. Lo une a su parte una línea guía negra de
   3px que sale de un punto blanco con borde negro. Nunca va sobre una zona lima.
 - **Nombre gigante**: el nombre de la parte activa, enorme y apretado (Inter
   Tight 800, interlineado 0.8, tracking −0,045em), en blanco, detrás de la
@@ -322,44 +341,43 @@ ilustraciones de esa referencia, ni su arcoíris de colores.
 
 ### Movimiento
 
-- **La cámara**: un `transform` (translate y scale) sobre la raqueta, que va de
-  parte en parte con el scroll. El paso que cruza la línea de lectura (el
+- **La cámara**: recorre la raqueta 3D de arriba hacia abajo con el scroll y se
+  acerca a la parte de cada paso. El paso que cruza la línea de lectura (el
   centro de la pantalla; en mobile, el centro de lo que queda debajo de la
-  raqueta) decide adónde mira; la cámara se acerca y se mueve con entrada y
-  salida suaves y un poco de inercia. Es continuo: entre un paso y otro está
-  en el medio. Antes del primer paso y después del último se ve la raqueta
-  entera.
-- **Al activarse un paso**: su parte pasa a lima, el resto se desvanece, el
-  sticker entra flotando (sube, se endereza y crece, con un rebote corto) y el
-  nombre gigante aparece detrás. El paso activo se lee entero y los demás
-  bajan al 35%.
-- **Movimientos propios**: las cuerdas crecen una tras otra (primero las
-  verticales) al llegar al encordado; el punto dulce late suave (escala 1,1
-  cada 1,8 s) mientras está activo; el overgrip se enrolla vuelta por vuelta,
-  de abajo hacia arriba, al llegar a su paso.
-- **Flotación y parallax**: la raqueta sube y baja 7px y rota ±0,8° cada 6
-  segundos; cada sticker flota a su ritmo; la pelota sube, baja y gira con el
-  scroll; el nombre gigante se queda un poco atrás de la raqueta.
+  raqueta) decide adónde mira, con entrada y salida suaves y un poco de
+  inercia. Es continuo: entre un paso y otro está en el medio. Antes del
+  primer paso y después del último se ve la raqueta entera. Mira de frente, un
+  poco desde la derecha y desde arriba. Los focos y las anclas de cada paso
+  están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
+- **Al activarse un paso**: el encordado brilla en lima o aparece el disco del
+  punto dulce, el sticker entra flotando (sube, se endereza y crece, con un
+  rebote corto) pegado a su parte, y el nombre gigante aparece detrás. El paso
+  activo se lee entero y los demás bajan al 35%.
+- **Flotación y parallax**: la raqueta sube y baja medio centímetro y gira
+  apenas (±8°); cada sticker flota a su ritmo; la pelota sube, baja y gira con
+  el scroll; el nombre gigante se queda un poco atrás de la raqueta.
 
 ### Rendimiento
 
-- **Solo se anima `transform` y `opacity`**: la cámara, los stickers y sus
-  líneas (posicionados en unidades del contenedor, `cqw`/`cqh`), las cuerdas
-  (`scale`), el overgrip, el parallax y las apariciones. Nada de `left`,
-  `top`, `viewBox` ni `stroke-dashoffset`.
-- La textura de ruido es estática y ningún elemento animado lleva filtros SVG.
-- Mientras la cámara se mueve, va en su propia capa (`will-change: transform`);
-  cuando se queda quieta se saca, para que se repinte nítida al zoom en que
-  quedó.
-- **Sin librerías**: un componente cliente (`AnatomiaRaqueta`) mide el scroll
-  con `requestAnimationFrame`. No usa `animation-timeline`, que Firefox no
-  soporta: funciona igual en Chrome, Safari y Firefox.
+- **El 3D va solo en esta sección**: React Three Fiber y drei, cargados con
+  `dynamic` y sin SSR (`components/Raqueta3D.js`). El lienzo deja de
+  renderizar cuando la sección no está en pantalla (`frameloop="never"`).
+- **Mobile**: DPR máximo 1,5 (2 en desktop) y la sombra de contacto se calcula
+  una sola vez, no en tiempo real.
+- **En la página, solo `transform` y `opacity`**: los stickers y sus líneas
+  (posicionados en unidades del contenedor, `cqw`/`cqh`, a partir de la
+  proyección de su ancla 3D), el parallax y las apariciones. Nada de `left`,
+  `top` ni filtros SVG en elementos que se mueven.
+- **Funciona igual en Chrome, Safari y Firefox**: el scroll se mide con
+  `requestAnimationFrame`, sin `animation-timeline`.
 
 ### Sin movimiento
 
-Con `prefers-reduced-motion` (o sin JavaScript): la raqueta inflada entera,
-quieta, sin parte activa, con las cuerdas y el overgrip puestos y los siete
-stickers a la vista, en blanco, cada uno con su línea guía. No flota nada.
+Con `prefers-reduced-motion`, sin WebGL o sin JavaScript no se carga el 3D: se
+ve la raqueta inflada en SVG, entera y quieta, con los siete stickers a la
+vista, en blanco, cada uno con su línea guía. No flota nada. Mientras carga el
+modelo se ve lo mismo, y cuando está listo la raqueta 3D aparece encima con un
+fundido.
 
 ## Fotos de producto
 
@@ -475,7 +493,7 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 | Negritas para jerarquizar                | Un solo peso; la jerarquía sale del tamaño y del gris                 |
 | Radios intermedios (4, 8, 24px)          | 50px para lo que se toca, 16px para lo que se mira                    |
 | Tarjetas con sombra y radio en la grilla | La vitrina: celdas pegadas dentro de un marco de 1px                  |
-| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. Las únicas excepciones son la raqueta (componente `Raqueta`) y la pelota de la anatomía |
+| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. Las únicas excepciones son la raqueta (3D y `Raqueta`) y la pelota de la anatomía |
 | Lima de fondo o lima sobre lima          | El lima va sobre negro o lleva texto negro; nunca de fondo de sección |
 | Texto centrado en párrafos y productos   | A la izquierda; solo se centran el hero y los estados                 |
 | Slogans, leyendas y frases inventadas    | Textos que describen qué hay y para qué sirve                         |

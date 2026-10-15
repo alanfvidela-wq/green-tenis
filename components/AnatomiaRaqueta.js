@@ -1,51 +1,42 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Raqueta, { ANCLAS, LIENZO } from "./Raqueta";
 import styles from "./AnatomiaRaqueta.module.css";
 
 // Sección «Anatomía de una raqueta» (ver DESIGN.md: es una excepción con su
-// propio estilo, inflado y sobre azul). La raqueta queda fija y los pasos
-// pasan al lado (abajo en mobile). Con el scroll, la cámara se acerca a cada
-// parte, que se pone lima; entra su sticker con la línea guía, el nombre
-// gigante aparece detrás, las cuerdas crecen y el overgrip se enrolla.
+// propio estilo, sobre azul de cancha). La raqueta queda fija y los pasos
+// pasan al lado (abajo en mobile).
 //
-// Todo lo que se mueve es transform u opacity: la cámara, los stickers (en
-// unidades del contenedor, cqw/cqh), las cuerdas y el parallax.
+// - Con WebGL y movimiento permitido: la raqueta 3D (Raqueta3D, cargada sin
+//   SSR). Con el scroll, la cámara la recorre de arriba hacia abajo y se
+//   acerca a la parte de cada paso; entra su sticker, anclado a la posición 3D
+//   de la parte, y el nombre gigante aparece detrás.
+// - Con prefers-reduced-motion, sin WebGL o mientras carga el modelo: la
+//   raqueta inflada en SVG, quieta, con todos los stickers. Ocupa la misma
+//   caja que el 3D, así que el cambio no mueve nada.
 //
-// Sin JavaScript o con prefers-reduced-motion queda lo que pinta el servidor:
-// la raqueta entera, quieta, con todos los stickers a la vista.
+// Lo que se mueve en la página (stickers, nombre, parallax) es transform u
+// opacity.
 
-const COMPLETA = { x: LIENZO.ancho / 2, y: LIENZO.alto / 2, zoom: 1 };
-// La escena mide como el lienzo: 1% de alto equivale a 7/5 de 1% de ancho
+const Raqueta3D = dynamic(() => import("./Raqueta3D"), { ssr: false });
+
+// La escena mide como el lienzo de la raqueta: 1% de alto equivale a 7/5 de
+// 1% de ancho
 const PROPORCION = LIENZO.alto / LIENZO.ancho;
-
-const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
-const mezclar = (a, b, t) => a + (b - a) * t;
-const suavizar = (t) => t * t * (3 - 2 * t);
-const corto = (n) => Math.round(n * 100) / 100;
-
-// Encuadre de la cámara como transform de la escena (en % de su tamaño):
-// el foco queda en el centro
-function camara({ x, y, zoom }) {
-  return {
-    tx: 50 - (zoom * x * 100) / LIENZO.ancho,
-    ty: 50 - (zoom * y * 100) / LIENZO.alto,
-    zoom,
-  };
-}
 
 // Hasta dónde se alejan los stickers del centro, en % de la escena. En
 // pantallas angostas, menos: si no, se salen por el borde.
 const LIMITES = { derecha: [60, 80], izquierda: [20, 40] };
 const LIMITES_ANGOSTOS = { derecha: [56, 72], izquierda: [28, 44] };
 
-// Dónde va el sticker de un paso, de dónde sale su línea guía (en % de la
-// escena) y cómo se dibuja esa línea, para un encuadre dado
-function ubicar(paso, { tx, ty, zoom }, limites = LIMITES) {
-  const [ax, ay] = ANCLAS[paso.ancla];
-  const x = tx + (zoom * ax * 100) / LIENZO.ancho;
-  const y = ty + (zoom * ay * 100) / LIENZO.alto;
+const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
+const corto = (n) => Math.round(n * 100) / 100;
+
+// Dónde va el sticker de un paso y cómo se dibuja su línea guía, a partir del
+// punto de su parte en la escena (en %)
+function posicionMarca(paso, x, y, limites = LIMITES) {
   const distancia = paso.distancia ?? 16;
   const ex =
     paso.lado === "derecha"
@@ -64,7 +55,26 @@ function ubicar(paso, { tx, ty, zoom }, limites = LIMITES) {
   };
 }
 
-const VISTA_COMPLETA = camara(COMPLETA);
+// En el dibujo SVG (la raqueta entera), el punto de cada parte
+function posicionSvg(paso) {
+  const [ax, ay] = ANCLAS[paso.ancla];
+  return posicionMarca(paso, (ax / LIENZO.ancho) * 100, (ay / LIENZO.alto) * 100);
+}
+
+// ¿Va la raqueta 3D? Solo con WebGL y sin prefers-reduced-motion
+let hay3d = null;
+function puede3d() {
+  if (hay3d === null) {
+    let webgl = false;
+    try {
+      const lienzo = document.createElement("canvas");
+      webgl = Boolean(lienzo.getContext("webgl2") || lienzo.getContext("webgl"));
+    } catch {}
+    hay3d = webgl && !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+  return hay3d;
+}
+const sinSuscripcion = () => () => {};
 
 // La pelota de la marca, inflada: lima con contorno negro y sus costuras
 function PelotaInflada() {
@@ -97,31 +107,67 @@ function PelotaInflada() {
 
 export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
   const refRaiz = useRef(null);
+  const refEscenario = useRef(null);
   const refEscena = useRef(null);
-  const refCamara = useRef(null);
-  const refSvg = useRef(null);
   const refNombres = useRef(null);
   const refPelota = useRef(null);
+  const refMarcas = useRef([]);
+  // Lo que comparte con la escena 3D sin volver a renderizar: el progreso del
+  // scroll y dónde está la escena dentro del lienzo
+  const estado = useRef({ p: -1 });
+  const medidas = useRef({ escena: { x: 0, y: 0, ancho: 1, alto: 1 }, fraccion: 1 });
+  const angosta = useRef(false);
 
+  const cargar3d = useSyncExternalStore(sinSuscripcion, puede3d, () => false);
+  const [modo3d, setModo3d] = useState(false);
+  const alListo = useCallback(() => setModo3d(true), []);
+
+  // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo
+  const colocarMarca = useCallback(
+    (indice, x, y) => {
+      const marca = refMarcas.current[indice];
+      if (!marca) return;
+      const lugar = posicionMarca(pasos[indice], x, y, angosta.current ? LIMITES_ANGOSTOS : LIMITES);
+      for (const [variable, valor] of Object.entries(lugar)) {
+        marca.style.setProperty(variable, valor);
+      }
+    },
+    [pasos],
+  );
+
+  // Dónde está la escena dentro del escenario (el lienzo 3D lo ocupa entero)
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!cargar3d) return;
+    const escenario = refEscenario.current;
+    const escena = refEscena.current;
+    const consulta = window.matchMedia("(max-width: 859px)");
+    function medir() {
+      const s = escenario.getBoundingClientRect();
+      const e = escena.getBoundingClientRect();
+      medidas.current = {
+        escena: { x: e.left - s.left, y: e.top - s.top, ancho: e.width, alto: e.height },
+        fraccion: e.height / s.height,
+      };
+      angosta.current = consulta.matches;
+    }
+    medir();
+    const observador = new ResizeObserver(medir);
+    observador.observe(escenario);
+    observador.observe(escena);
+    return () => observador.disconnect();
+  }, [cargar3d]);
+
+  // Con la raqueta 3D en pantalla, el scroll decide el paso activo
+  useEffect(() => {
+    if (!modo3d) return;
 
     const raiz = refRaiz.current;
     const escena = refEscena.current;
-    const capaCamara = refCamara.current;
-    const svg = refSvg.current;
     const nombresCapa = refNombres.current;
     const pelota = refPelota.current;
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
-    const marcas = pasos.map((paso) => raiz.querySelector(`[data-marca="${paso.id}"]`));
     const nombres = pasos.map((paso) => raiz.querySelector(`[data-nombre="${paso.id}"]`));
-    const cuerdas = [...svg.querySelectorAll("[data-cuerda]")];
-    const vueltas = [...svg.querySelectorAll("[data-vuelta]")];
-    const pasoEncordado = pasos.findIndex((paso) => paso.partes.includes("encordado"));
-    const pasoOvergrip = pasos.findIndex((paso) => paso.partes.includes("overgrip"));
-
-    raiz.dataset.animado = "";
 
     // Progreso continuo: 0 con el primer paso en la línea de lectura, 1 con
     // el segundo, etc. De -1 (antes del primero) a pasos.length (después).
@@ -146,112 +192,53 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
       return Math.min(n, n - 1 + (linea - centros[n - 1]) / (centros[n - 1] - centros[n - 2]));
     }
 
-    // Adónde mira la cámara: de foco en foco, con entrada y salida suaves
-    const focos = [COMPLETA, ...pasos.map((paso) => paso.foco), COMPLETA];
-    function objetivo(p) {
-      const q = p + 1;
-      const k = limitar(Math.floor(q), 0, focos.length - 2);
-      const t = suavizar(limitar(q - k, 0, 1));
-      const a = focos[k];
-      const b = focos[k + 1];
-      return { x: mezclar(a.x, b.x, t), y: mezclar(a.y, b.y, t), zoom: mezclar(a.zoom, b.zoom, t) };
-    }
-
-    // Cuerdas y vueltas de overgrip: crecen una tras otra (solo transform)
-    function crecer(grupos, avance, eje) {
-      const total = grupos.length;
-      grupos.forEach((grupo, i) => {
-        const hecho = corto(limitar(avance * total - i, 0, 1));
-        if (grupo.dataset.hecho === String(hecho)) return;
-        grupo.dataset.hecho = String(hecho);
-        const sentido = eje ?? (grupo.dataset.sentido === "vertical" ? "Y" : "X");
-        grupo.style.transform = `scale${sentido}(${hecho})`;
-      });
-    }
-
-    let mirada = objetivo(progreso());
     let activo = null;
     let cuadro = 0;
-    let moviendo = false;
 
     function marcarActivo(indice) {
       activo = indice;
-      const partes = indice >= 0 ? pasos[indice].partes : [];
-      for (const grupo of svg.querySelectorAll("[data-parte]")) {
-        grupo.toggleAttribute("data-resaltada", partes.includes(grupo.dataset.parte));
-      }
-      svg.toggleAttribute("data-resaltando", partes.length > 0);
       elementosPasos.forEach((el, i) => el.toggleAttribute("data-activo", i === indice));
-      marcas.forEach((el, i) => el.toggleAttribute("data-visible", i === indice));
+      refMarcas.current.forEach((el, i) => el?.toggleAttribute("data-visible", i === indice));
       nombres.forEach((el, i) => el.toggleAttribute("data-visible", i === indice));
     }
 
-    function pintar() {
+    function actualizar() {
       cuadro = 0;
       const p = progreso();
-      const destino = objetivo(p);
-
-      // La cámara sigue al scroll con un poco de inercia
-      mirada = {
-        x: mezclar(mirada.x, destino.x, 0.12),
-        y: mezclar(mirada.y, destino.y, 0.12),
-        zoom: mezclar(mirada.zoom, destino.zoom, 0.12),
-      };
-      const vista = camara(mirada);
-      capaCamara.style.transform = `translate(${corto(vista.tx)}%, ${corto(vista.ty)}%) scale(${vista.zoom.toFixed(4)})`;
-
-      crecer(cuerdas, limitar((p - pasoEncordado + 0.8) / 0.8, 0, 1));
-      crecer(vueltas, limitar((p - pasoOvergrip + 0.7) / 0.7, 0, 1), "X");
+      estado.current.p = p;
 
       const indice = p > -0.5 && p < pasos.length - 0.5 ? Math.round(p) : -1;
       if (indice !== activo) marcarActivo(indice);
-      if (indice >= 0) {
-        const lugar = ubicar(pasos[indice], vista, mobile.matches ? LIMITES_ANGOSTOS : LIMITES);
-        for (const [variable, valor] of Object.entries(lugar)) {
-          marcas[indice].style.setProperty(variable, valor);
-        }
-      }
 
       // Parallax: el nombre gigante se queda atrás de la raqueta y la pelota
       // sube, baja y gira con el scroll
       const resto = p - Math.round(p);
       nombresCapa.style.transform = `translateY(${corto(resto * -36)}px)`;
       pelota.style.transform = `translateY(${corto(Math.sin(p * 1.3) * -12)}px) rotate(${corto(p * 24)}deg)`;
-
-      const quieta =
-        Math.abs(destino.x - mirada.x) < 0.05 &&
-        Math.abs(destino.y - mirada.y) < 0.05 &&
-        Math.abs(destino.zoom - mirada.zoom) < 0.001;
-
-      // Mientras se mueve, la cámara va en su propia capa (transform en la
-      // GPU); quieta, se repinta nítida al zoom en que quedó
-      if (!quieta && !moviendo) {
-        capaCamara.style.willChange = "transform";
-        moviendo = true;
-      } else if (quieta && moviendo) {
-        capaCamara.style.willChange = "auto";
-        moviendo = false;
-      }
-      if (!quieta) pedir();
     }
 
     function pedir() {
-      if (!cuadro) cuadro = requestAnimationFrame(pintar);
+      if (!cuadro) cuadro = requestAnimationFrame(actualizar);
     }
 
-    pintar();
+    actualizar();
     window.addEventListener("scroll", pedir, { passive: true });
     window.addEventListener("resize", pedir);
     return () => {
       cancelAnimationFrame(cuadro);
-      capaCamara.style.willChange = "";
       window.removeEventListener("scroll", pedir);
       window.removeEventListener("resize", pedir);
     };
-  }, [pasos]);
+  }, [modo3d, pasos]);
 
   return (
-    <section className={styles.seccion} aria-labelledby="titulo-anatomia" ref={refRaiz}>
+    <section
+      className={styles.seccion}
+      aria-labelledby="titulo-anatomia"
+      ref={refRaiz}
+      data-animado={modo3d ? "" : undefined}
+      data-modo={modo3d ? "3d" : "svg"}
+    >
       <div className={styles.contenido}>
         <header className={styles.encabezado}>
           <h2 id="titulo-anatomia" className={styles.titular}>
@@ -261,7 +248,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
         </header>
 
         <div className={styles.anatomia}>
-          <div className={styles.escenario}>
+          <div className={styles.escenario} ref={refEscenario}>
             {/* El nombre de la parte activa, gigante, detrás de la raqueta */}
             <div className={styles.nombres} ref={refNombres} aria-hidden="true">
               {pasos.map((paso) => (
@@ -271,27 +258,36 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
               ))}
             </div>
 
+            {cargar3d && (
+              <div className={styles.capa3d}>
+                <Raqueta3D
+                  pasos={pasos}
+                  estado={estado}
+                  medidas={medidas}
+                  onMarca={colocarMarca}
+                  onListo={alListo}
+                />
+              </div>
+            )}
+
             <div className={styles.escena} ref={refEscena}>
-              <div className={styles.flotador}>
-                <div className={styles.camara} ref={refCamara}>
-                  <Raqueta
-                    ref={refSvg}
-                    estilo="inflada"
-                    encuadre="lienzo"
-                    prefijo="anatomia"
-                    className={styles.raqueta}
-                  />
-                </div>
+              {/* La raqueta en SVG: mientras carga el 3D, sin WebGL o sin
+                  movimiento */}
+              <div className={styles.dibujo}>
+                <Raqueta estilo="inflada" encuadre="lienzo" prefijo="anatomia" className={styles.raqueta} />
               </div>
 
               {/* Stickers: texto HTML; repiten el título del paso, por eso van
                   ocultos para lectores de pantalla */}
-              {pasos.map((paso) => (
+              {pasos.map((paso, i) => (
                 <span
                   key={paso.id}
+                  ref={(el) => {
+                    refMarcas.current[i] = el;
+                  }}
                   className={styles.marca}
                   data-marca={paso.id}
-                  style={{ ...ubicar(paso, VISTA_COMPLETA), "--giro": `${paso.giro ?? 0}deg` }}
+                  style={{ ...posicionSvg(paso), "--giro": `${paso.giro ?? 0}deg` }}
                   aria-hidden="true"
                 >
                   <span className={styles.guia} />

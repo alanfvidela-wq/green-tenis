@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Fotos de producto originales; en public/productos/estudio va la versión procesada
 /public/productos/fuente/
+
+# Modelos 3D originales (pesados); en public/models va la versión optimizada
+/modelos-fuente/
