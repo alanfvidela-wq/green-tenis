@@ -275,7 +275,7 @@ El loop del hero sale de `public/videos/fuentes/tenis.mp4` (fuera de git) con
 `npm run video:hero` (`scripts/video-hero.mjs`): H.264 sin audio, de menos de
 4 MB, con un fundido cruzado entre el final y el principio para que el loop no
 salte. Hay dos versiones: `hero-desktop` (el cuadro entero, escalado) y
-`hero-mobile` (un recorte 9:16 sobre el jugador). Cada una tiene su poster en
+`hero-mobile` (un recorte 9:16 que sigue al jugador). Cada una tiene su poster en
 WebP (el primer cuadro). El detalle y el control del loop están en `MEDIOS.md`.
 
 ## Páginas
