@@ -1,6 +1,8 @@
 import Link from "next/link";
+import AnatomiaRaqueta from "@/components/AnatomiaRaqueta";
 import GrillaProductos from "@/components/GrillaProductos";
 import Hero from "@/components/Hero";
+import { PASOS_ANATOMIA } from "@/lib/anatomia";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -18,6 +20,22 @@ export default async function Home() {
             Lo que más sale
           </h2>
           <GrillaProductos productos={destacados} columnas={3} />
+        </div>
+      </section>
+
+      {/* Anatomía de una raqueta: la raqueta fija y los pasos con el scroll */}
+      <section aria-labelledby="titulo-anatomia">
+        <div className={`${styles.contenido} ${styles.seccion}`}>
+          <div className={styles.encabezado}>
+            <h2 id="titulo-anatomia" className={styles.subtitulo}>
+              Anatomía de una raqueta
+            </h2>
+            <p className={styles.bajada}>
+              De la cabeza a la tapa del mango: qué es cada parte y qué cambia
+              en el juego.
+            </p>
+          </div>
+          <AnatomiaRaqueta pasos={PASOS_ANATOMIA} />
         </div>
       </section>
 

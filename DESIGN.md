@@ -138,13 +138,16 @@ radio es del marco, no de cada celda.
    encima. Ver «Hero».
 2. **Lo que más sale** (blanco): los seis destacados en la vitrina, en tres
    columnas (dos filas llenas).
-3. **Categorías** (blanco): una fila por categoría, separadas por líneas de
+3. **Anatomía de una raqueta** (blanco): la raqueta dibujada en línea, fija,
+   y un paso por parte con el scroll. Ver «Anatomía de una raqueta».
+4. **Categorías** (blanco): una fila por categoría, separadas por líneas de
    1px: nombre, bajada y cantidad. Al pasar el mouse, la fila se pinta lima.
-4. **Footer** (negro).
+5. **Footer** (negro).
 
 Todo va sobre blanco; las secciones se separan con aire, no con fondos
 alternados. El negro aparece solo en el footer. No hay cintas con leyendas ni
-bloques de slogan: la home muestra productos y categorías.
+bloques de slogan: la home muestra productos, cómo es una raqueta y las
+categorías.
 
 ## Hero
 
@@ -217,6 +220,73 @@ del mismo marco de 1px y 16px de radio, sin texto encima. La primera vista va
 grande; si hay más, van de a dos debajo. En escritorio queda fija mientras se
 lee la ficha y nunca es más alta que la pantalla. Acá el producto no se apaga
 aunque no haya stock: eso lo dice el selector de opciones, al lado.
+
+## Anatomía de una raqueta
+
+Una sección de la home, entre «Lo que más sale» y «Categorías», que explica la
+raqueta parte por parte. De otras referencias se toma solo la idea de una
+animación atada al scroll; todo lo demás sigue este documento.
+
+### El dibujo
+
+- **Componente `Raqueta`** (`components/Raqueta.js`): la raqueta de frente y
+  vertical, dibujada en SVG con código. Es reutilizable (va a usarse en «Armá
+  tu raqueta»): recibe `resaltadas` (las partes en lima) y `encuadre`
+  (`ajustado`, solo la raqueta, o `lienzo`, 400×560 con aire para las
+  etiquetas). Exporta `ANCLAS` (el punto de cada parte), `PATRON` y `LIENZO`.
+- **Línea negra de 1,5px sobre blanco**, sin rellenos, puntas redondeadas. Es
+  un dibujo técnico, no una ilustración: sin sombras, sin color, sin gestos.
+  El grosor queda en 1,5px en pantalla aunque la cámara se acerque.
+- **Cada parte es un grupo** (`data-parte`) que se puede resaltar o animar por
+  separado: aro, encordado (16 verticales × 19 horizontales, calculadas desde
+  el patrón), punto dulce (una zona, en línea punteada), antivibrador,
+  garganta, mango, grip, overgrip y tapa.
+- **Resaltar es marcar en lima.** La parte resaltada lleva debajo un trazo lima
+  grueso, como un marcador, y arriba sigue la línea negra: sobre blanco, una
+  línea lima sola no se leería. Las zonas cerradas (punto dulce,
+  antivibrador, tapa) se rellenan de lima; las cuerdas llevan un marcador más
+  fino para no volverse una mancha. Con una parte resaltada, el resto baja a
+  gris (negro al 28%).
+
+### La sección
+
+- **Desktop**: la raqueta queda fija (sticky) a la izquierda y los pasos van
+  pasando a la derecha, uno por pantalla. **Mobile**: la raqueta fija arriba
+  (46% del alto) y los pasos abajo.
+- **Un paso por parte, de arriba hacia abajo**: contorno, encordado, punto
+  dulce, garganta, mango y grip, overgrip y tapa. Cada paso tiene el número,
+  el nombre de la parte (`h3`), un dato técnico concreto en mono (patrón
+  16×19 contra 18×20, tamaños de grip, largo de 27″) y una frase corta que
+  dice qué cambia en el juego. Los pasos están en `lib/anatomia.js`.
+- **Todo el texto es HTML** (títulos y párrafos), nunca texto dentro del SVG.
+  Las etiquetas sobre el dibujo también son HTML y repiten el título del paso,
+  por eso van ocultas para lectores de pantalla.
+- **Etiqueta**: píldora lima con el nombre en mayúsculas, unida a su parte por
+  una línea guía negra de 1px que sale de un punto negro. Nunca va sobre una
+  zona lima (lima sobre lima): si la parte es grande, se aleja.
+
+### Movimiento
+
+- **La cámara**: el encuadre (viewBox) va de parte en parte con el scroll. El
+  paso que cruza la línea de lectura (el centro de la pantalla; en mobile, el
+  centro de lo que queda debajo de la raqueta) decide adónde mira, y la
+  cámara se acerca y se mueve hacia esa parte con entrada y salida suaves y
+  un poco de inercia. Es continuo: entre un paso y otro, la cámara está en el
+  medio. Antes del primer paso y después del último se ve la raqueta entera.
+- **Al activarse un paso**: su parte se pone lima, el resto baja a gris y
+  aparece su etiqueta con la línea guía (250 a 300ms). El paso activo se lee
+  en negro y los demás bajan al 30%.
+- **Movimientos propios**: las cuerdas se dibujan (`stroke-dashoffset`, una
+  tras otra, primero las verticales) al llegar al encordado; el punto dulce
+  late suave (escala 1,1 cada 1,8 s) mientras está activo; el overgrip se
+  enrolla vuelta por vuelta, de abajo hacia arriba, al llegar a su paso.
+- **Flotación**: la raqueta sube y baja 6px cada 6 segundos.
+- **Sin librerías**: un componente cliente (`AnatomiaRaqueta`) mide el scroll
+  con `requestAnimationFrame` y mueve el viewBox. No usa `animation-timeline`
+  porque Firefox no lo soporta: funciona igual en Chrome, Safari y Firefox.
+- **Con `prefers-reduced-motion`** (o sin JavaScript): la raqueta entera,
+  quieta, con las cuerdas y el overgrip dibujados y todas las etiquetas a la
+  vista.
 
 ## Fotos de producto
 
@@ -307,9 +377,12 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 
 - **Hero**: el loop del video. Se puede pausar.
 - **Vitrina**: el producto se acerca apenas con el hover o el foco.
+- **Anatomía de una raqueta**: la cámara sigue al scroll. Ver
+  «Anatomía de una raqueta».
 - **Categorías**: la fila se pinta lima al pasar el mouse.
 - **Header**: pasa de transparente a blanco con una transición suave.
-- Con `prefers-reduced-motion` el hero muestra solo el poster y no hay
+- Con `prefers-reduced-motion` el hero muestra solo el poster, la anatomía
+  muestra la raqueta entera y quieta con todas sus etiquetas, y no hay
   animaciones ni transiciones.
 
 ## Accesibilidad
@@ -329,7 +402,7 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 | Negritas para jerarquizar                | Un solo peso; la jerarquía sale del tamaño y del gris                 |
 | Radios intermedios (4, 8, 24px)          | 50px para lo que se toca, 16px para lo que se mira                    |
 | Tarjetas con sombra y radio en la grilla | La vitrina: celdas pegadas dentro de un marco de 1px                  |
-| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía                     |
+| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. La única excepción es el dibujo técnico de la raqueta, en línea |
 | Lima de fondo o lima sobre lima          | El lima va sobre negro o lleva texto negro; nunca de fondo de sección |
 | Texto centrado en párrafos y productos   | A la izquierda; solo se centran el hero y los estados                 |
 | Slogans, leyendas y frases inventadas    | Textos que describen qué hay y para qué sirve                         |

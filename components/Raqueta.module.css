@@ -1,0 +1,89 @@
+/* Raqueta en línea negra de 1,5px sobre blanco. Ver «Anatomía de una
+   raqueta» en DESIGN.md. */
+.raqueta {
+  --gris-raqueta: color-mix(in srgb, var(--negro) 28%, var(--blanco));
+  /* Grosores: fijos en pantalla mientras el viewBox no cambia. Con la cámara
+     en movimiento ([data-camara]) los calcula AnatomiaRaqueta. */
+  --trazo: 1.5px;
+  --resalte: 8px;
+  --resalte-fino: 3px;
+  display: block;
+  overflow: visible;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.raqueta * {
+  vector-effect: non-scaling-stroke;
+}
+
+.raqueta[data-camara] * {
+  vector-effect: none;
+}
+
+/* La línea */
+.raqueta [data-capa="trazo"] {
+  stroke: var(--negro);
+  stroke-width: var(--trazo);
+}
+
+/* El punto dulce no es una pieza: es una zona, en línea punteada */
+.raqueta [data-capa="trazo"] [data-parte="punto-dulce"] {
+  stroke-dasharray: 2 3;
+}
+
+/* Con una parte resaltada, el resto baja a gris */
+.raqueta[data-resaltando] [data-capa="trazo"] [data-parte]:not([data-resaltada]) {
+  stroke: var(--gris-raqueta);
+}
+
+/* El resalte: lima, grueso, debajo de la línea; solo en la parte resaltada */
+.raqueta [data-capa="resalte"] {
+  stroke: var(--lima);
+  stroke-width: var(--resalte);
+}
+
+.raqueta [data-capa="resalte"] [data-parte] {
+  opacity: 0;
+}
+
+.raqueta [data-capa="resalte"] [data-parte][data-resaltada] {
+  opacity: 1;
+}
+
+/* En las cuerdas el resalte es más fino: si no, 35 líneas juntas se vuelven
+   una mancha lima */
+.raqueta [data-capa="resalte"] [data-parte="encordado"] {
+  stroke-width: var(--resalte-fino);
+}
+
+/* Las zonas cerradas se rellenan de lima */
+.raqueta [data-capa="resalte"] [data-parte="punto-dulce"],
+.raqueta [data-capa="resalte"] [data-parte="antivibrador"],
+.raqueta [data-capa="resalte"] [data-parte="tapa"] {
+  fill: var(--lima);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .raqueta [data-capa="trazo"] [data-parte] {
+    transition: stroke 300ms ease;
+  }
+
+  .raqueta [data-capa="resalte"] [data-parte] {
+    transition: opacity 300ms ease;
+  }
+
+  /* El punto dulce late suave mientras está resaltado */
+  .raqueta [data-parte="punto-dulce"][data-resaltada] {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: latir 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes latir {
+  50% {
+    transform: scale(1.1);
+  }
+}

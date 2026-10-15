@@ -22,6 +22,18 @@
   font-size: var(--t-titulo-2);
 }
 
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+.bajada {
+  max-width: 44ch;
+  color: var(--grafito);
+  font-size: var(--t-entrada);
+}
+
 /* ---------- Categorías ---------- */
 
 /* Una fila por categoría, separadas por líneas de 1px */

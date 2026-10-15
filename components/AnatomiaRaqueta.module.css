@@ -1,0 +1,188 @@
+/* Anatomía de una raqueta (ver DESIGN.md). Desktop: la raqueta fija a la
+   izquierda y los pasos a la derecha. Mobile: la raqueta fija arriba y los
+   pasos abajo. */
+.anatomia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+/* Lo que queda fijo mientras pasan los pasos */
+.escenario {
+  position: sticky;
+  z-index: 1;
+  top: var(--alto-header);
+  display: grid;
+  place-items: center;
+  height: 46svh;
+  padding-block: var(--espacio-2);
+  background: var(--blanco);
+}
+
+/* La escena tiene la proporción del lienzo de la raqueta (5:7): así las
+   etiquetas, en %, caen justo sobre su parte */
+.escena {
+  position: relative;
+  width: min(100%, (46svh - var(--espacio-4)) * 5 / 7);
+  aspect-ratio: 5 / 7;
+}
+
+.raqueta,
+.guias {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* La cámara: lo que queda afuera del encuadre no se ve */
+.escena .raqueta {
+  overflow: hidden;
+}
+
+/* Líneas guía de 1px negras, de la parte a su etiqueta */
+.guias {
+  overflow: visible;
+  pointer-events: none;
+  stroke: var(--negro);
+  stroke-width: 1px;
+}
+
+.guias line {
+  vector-effect: non-scaling-stroke;
+}
+
+/* Punto de anclaje de la línea guía */
+.punto {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--negro);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* Etiqueta: píldora lima con texto negro, en mayúsculas */
+.etiqueta {
+  position: absolute;
+  padding: var(--espacio-1) var(--espacio-3);
+  border-radius: var(--radio-pildora);
+  background: var(--lima);
+  color: var(--negro);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-nav);
+  line-height: 1.4;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+/* Del lado izquierdo, la etiqueta termina donde llega la línea */
+.izquierda {
+  transform: translate(-100%, -50%);
+}
+
+/* Animada, solo se ve la etiqueta del paso activo */
+.anatomia[data-animado] .etiqueta,
+.anatomia[data-animado] .punto,
+.anatomia[data-animado] .guias line {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+
+.anatomia[data-animado] .etiqueta[data-visible],
+.anatomia[data-animado] .punto[data-visible],
+.anatomia[data-animado] .guias line[data-visible] {
+  opacity: 1;
+}
+
+/* Los pasos */
+.pasos {
+  list-style: none;
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--espacio-3);
+  min-height: 60svh;
+  max-width: 34rem;
+  padding-block: var(--espacio-8);
+}
+
+/* Animada, el paso activo en negro y los demás en gris */
+.anatomia[data-animado] .paso {
+  opacity: 0.3;
+  transition: opacity 300ms ease;
+}
+
+.anatomia[data-animado] .paso[data-activo] {
+  opacity: 1;
+}
+
+.numero {
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+  color: var(--grafito);
+}
+
+.titulo {
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.05;
+}
+
+/* El dato técnico, en mono */
+.dato {
+  padding-top: var(--espacio-3);
+  border-top: 1px solid var(--negro);
+  font-family: var(--fuente-datos);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.frase {
+  color: var(--grafito);
+  font-size: var(--t-entrada);
+}
+
+@media (min-width: 860px) {
+  .anatomia {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--espacio-10);
+  }
+
+  .escenario {
+    top: calc(var(--alto-header) + var(--espacio-5));
+    align-self: start;
+    height: calc(100svh - var(--alto-header) - var(--espacio-10));
+    padding-block: 0;
+  }
+
+  .escena {
+    width: min(100%, (100svh - var(--alto-header) - var(--espacio-10)) * 5 / 7);
+  }
+
+  /* Aire arriba y abajo para que el primer y el último paso lleguen al centro */
+  .pasos {
+    padding-block: 20svh;
+  }
+
+  .paso {
+    min-height: 75svh;
+  }
+}
+
+/* Flotación leve de la raqueta */
+@media (prefers-reduced-motion: no-preference) {
+  .anatomia[data-animado] .escena {
+    animation: flotar 6s ease-in-out infinite;
+  }
+}
+
+@keyframes flotar {
+  50% {
+    transform: translateY(-6px);
+  }
+}
