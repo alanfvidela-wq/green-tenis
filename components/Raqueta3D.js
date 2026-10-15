@@ -20,9 +20,8 @@ export const URL_RAQUETA = "/models/raqueta.glb";
 // Medidas del modelo, en centímetros: de la tapa (y = 0) a la punta
 const LARGO = 70.5;
 const COMPLETA = { y: LARGO / 2, zoom: 1 };
-// El final: la raqueta entera, un poco más lejos y más arriba, para dejar
-// lugar al botón debajo
-const FINAL = { y: LARGO / 2 - 4, zoom: 0.82 };
+// El final: la raqueta entera, centrada y un poco más lejos
+const FINAL = { y: LARGO / 2, zoom: 0.9 };
 // Tramos del final (fin va de 0 a 1): los stickers juntos, la vuelta de 360°
 // y, después, la rotación lenta
 const STICKERS = [0.1, 0.38];

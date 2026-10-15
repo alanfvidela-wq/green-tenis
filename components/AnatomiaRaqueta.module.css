@@ -241,33 +241,6 @@
   transition: opacity 250ms ease;
 }
 
-/* ---------- El botón del final ---------- */
-
-/* Debajo de la raqueta entera. Escondido (y fuera del orden de tabulación)
-   hasta el final; entra subiendo. */
-.botonFinal {
-  position: absolute;
-  z-index: 4;
-  bottom: 5%;
-  left: 50%;
-  min-height: 56px;
-  padding-inline: var(--espacio-10);
-  opacity: 0;
-  visibility: hidden;
-  transform: translate(-50%, 16px);
-  transition:
-    opacity 300ms ease,
-    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
-    visibility 0s linear 300ms;
-}
-
-.seccion[data-final] .botonFinal {
-  opacity: 1;
-  visibility: visible;
-  transform: translate(-50%, 0);
-  transition-delay: 0s;
-}
-
 /* ---------- La pelota ---------- */
 
 /* Arriba a la izquierda: ahí no cae ningún sticker */
@@ -325,6 +298,31 @@
 .seccion[data-animado][data-frase] .cierreTexto {
   opacity: 1;
   transform: none;
+}
+
+/* El botón, debajo de la frase */
+.cierreBoton {
+  min-height: 56px;
+  padding-inline: var(--espacio-10);
+}
+
+/* Con 3D, escondido (y fuera del orden de tabulación) hasta el final; entra
+   subiendo, con un rebote corto */
+.seccion[data-animado] .cierreBoton {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  transition:
+    opacity 300ms ease,
+    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    visibility 0s linear 300ms;
+}
+
+.seccion[data-animado][data-final] .cierreBoton {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
 }
 
 /* En mobile el escenario va de borde a borde, para que los stickers tengan

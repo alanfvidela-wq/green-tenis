@@ -344,13 +344,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
               ))}
             </div>
 
-            {/* El botón del final: con el 3D aparece debajo de la raqueta */}
-            {modo3d && (
-              <Link href={cierre.href} className={`boton ${styles.botonFinal}`}>
-                {cierre.accion}
-              </Link>
-            )}
-
             <div className={styles.pelota} ref={refPelota} aria-hidden="true">
               <div className={styles.pelotaFlota}>
                 <PelotaInflada />
@@ -371,18 +364,16 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
             ))}
           </ol>
 
-          {/* El cierre: el tramo de scroll del final. La frase queda fija al
-              lado de la raqueta (debajo en mobile): con 3D aparece junto con
-              los stickers y se queda mientras la raqueta gira; sin 3D está
-              siempre, con el botón. Con 3D el botón está en el escenario. */}
+          {/* El cierre: el tramo de scroll del final. La frase y el botón
+              quedan fijos al lado de la raqueta (debajo en mobile). Con 3D la
+              frase aparece junto con los stickers y se queda mientras la
+              raqueta gira, y el botón entra al final; sin 3D están siempre. */}
           <div className={styles.cierre} data-cierre>
             <div className={styles.cierreContenido}>
               <p className={styles.cierreTexto}>{cierre.texto}</p>
-              {!modo3d && (
-                <Link href={cierre.href} className="boton">
-                  {cierre.accion}
-                </Link>
-              )}
+              <Link href={cierre.href} className={`boton ${styles.cierreBoton}`}>
+                {cierre.accion}
+              </Link>
             </div>
           </div>
         </div>
