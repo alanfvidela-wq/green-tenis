@@ -4,7 +4,7 @@ Amargo es un almacén de mate que se lee como un recetario: la limpieza y la
 tipografía gigante de graza.co, las fotos de cocina con luz de mañana de
 alisoneroman.com y las manchas de color, los dibujos botánicos y el humor de
 palais.bio. Bloques de color plano, mucho aire, nada de bordes. Lo que llama la
-atención son las fotos propias (la mesa de la portada, la ronda, los momentos),
+atención son las fotos propias (la mesa de la portada y los momentos),
 la rama de yerba que se dibuja sola y el Cimarrón, el mate con cara del pie.
 Todo lo demás es tinta sobre papel, ordenado.
 
@@ -66,23 +66,18 @@ las cumple, se corrige.
    afiche. Debajo, una rama de yerba que se dibuja sola y una frase.
 4. **Lo que más sale** (papel, con ola): los seis destacados en la vitrina,
    en tres columnas (dos filas llenas).
-5. **Cómo cebar un buen mate** (tinta, con ola): la receta de la casa. La foto
-   de la ronda (dos manos pasándose el mate) queda fija a la izquierda
-   mientras se leen, a la derecha, los datos (rinde, tiempo, dificultad), lo
-   que hace falta y los cinco pasos con su número en un sello amarillo. Cierra
-   con «¿Te falta algo? Armá tu combo».
-6. **Para cada ronda** (avena, con ola): la mañana, la ruta y la plaza, con
+5. **Para cada ronda** (avena, con ola): la mañana, la ruta y la plaza, con
    una foto cada una y el link a la categoría que la resuelve. En mobile se
    pasan de costado.
-7. **Qué hay en el almacén** (papel, con ola): la única sección de
+6. **Qué hay en el almacén** (papel, con ola): la única sección de
    categorías de la home. Cada categoría es una fila en un bloque suave de su
    color; al pasar el mouse el producto se ladea.
-8. **Footer** (verde, con ola).
+7. **Footer** (verde, con ola).
 
-El contenido editorial (leyendas, receta, momentos) está en `lib/home.js`.
+El contenido editorial (leyendas y momentos) está en `lib/home.js`.
 
-Secuencia de fondos de la home: foto → verde → avena → papel → tinta → avena
-→ papel → verde. En las demás páginas: header papel → acento de la categoría
+Secuencia de fondos de la home: foto → verde → avena → papel → avena → papel
+→ verde. En las demás páginas: header papel → acento de la categoría
 (solo en categoría) → avena → verde.
 
 ## Header
@@ -137,8 +132,8 @@ Secuencia de fondos de la home: foto → verde → avena → papel → tinta →
 - **La etiqueta.** La ficha de producto se lee como el dorso de un paquete:
   un bloque papel con filas alternadas, sin líneas.
 - **Sellos** ovalados y rellenos (no contorneados), en serif itálica:
-  «Próximamente», «404», el sello de la categoría y el número de cada paso
-  de la receta. Nunca encima de la vitrina.
+  «Próximamente», «404» y el sello de la categoría. Nunca encima de la
+  vitrina.
 
 ## Paleta
 
@@ -150,7 +145,7 @@ mezclarlos (`color-mix`), no son colores nuevos.
 | Token        | Nombre           | Hex       | Uso                                               |
 | ------------ | ---------------- | --------- | ------------------------------------------------- |
 | `--kraft`    | Avena            | `#EFE4CF` | Fondo general, con una textura de papel muy sutil |
-| `--tinta`    | Tinta            | `#1F1A14` | Texto y bloque de la receta                       |
+| `--tinta`    | Tinta            | `#1F1A14` | Texto, categoría Accesorios                       |
 | `--verde`    | Verde yerba      | `#1F5135` | Logo, leyendas, footer, categoría Yerbas          |
 | `--rojo`     | Rojo almacén     | `#BF3A1E` | Sellos, «sin stock», categoría Mates              |
 | `--amarillo` | Amarillo paquete | `#E9AE1B` | Categoría Bombillas                               |
@@ -235,7 +230,7 @@ Interlineado: 0.88–0.95 para los títulos y 1.55 para el texto.
   footer.
 - **Círculos** para los botones de ícono (pausa del video) y el sello de la
   portada.
-- **Óvalo relleno** para los sellos y los números de la receta.
+- **Óvalo relleno** para los sellos.
 - **Sin sombras de caja.** La profundidad sale de los bloques de color planos.
   La única sombra es la de contacto debajo de los recortes de producto fuera
   de la vitrina (encabezado de categoría y «Qué hay en el almacén»); sigue la
@@ -385,7 +380,7 @@ foto representativa por categoría, en `CATEGORIAS`).
 
 ## Fotos y video
 
-Las fotos de la home (portada, la ronda y los tres momentos) se generaron con
+Las fotos de la home (portada y los tres momentos) se generaron con
 Higgsfield, Nano Banana Pro a 2K; el loop de la portada, con Kling 2.5 Turbo
 Pro en Artlist. Las fotos comparten la misma receta: película de
 35mm, grano suave, luz natural cálida, foco corto, paleta de crema, avena,
@@ -430,8 +425,6 @@ que muestra. Nada entra con fundido y desplazamiento genérico.
   frutitos.
 - **Vitrina** («Lo que más sale», categorías y galería): el producto se
   acerca apenas al pasar el mouse o con el foco. Nada más se mueve.
-- **Receta**: la foto se acomoda al entrar y los números de los pasos se
-  estampan como un sello de goma.
 - **Para cada ronda**: las fotos se revelan como un rollo recién salido (de
   sepia lavado a color) y se acercan apenas al pasar el mouse.
 - **Qué hay en el almacén**: el producto de cada fila se ladea al pasar el
@@ -446,8 +439,8 @@ que muestra. Nada entra con fundido y desplazamiento genérico.
 
 ## Principios
 
-1. **El mate es la estrella.** En la portada, la mesa con el mate; en la
-   receta, el mate pasando de mano en mano; en el pie, el Cimarrón.
+1. **El mate es la estrella.** En la portada, la mesa con el mate; en el pie,
+   el Cimarrón.
 2. **Color y aire, no líneas.** Si algo necesita separarse, se le cambia el
    fondo o se le da espacio; nunca un borde. La excepción es la vitrina,
    donde el color es solo del producto.

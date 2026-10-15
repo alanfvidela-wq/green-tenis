@@ -4,8 +4,8 @@ import Hero from "@/components/Hero";
 import Marquesina from "@/components/Marquesina";
 import GrillaProductos from "@/components/GrillaProductos";
 import FotoProducto from "@/components/FotoProducto";
-import { Hojita, RamaYerba } from "@/components/Ilustraciones";
-import { LEYENDAS, MOMENTOS, RECETA } from "@/lib/home";
+import { RamaYerba } from "@/components/Ilustraciones";
+import { LEYENDAS, MOMENTOS } from "@/lib/home";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -52,66 +52,6 @@ export default async function Home() {
             Lo que más sale
           </h2>
           <GrillaProductos productos={destacados} columnas={3} />
-        </div>
-      </section>
-
-      {/* La receta de la casa: foto a un lado y el paso a paso al otro */}
-      <section className={`ola ${styles.receta}`} aria-labelledby="titulo-receta">
-        <div className={`${styles.contenido} ${styles.recetaGrilla}`}>
-          <div className={styles.recetaFoto}>
-            <Image
-              src="/fotos/la-ronda.webp"
-              alt="Dos manos se pasan un mate de calabaza sobre una mesa de madera en un patio"
-              fill
-              sizes="(max-width: 900px) 100vw, 520px"
-              className={styles.recetaImagen}
-            />
-          </div>
-
-          <div className={styles.recetaTexto}>
-            <h2 id="titulo-receta" className={styles.subtitulo}>
-              Cómo cebar un buen mate
-            </h2>
-
-            <dl className={styles.recetaDatos}>
-              {RECETA.datos.map(([dato, valor]) => (
-                <div key={dato}>
-                  <dt className="dato">{dato}</dt>
-                  <dd>{valor}</dd>
-                </div>
-              ))}
-            </dl>
-
-            <h3 className={styles.recetaSubtitulo}>Necesitás</h3>
-            <ul className={styles.ingredientes}>
-              {RECETA.ingredientes.map((ingrediente) => (
-                <li key={ingrediente}>
-                  <Hojita className={styles.ingredienteHoja} />
-                  {ingrediente}
-                </li>
-              ))}
-            </ul>
-
-            <h3 className={styles.recetaSubtitulo}>Paso a paso</h3>
-            <ol className={styles.pasos}>
-              {RECETA.pasos.map((paso, i) => (
-                <li key={paso.titulo} className={styles.paso}>
-                  <span className={styles.pasoNumero} aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  <h4 className={styles.pasoTitulo}>{paso.titulo}</h4>
-                  <p className={styles.pasoTexto}>{paso.texto}</p>
-                </li>
-              ))}
-            </ol>
-
-            <div className={styles.recetaCierre}>
-              <p className={styles.recetaPregunta}>¿Te falta algo?</p>
-              <Link href="/arma-tu-combo" className="boton">
-                Armá tu combo
-              </Link>
-            </div>
-          </div>
         </div>
       </section>
 
