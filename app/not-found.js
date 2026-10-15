@@ -9,11 +9,8 @@ export default function NotFound() {
   return (
     <main className={styles.estado}>
       <p className={styles.codigo}>404</p>
-      <h1 className={styles.titulo}>Se fue larga</h1>
-      <p className={styles.texto}>
-        Lo que buscás no está, o picó afuera. Volvé al inicio, que siempre hay
-        otra pelota.
-      </p>
+      <h1 className={styles.titulo}>Página no encontrada</h1>
+      <p className={styles.texto}>Lo que buscás no está o ya no existe.</p>
       <div className={styles.acciones}>
         <Link href="/" className="boton">
           Volver al inicio

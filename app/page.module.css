@@ -18,74 +18,11 @@
   padding-bottom: var(--espacio-16);
 }
 
-.anclaje {
-  scroll-margin-top: var(--alto-header);
-}
-
 .subtitulo {
   font-size: var(--t-titulo-2);
 }
 
-/* Link en mayúsculas que se subraya al pasar el mouse */
-.enlace {
-  align-self: flex-start;
-  font-size: var(--t-dato);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
-}
-
-.enlace:hover {
-  text-decoration-thickness: 2px;
-}
-
-/* ---------- Manifiesto ---------- */
-
-.manifiesto {
-  padding: var(--espacio-24) 0 var(--espacio-8);
-}
-
-.manifiestoTitulo {
-  display: flex;
-  flex-direction: column;
-  font-size: clamp(3rem, 9vw, 8.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.03em;
-  text-wrap: nowrap;
-}
-
-/* La segunda línea corrida a la derecha, como en un afiche */
-.manifiestoCorrido {
-  align-self: flex-end;
-}
-
-.manifiestoTexto {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-4);
-  max-width: 40ch;
-  margin-top: var(--espacio-10);
-  color: var(--grafito);
-  font-size: var(--t-entrada);
-}
-
-.manifiestoTexto .enlace {
-  color: var(--negro);
-}
-
-@media (max-width: 640px) {
-  .manifiestoTitulo {
-    text-wrap: balance;
-  }
-
-  .manifiestoCorrido {
-    align-self: flex-start;
-  }
-}
-
-/* ---------- Qué hay en el club ---------- */
+/* ---------- Categorías ---------- */
 
 /* Una fila por categoría, separadas por líneas de 1px */
 .categorias {

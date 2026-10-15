@@ -23,7 +23,7 @@ export const metadata = {
     template: "%s | green.",
   },
   description:
-    "Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de tenis. Lo que hace falta para que la pelota vuelva.",
+    "Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de tenis.",
 };
 
 export default function RootLayout({ children }) {

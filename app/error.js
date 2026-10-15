@@ -12,9 +12,9 @@ export default function Error({ error, retry }) {
   return (
     <main className={styles.estado}>
       <p className={styles.codigo}>Error</p>
-      <h1 className={styles.titulo}>Doble falta</h1>
+      <h1 className={styles.titulo}>Algo salió mal</h1>
       <p className={styles.texto}>
-        Algo falló de nuestro lado. Juntamos las pelotas y sacás de nuevo.
+        Falló algo de nuestro lado. Probá de nuevo en un momento.
       </p>
       <div className={styles.acciones}>
         <button type="button" className="boton" onClick={() => retry()}>

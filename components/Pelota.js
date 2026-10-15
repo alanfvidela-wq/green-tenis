@@ -1,6 +1,6 @@
 // La pelota de la marca: círculo lima con sus dos costuras en negro, que la
-// hacen legible también sobre blanco. Es el punto de «green.», separa las
-// leyendas de la cinta y es el favicon (app/icon.svg).
+// hacen legible también sobre blanco. Es el punto de «green.» y el favicon
+// (app/icon.svg).
 export default function Pelota({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden="true" focusable="false">

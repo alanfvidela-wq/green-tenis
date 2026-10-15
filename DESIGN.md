@@ -38,15 +38,15 @@ sitios usarían cajas y sombras.
    texto va en sentence case.
 7. **Texto a la izquierda.** Solo se centran el titular del hero y los
    encabezados de estado (404, error).
-8. **Una frase por lugar.** Títulos cortos, bajadas de 34 a 46 caracteres de
-   ancho y, si hace falta, una acción.
+8. **Textos que describen.** Títulos cortos y bajadas que dicen qué hay. Sin
+   slogans, leyendas ni frases inventadas (ver «Voz»).
 
 ## Paleta
 
 | Token        | Nombre   | Hex       | Uso                                                          |
 | ------------ | -------- | --------- | ------------------------------------------------------------ |
 | `--blanco`   | Blanco   | `#FFFFFF` | Fondo de todas las páginas                                   |
-| `--negro`    | Negro    | `#000000` | Texto, líneas de 1px, footer, cinta                          |
+| `--negro`    | Negro    | `#000000` | Texto, líneas de 1px, footer                                 |
 | `--grafito`  | Grafito  | `#333333` | Texto secundario: bajadas, variantes, legales                |
 | `--hormigon` | Hormigón | `#E6E6E6` | El único gris de fondo: opciones sin stock, botones apagados |
 | `--estudio`  | Estudio  | `#F4F5F2` | Solo la vitrina: el fondo de estudio de cada celda           |
@@ -136,20 +136,15 @@ radio es del marco, no de cada celda.
 
 1. **Hero**: el video a pantalla completa (100svh), con el header flotando
    encima. Ver «Hero».
-2. **Cinta** (negro): las leyendas de la casa en mayúsculas blancas, corriendo
-   de derecha a izquierda, separadas por pelotitas lima. Se frena con el mouse
-   encima.
-3. **Manifiesto** (blanco): dos líneas display, la segunda corrida a la
-   derecha, y una frase corta.
-4. **Lo que más sale** (blanco): los seis destacados en la vitrina, en tres
+2. **Lo que más sale** (blanco): los seis destacados en la vitrina, en tres
    columnas (dos filas llenas).
-5. **Categorías** (blanco): una fila por categoría, separadas por líneas de
+3. **Categorías** (blanco): una fila por categoría, separadas por líneas de
    1px: nombre, bajada y cantidad. Al pasar el mouse, la fila se pinta lima.
-6. **Footer** (negro).
+4. **Footer** (negro).
 
 Todo va sobre blanco; las secciones se separan con aire, no con fondos
-alternados. El negro aparece solo en la cinta y en el footer. El contenido
-editorial (leyendas) está en `lib/home.js`.
+alternados. El negro aparece solo en el footer. No hay cintas con leyendas ni
+bloques de slogan: la home muestra productos y categorías.
 
 ## Hero
 
@@ -157,8 +152,8 @@ editorial (leyendas) está en `lib/home.js`.
   en loop y sin audio. Ver «Video».
 - **Capa plana**: negro al 40% sobre el video, pareja en toda la pantalla. No
   es un degradado; está para que el titular lima se lea sobre la cancha clara.
-- **Titular** centrado, en lima, a `--t-titulo-1`. Debajo, una frase corta en
-  blanco y la píldora lima.
+- **Titular** centrado, en lima, a `--t-titulo-1`: «Todo para jugar al
+  tenis». Debajo, qué se vende, en blanco, y la píldora lima.
 - **Poster**: el primer cuadro de cada versión en WebP, pintado por el servidor
   en un `<picture>`. El video se monta encima desde un componente cliente
   (`VideoFondo`), que elige la versión según el ancho (corte en 760px).
@@ -287,40 +282,40 @@ WebP (el primer cuadro). El detalle y el control del loop están en `MEDIOS.md`.
   (filas separadas por líneas de 1px, el dato en mono), el precio y el
   selector: opciones en píldora con borde de 1px, la activa en lima y las que
   no tienen stock en hormigón. «Agregar al carrito» es la píldora lima.
-- **Carga**: «Peloteando…» y la vitrina vacía.
-- **Error y 404**: tipográficos, sin dibujos. El código gigante, un título, una
-  frase y la píldora para volver.
+- **Carga**: «Cargando…» y la vitrina vacía.
+- **Error y 404**: tipográficos, sin dibujos. El código gigante, un título que
+  dice qué pasó («Página no encontrada», «Algo salió mal») y la píldora para
+  volver.
 
 ## Footer
 
 Banda negra a todo el ancho. El wordmark gigante en blanco con su pelota lima,
-una frase, las categorías en mayúsculas y los legales a 13px. Sin líneas de
+las categorías en mayúsculas y los legales a 13px. Sin líneas de
 color ni íconos sociales.
 
 ## Voz
 
-Rioplatense, breve y con humor tenístico sin forzar. Una frase por lugar, no un
-chiste por línea. Tono: «El que pierde paga las pelotas», «Cuarenta iguales»,
-«Pelota nueva, excusa vieja», «Doble falta», «Se fue larga». Se habla de vos y
-en presente.
+Sencilla y descriptiva, en castellano rioplatense (de vos). Los textos dicen
+qué es cada cosa: «Todo para jugar al tenis», «Raquetas de potencia con un
+punto dulce amplio», «Página no encontrada». Sin slogans, leyendas, chistes ni
+frases inventadas. Las descripciones de producto cuentan para qué sirve y qué
+lo distingue, en una o dos oraciones.
 
 ## Movimiento
 
 Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 
 - **Hero**: el loop del video. Se puede pausar.
-- **Cinta**: corre sola; se frena con el mouse encima.
 - **Vitrina**: el producto se acerca apenas con el hover o el foco.
 - **Categorías**: la fila se pinta lima al pasar el mouse.
 - **Header**: pasa de transparente a blanco con una transición suave.
-- Con `prefers-reduced-motion` el hero muestra solo el poster, la cinta queda
-  quieta (y baja de línea si no entra) y no hay animaciones ni transiciones.
+- Con `prefers-reduced-motion` el hero muestra solo el poster y no hay
+  animaciones ni transiciones.
 
 ## Accesibilidad
 
 - Contraste AA en todo el texto. El lima nunca es texto sobre blanco.
-- Foco de 3px en negro sobre blanco y en lima sobre negro (cinta, footer,
-  hero).
+- Foco de 3px en negro sobre blanco y en lima sobre negro (footer, hero).
 - Navegación completa con teclado, un solo paso de Tab por producto y salto al
   contenido.
 - Layout fluido desde 320px.
@@ -337,3 +332,4 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 | Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía                     |
 | Lima de fondo o lima sobre lima          | El lima va sobre negro o lleva texto negro; nunca de fondo de sección |
 | Texto centrado en párrafos y productos   | A la izquierda; solo se centran el hero y los estados                 |
+| Slogans, leyendas y frases inventadas    | Textos que describen qué hay y para qué sirve                         |

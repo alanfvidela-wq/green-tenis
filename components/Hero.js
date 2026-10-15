@@ -29,11 +29,11 @@ export default function Hero() {
 
       <div className={styles.texto}>
         <h1 id="hero-titulo" className={styles.titulo}>
-          Que la pelota vuelva
+          Todo para jugar al tenis
         </h1>
         <p className={styles.frase}>
-          Raquetas, zapatillas, pelotas y todo lo que va en el bolso. El tercer
-          set lo ponés vos.
+          Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de las marcas
+          que ya conocés.
         </p>
         <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>
           Ver raquetas

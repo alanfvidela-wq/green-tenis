@@ -1,8 +1,6 @@
 import Link from "next/link";
 import GrillaProductos from "@/components/GrillaProductos";
 import Hero from "@/components/Hero";
-import Marquesina from "@/components/Marquesina";
-import { LEYENDAS } from "@/lib/home";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -14,27 +12,6 @@ export default async function Home() {
     <main className={styles.home}>
       <Hero />
 
-      <Marquesina items={LEYENDAS} />
-
-      {/* Manifiesto: dos líneas display, la segunda corrida a la derecha */}
-      <section className={styles.manifiesto} aria-labelledby="titulo-manifiesto">
-        <div className={styles.contenido}>
-          <h2 id="titulo-manifiesto" className={styles.manifiestoTitulo}>
-            <span>La raqueta no</span>
-            <span className={styles.manifiestoCorrido}>tiene la culpa.</span>
-          </h2>
-          <div className={styles.manifiestoTexto}>
-            <p>
-              Casi nunca. Traemos las marcas que ya conocés, en el modelo que te
-              va, para que la única excusa que quede sea el viento.
-            </p>
-            <Link href="#categorias" className={styles.enlace}>
-              Ver qué hay en el club
-            </Link>
-          </div>
-        </div>
-      </section>
-
       <section aria-labelledby="titulo-destacados">
         <div className={`${styles.contenido} ${styles.seccion}`}>
           <h2 id="titulo-destacados" className={styles.subtitulo}>
@@ -44,10 +21,10 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="categorias" className={styles.anclaje} aria-labelledby="titulo-categorias">
+      <section aria-labelledby="titulo-categorias">
         <div className={`${styles.contenido} ${styles.seccion}`}>
           <h2 id="titulo-categorias" className={styles.subtitulo}>
-            Qué hay en el club
+            Categorías
           </h2>
           <ul className={styles.categorias}>
             {CATEGORIAS.map((categoria) => {

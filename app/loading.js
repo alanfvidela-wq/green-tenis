@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <main className={styles.carga} aria-busy="true">
       <p className={styles.cargaTexto} role="status">
-        Peloteando…
+        Cargando…
       </p>
       <div className={styles.marco} aria-hidden="true">
         <div className={styles.gondola}>

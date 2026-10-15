@@ -14,19 +14,12 @@
   padding: var(--espacio-16) var(--gutter) var(--espacio-10);
 }
 
-/* El wordmark ocupa toda la primera fila; abajo, la frase y los links */
+/* El wordmark ocupa toda la primera fila; abajo, los links */
 .contenido .logo {
   grid-column: 1 / -1;
   justify-self: start;
   font-size: clamp(4.5rem, 20vw, 12rem);
   line-height: 0.9;
-}
-
-.frase {
-  max-width: 22ch;
-  font-size: var(--t-titulo-3);
-  line-height: 1.3;
-  letter-spacing: var(--tracking-titulos);
 }
 
 .lista {
