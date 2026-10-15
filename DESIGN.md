@@ -357,6 +357,30 @@ mueve el layout.
   apenas (±8°); cada sticker flota a su ritmo; la pelota sube, baja y gira con
   el scroll; el nombre gigante se queda un poco atrás de la raqueta.
 
+### El final
+
+Después de la última parte (la tapa) viene un tramo de scroll propio, el
+bloque de cierre (`data-cierre`, de 170 a 180svh). A lo largo de ese tramo:
+
+1. **La cámara se aleja** hasta mostrar la raqueta entera, centrada, un poco
+   más lejos y más arriba que al principio, para dejar lugar al botón.
+2. **Los stickers de todas las partes aparecen juntos** alrededor de la
+   raqueta, cada uno anclado a su parte, un instante (del 14% al 34% del
+   tramo), y se van.
+3. **La raqueta da una vuelta de 360°** atada al scroll (del 36% al 86%), con
+   entrada y salida suaves. Si se vuelve para atrás, desanda la vuelta.
+4. **Después queda flotando** con una rotación muy lenta (0,18 rad/s, una
+   vuelta cada 35 segundos).
+5. **La tipografía gigante de fondo cambia** a «Ahora que la conocés, salí a
+   jugar.» (desde el 72%): un bloque de tres líneas, detrás del mango, donde la
+   raqueta es angosta y la frase se lee.
+6. **Aparece el botón lima «Ver raquetas»** (desde el 78%), debajo de la
+   raqueta, y lleva a `/categoria/raquetas`. Antes está oculto y fuera del
+   orden de tabulación.
+
+La frase y el botón están en `lib/anatomia.js` (`CIERRE_ANATOMIA`). La frase
+también está en el bloque de cierre como texto HTML para lectores de pantalla.
+
 ### Rendimiento
 
 - **El 3D va solo en esta sección**: React Three Fiber y drei, cargados con
@@ -375,7 +399,10 @@ mueve el layout.
 
 Con `prefers-reduced-motion`, sin WebGL o sin JavaScript no se carga el 3D: se
 ve la raqueta inflada en SVG, entera y quieta, con los siete stickers a la
-vista, en blanco, cada uno con su línea guía. No flota nada. Mientras carga el
+vista, en blanco, cada uno con su línea guía. No flota nada. El final es la
+raqueta quieta con la frase de cierre (Inter Tight 800, interlineado 0.8) y el
+botón lima, fijos al lado (debajo en mobile) mientras dura el tramo de cierre,
+que mide lo mismo con y sin 3D. Mientras carga el
 modelo se ve lo mismo, y cuando está listo la raqueta 3D aparece encima con un
 fundido.
 

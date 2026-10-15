@@ -4,6 +4,7 @@ import GrillaProductos from "@/components/GrillaProductos";
 import Hero from "@/components/Hero";
 import {
   BAJADA_ANATOMIA,
+  CIERRE_ANATOMIA,
   PASOS_ANATOMIA,
   TITULO_ANATOMIA,
 } from "@/lib/anatomia";
@@ -32,6 +33,7 @@ export default async function Home() {
       <AnatomiaRaqueta
         titulo={TITULO_ANATOMIA}
         bajada={BAJADA_ANATOMIA}
+        cierre={CIERRE_ANATOMIA}
         pasos={PASOS_ANATOMIA}
       />
 

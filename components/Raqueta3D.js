@@ -20,6 +20,15 @@ export const URL_RAQUETA = "/models/raqueta.glb";
 // Medidas del modelo, en centímetros: de la tapa (y = 0) a la punta
 const LARGO = 70.5;
 const COMPLETA = { y: LARGO / 2, zoom: 1 };
+// El final: la raqueta entera, un poco más lejos y más arriba, para dejar
+// lugar al botón debajo
+const FINAL = { y: LARGO / 2 - 4, zoom: 0.82 };
+// Tramos del final (fin va de 0 a 1): los stickers juntos, la vuelta de 360°
+// y, después, la rotación lenta
+const STICKERS = [0.1, 0.38];
+const VUELTA = [0.36, 0.86];
+const GIRO_LENTO = 0.18; // radianes por segundo
+const VUELTA_COMPLETA = Math.PI * 2;
 const FOV = 30;
 // La cámara mira de frente, un poco desde la derecha y desde arriba
 const AZIMUT = 0.32;
@@ -62,14 +71,15 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   const refCuerdas = useRef(null);
 
   const focos = useMemo(
-    () => [COMPLETA, ...pasos.map((paso) => paso.foco3d), COMPLETA],
+    () => [COMPLETA, ...pasos.map((paso) => paso.foco3d), FINAL],
     [pasos],
   );
   const mirada = useRef(null);
+  const giroLento = useRef(0);
   const ancla = useMemo(() => new Vector3(), []);
 
   useFrame((state, delta) => {
-    const p = estado.current.p;
+    const { p, fin } = estado.current;
 
     // Adónde mira la cámara: de foco en foco, con entrada y salida suaves
     const q = p + 1;
@@ -95,10 +105,20 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     camera.lookAt(0, m.y, 0);
     camera.updateMatrixWorld();
 
-    // Flota y gira apenas
+    // Flota y gira apenas. En el final da una vuelta entera atada al scroll y
+    // después sigue girando muy lento; si se vuelve para atrás, el giro lento
+    // se desarma hasta la vuelta más cercana, sin saltos.
     const tiempo = state.clock.elapsedTime;
+    const vuelta = suavizar(limitar((fin - VUELTA[0]) / (VUELTA[1] - VUELTA[0]), 0, 1));
+    if (fin >= VUELTA[1]) {
+      giroLento.current += delta * GIRO_LENTO;
+    } else {
+      const cercana = Math.round(giroLento.current / VUELTA_COMPLETA) * VUELTA_COMPLETA;
+      giroLento.current = MathUtils.damp(giroLento.current, cercana, 3, delta);
+    }
     grupo.current.position.y = Math.sin(tiempo * 0.8) * 0.5;
-    grupo.current.rotation.y = Math.sin(tiempo * 0.45) * 0.14;
+    grupo.current.rotation.y =
+      Math.sin(tiempo * 0.45) * 0.14 + vuelta * VUELTA_COMPLETA + giroLento.current;
     grupo.current.rotation.z = Math.sin(tiempo * 0.6) * 0.02;
     grupo.current.updateMatrixWorld();
 
@@ -125,19 +145,21 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     const latido = 1 + Math.sin(tiempo * 3.4) * 0.07;
     disco.current.scale.set(4.2 * latido, 5.4 * latido, 1);
 
-    // El sticker del paso activo, anclado a la posición 3D de su parte
-    if (paso) {
-      ancla.set(...paso.ancla3d);
+    // El sticker del paso activo, anclado a la posición 3D de su parte. En el
+    // final, todos juntos alrededor de la raqueta entera.
+    const escena = medidas.current.escena;
+    const colocar = (i) => {
+      ancla.set(...pasos[i].ancla3d);
       grupo.current.localToWorld(ancla);
       ancla.project(camera);
       const x = ((ancla.x + 1) / 2) * size.width;
       const yPantalla = ((1 - ancla.y) / 2) * size.height;
-      const escena = medidas.current.escena;
-      onMarca(
-        indice,
-        ((x - escena.x) / escena.ancho) * 100,
-        ((yPantalla - escena.y) / escena.alto) * 100,
-      );
+      onMarca(i, ((x - escena.x) / escena.ancho) * 100, ((yPantalla - escena.y) / escena.alto) * 100);
+    };
+    if (fin > STICKERS[0] && fin < STICKERS[1]) {
+      pasos.forEach((_, i) => colocar(i));
+    } else if (paso) {
+      colocar(indice);
     }
   });
 

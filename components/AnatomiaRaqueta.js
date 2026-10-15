@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Raqueta, { ANCLAS, LIENZO } from "./Raqueta";
 import styles from "./AnatomiaRaqueta.module.css";
@@ -17,8 +18,19 @@ import styles from "./AnatomiaRaqueta.module.css";
 //   raqueta inflada en SVG, quieta, con todos los stickers. Ocupa la misma
 //   caja que el 3D, así que el cambio no mueve nada.
 //
+// Al final, después de la última parte, la cámara se aleja hasta la raqueta
+// entera, que da una vuelta con el scroll y después gira muy lento; los
+// stickers aparecen todos juntos un instante, el fondo dice la frase de cierre
+// y aparece el botón. Sin movimiento, el cierre es texto y botón al lado de la
+// raqueta quieta.
+//
 // Lo que se mueve en la página (stickers, nombre, parallax) es transform u
 // opacity.
+
+// Tramos del final (fin va de 0 a 1 a lo largo del bloque de cierre): los
+// stickers juntos, y desde dónde se ven la frase y el botón. La vuelta de la
+// raqueta está en Raqueta3D.
+const FINAL = { stickers: [0.14, 0.34], frase: 0.72, boton: 0.78 };
 
 const Raqueta3D = dynamic(() => import("./Raqueta3D"), { ssr: false });
 
@@ -105,7 +117,7 @@ function PelotaInflada() {
   );
 }
 
-export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
+export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   const refRaiz = useRef(null);
   const refEscenario = useRef(null);
   const refEscena = useRef(null);
@@ -114,7 +126,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
   const refMarcas = useRef([]);
   // Lo que comparte con la escena 3D sin volver a renderizar: el progreso del
   // scroll y dónde está la escena dentro del lienzo
-  const estado = useRef({ p: -1 });
+  const estado = useRef({ p: -1, fin: 0 });
   const medidas = useRef({ escena: { x: 0, y: 0, ancho: 1, alto: 1 }, fraccion: 1 });
   const angosta = useRef(false);
 
@@ -168,6 +180,9 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
     const nombres = pasos.map((paso) => raiz.querySelector(`[data-nombre="${paso.id}"]`));
+    const nombreFinal = raiz.querySelector('[data-nombre="final"]');
+    const bloqueCierre = raiz.querySelector("[data-cierre]");
+    const escenario = refEscenario.current;
 
     // Progreso continuo: 0 con el primer paso en la línea de lectura, 1 con
     // el segundo, etc. De -1 (antes del primero) a pasos.length (después).
@@ -192,23 +207,44 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
       return Math.min(n, n - 1 + (linea - centros[n - 1]) / (centros[n - 1] - centros[n - 2]));
     }
 
-    let activo = null;
+    // Avance dentro del bloque de cierre: 0 cuando su borde de arriba cruza la
+    // línea de lectura, 1 justo antes de que la raqueta deje de estar fija
+    function avanceFinal() {
+      const alto = window.innerHeight;
+      const linea = mobile.matches
+        ? (escena.getBoundingClientRect().bottom + alto) / 2
+        : alto / 2;
+      const r = bloqueCierre.getBoundingClientRect();
+      const resto = Math.max(0, escenario.getBoundingClientRect().bottom - linea);
+      return limitar((linea - r.top) / Math.max(1, r.height - resto), 0, 1);
+    }
+
+    let estadoAnterior = "";
     let cuadro = 0;
 
-    function marcarActivo(indice) {
-      activo = indice;
+    function marcar(indice, todos, final) {
       elementosPasos.forEach((el, i) => el.toggleAttribute("data-activo", i === indice));
-      refMarcas.current.forEach((el, i) => el?.toggleAttribute("data-visible", i === indice));
+      refMarcas.current.forEach((el, i) => el?.toggleAttribute("data-visible", todos || i === indice));
       nombres.forEach((el, i) => el.toggleAttribute("data-visible", i === indice));
+      nombreFinal.toggleAttribute("data-visible", final >= FINAL.frase);
+      raiz.toggleAttribute("data-final", final >= FINAL.boton);
     }
 
     function actualizar() {
       cuadro = 0;
       const p = progreso();
+      const fin = avanceFinal();
       estado.current.p = p;
+      estado.current.fin = fin;
 
       const indice = p > -0.5 && p < pasos.length - 0.5 ? Math.round(p) : -1;
-      if (indice !== activo) marcarActivo(indice);
+      const todos = fin > FINAL.stickers[0] && fin < FINAL.stickers[1];
+      const final = fin >= FINAL.boton ? FINAL.boton : fin >= FINAL.frase ? FINAL.frase : 0;
+      const clave = `${indice}|${todos}|${final}`;
+      if (clave !== estadoAnterior) {
+        estadoAnterior = clave;
+        marcar(indice, todos, final);
+      }
 
       // Parallax: el nombre gigante se queda atrás de la raqueta y la pelota
       // sube, baja y gira con el scroll
@@ -256,6 +292,9 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
                   {paso.titulo}
                 </span>
               ))}
+              <span className={`${styles.nombre} ${styles.nombreFinal}`} data-nombre="final">
+                {cierre.texto}
+              </span>
             </div>
 
             {cargar3d && (
@@ -307,6 +346,13 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
               ))}
             </div>
 
+            {/* El botón del final: con el 3D aparece debajo de la raqueta */}
+            {modo3d && (
+              <Link href={cierre.href} className={`boton ${styles.botonFinal}`}>
+                {cierre.accion}
+              </Link>
+            )}
+
             <div className={styles.pelota} ref={refPelota} aria-hidden="true">
               <div className={styles.pelotaFlota}>
                 <PelotaInflada />
@@ -326,6 +372,20 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos }) {
               </li>
             ))}
           </ol>
+
+          {/* El cierre: el tramo de scroll del final. Sin 3D, acá van la frase y
+              el botón, al lado de la raqueta quieta; con 3D la frase queda
+              para lectores de pantalla y lo visible está en el escenario. */}
+          <div className={styles.cierre} data-cierre>
+            <div className={styles.cierreContenido}>
+              <p className={styles.cierreTexto}>{cierre.texto}</p>
+              {!modo3d && (
+                <Link href={cierre.href} className="boton">
+                  {cierre.accion}
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

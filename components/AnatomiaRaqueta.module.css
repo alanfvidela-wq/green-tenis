@@ -136,6 +136,16 @@
   transform: none;
 }
 
+/* La frase del final: un bloque de tres líneas, detrás del mango (ahí la
+   raqueta es angosta y la frase se lee casi entera), encima del botón */
+.nombreFinal {
+  align-self: end;
+  max-width: 80%;
+  margin-bottom: 22%;
+  font-size: 11cqi;
+  text-wrap: balance;
+}
+
 /* ---------- Stickers con su línea guía ---------- */
 
 .marca {
@@ -241,6 +251,33 @@
   transition: opacity 250ms ease;
 }
 
+/* ---------- El botón del final ---------- */
+
+/* Debajo de la raqueta entera. Escondido (y fuera del orden de tabulación)
+   hasta el final; entra subiendo. */
+.botonFinal {
+  position: absolute;
+  z-index: 4;
+  bottom: 5%;
+  left: 50%;
+  min-height: 56px;
+  padding-inline: var(--espacio-10);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 16px);
+  transition:
+    opacity 300ms ease,
+    transform 500ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    visibility 0s linear 300ms;
+}
+
+.seccion[data-final] .botonFinal {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+
 /* ---------- La pelota ---------- */
 
 /* Arriba a la izquierda: ahí no cae ningún sticker */
@@ -256,6 +293,44 @@
 .pelota svg {
   display: block;
   width: 100%;
+}
+
+/* ---------- El cierre ---------- */
+
+/* El tramo de scroll del final. Mide lo mismo con y sin 3D: el cambio no
+   mueve el layout. */
+.cierre {
+  min-height: 170svh;
+}
+
+/* Sin 3D: la frase y el botón quedan fijos al lado (o debajo) de la raqueta */
+.cierreContenido {
+  position: sticky;
+  top: calc(var(--alto-header) + 46svh + var(--espacio-6));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-6);
+  padding-block: var(--espacio-8);
+}
+
+.cierreTexto {
+  max-width: 11ch;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+}
+
+/* Con 3D la frase grande está detrás de la raqueta: esta queda solo para
+   lectores de pantalla */
+.seccion[data-modo="3d"] .cierreTexto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* En mobile el escenario va de borde a borde, para que los stickers tengan
@@ -339,6 +414,15 @@
   /* Aire arriba y abajo para que el primer y el último paso lleguen al centro */
   .pasos {
     padding-block: 25svh;
+  }
+
+  .cierre {
+    grid-column: 2;
+    min-height: 180svh;
+  }
+
+  .cierreContenido {
+    top: 35svh;
   }
 
   .paso {
