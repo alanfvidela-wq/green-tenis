@@ -136,16 +136,6 @@
   transform: none;
 }
 
-/* La frase del final: un bloque de tres líneas, detrás del mango (ahí la
-   raqueta es angosta y la frase se lee casi entera), encima del botón */
-.nombreFinal {
-  align-self: end;
-  max-width: 80%;
-  margin-bottom: 22%;
-  font-size: 11cqi;
-  text-wrap: balance;
-}
-
 /* ---------- Stickers con su línea guía ---------- */
 
 .marca {
@@ -322,15 +312,19 @@
   letter-spacing: -0.04em;
 }
 
-/* Con 3D la frase grande está detrás de la raqueta: esta queda solo para
-   lectores de pantalla */
-.seccion[data-modo="3d"] .cierreTexto {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+/* Con 3D la frase entra subiendo junto con los stickers del resumen y se
+   queda hasta el final */
+.seccion[data-animado] .cierreTexto {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 400ms ease,
+    transform 700ms var(--suave);
+}
+
+.seccion[data-animado][data-frase] .cierreTexto {
+  opacity: 1;
+  transform: none;
 }
 
 /* En mobile el escenario va de borde a borde, para que los stickers tengan
@@ -422,7 +416,7 @@
   }
 
   .cierreContenido {
-    top: 35svh;
+    top: 30svh;
   }
 
   .paso {

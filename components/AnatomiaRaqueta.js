@@ -20,17 +20,19 @@ import styles from "./AnatomiaRaqueta.module.css";
 //
 // Al final, después de la última parte, la cámara se aleja hasta la raqueta
 // entera, que da una vuelta con el scroll y después gira muy lento; los
-// stickers aparecen todos juntos un instante, el fondo dice la frase de cierre
-// y aparece el botón. Sin movimiento, el cierre es texto y botón al lado de la
+// stickers aparecen todos juntos un instante, la frase de cierre aparece al
+// lado (debajo en mobile) y queda mientras gira, y aparece el botón. Sin
+// movimiento, el cierre es texto y botón al lado de la
 // raqueta quieta.
 //
 // Lo que se mueve en la página (stickers, nombre, parallax) es transform u
 // opacity.
 
 // Tramos del final (fin va de 0 a 1 a lo largo del bloque de cierre): los
-// stickers juntos, y desde dónde se ven la frase y el botón. La vuelta de la
-// raqueta está en Raqueta3D.
-const FINAL = { stickers: [0.14, 0.34], frase: 0.72, boton: 0.78 };
+// stickers juntos, y desde dónde se ven la frase (junto con los stickers, y
+// queda durante la vuelta) y el botón. La vuelta de la raqueta está en
+// Raqueta3D.
+const FINAL = { stickers: [0.14, 0.34], frase: 0.14, boton: 0.78 };
 
 const Raqueta3D = dynamic(() => import("./Raqueta3D"), { ssr: false });
 
@@ -180,7 +182,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
     const nombres = pasos.map((paso) => raiz.querySelector(`[data-nombre="${paso.id}"]`));
-    const nombreFinal = raiz.querySelector('[data-nombre="final"]');
     const bloqueCierre = raiz.querySelector("[data-cierre]");
     const escenario = refEscenario.current;
 
@@ -226,7 +227,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
       elementosPasos.forEach((el, i) => el.toggleAttribute("data-activo", i === indice));
       refMarcas.current.forEach((el, i) => el?.toggleAttribute("data-visible", todos || i === indice));
       nombres.forEach((el, i) => el.toggleAttribute("data-visible", i === indice));
-      nombreFinal.toggleAttribute("data-visible", final >= FINAL.frase);
+      raiz.toggleAttribute("data-frase", final >= FINAL.frase);
       raiz.toggleAttribute("data-final", final >= FINAL.boton);
     }
 
@@ -292,9 +293,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
                   {paso.titulo}
                 </span>
               ))}
-              <span className={`${styles.nombre} ${styles.nombreFinal}`} data-nombre="final">
-                {cierre.texto}
-              </span>
             </div>
 
             {cargar3d && (
@@ -373,9 +371,10 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
             ))}
           </ol>
 
-          {/* El cierre: el tramo de scroll del final. Sin 3D, acá van la frase y
-              el botón, al lado de la raqueta quieta; con 3D la frase queda
-              para lectores de pantalla y lo visible está en el escenario. */}
+          {/* El cierre: el tramo de scroll del final. La frase queda fija al
+              lado de la raqueta (debajo en mobile): con 3D aparece junto con
+              los stickers y se queda mientras la raqueta gira; sin 3D está
+              siempre, con el botón. Con 3D el botón está en el escenario. */}
           <div className={styles.cierre} data-cierre>
             <div className={styles.cierreContenido}>
               <p className={styles.cierreTexto}>{cierre.texto}</p>

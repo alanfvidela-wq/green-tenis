@@ -366,20 +366,21 @@ bloque de cierre (`data-cierre`, de 170 a 180svh). A lo largo de ese tramo:
    más lejos y más arriba que al principio, para dejar lugar al botón.
 2. **Los stickers de todas las partes aparecen juntos** alrededor de la
    raqueta, cada uno anclado a su parte, un instante (del 14% al 34% del
-   tramo), y se van.
+   tramo), y se van. **Con ellos entra la frase de cierre**, «Ahora que la
+   conocés, salí a jugar.», en el espacio libre al lado de la raqueta (debajo
+   en mobile), fija mientras dura el tramo: Inter Tight 800, interlineado 0.8.
+   Entra subiendo y se queda durante la vuelta y hasta el final. Nunca va
+   detrás de la raqueta.
 3. **La raqueta da una vuelta de 360°** atada al scroll (del 36% al 86%), con
    entrada y salida suaves. Si se vuelve para atrás, desanda la vuelta.
 4. **Después queda flotando** con una rotación muy lenta (0,18 rad/s, una
    vuelta cada 35 segundos).
-5. **La tipografía gigante de fondo cambia** a «Ahora que la conocés, salí a
-   jugar.» (desde el 72%): un bloque de tres líneas, detrás del mango, donde la
-   raqueta es angosta y la frase se lee.
-6. **Aparece el botón lima «Ver raquetas»** (desde el 78%), debajo de la
+5. **Aparece el botón lima «Ver raquetas»** (desde el 78%), debajo de la
    raqueta, y lleva a `/categoria/raquetas`. Antes está oculto y fuera del
    orden de tabulación.
 
-La frase y el botón están en `lib/anatomia.js` (`CIERRE_ANATOMIA`). La frase
-también está en el bloque de cierre como texto HTML para lectores de pantalla.
+La frase y el botón están en `lib/anatomia.js` (`CIERRE_ANATOMIA`). La frase es
+texto HTML del bloque de cierre, el mismo con y sin 3D.
 
 ### Rendimiento
 
