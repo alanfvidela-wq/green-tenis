@@ -1,9 +1,12 @@
 @AGENTS.md
-# Proyecto "Amargo"
+# Proyecto "green."
 
-E-commerce de "Amargo", una tienda de mate: mates, bombillas, termos, yerbas y accesorios.
-Vende productos de marcas reales. Mecánica principal: "Armá tu combo", un armador por
-pasos donde el cliente elige mate, bombilla, termo, yerba y presentación, con descuento por combo.
+E-commerce de "green.", una tienda de tenis: raquetas, zapatillas, pelotas, cuerdas y grips,
+bolsos y ropa. Vende productos de marcas reales. Mecánica principal (pendiente, va en un
+pedido aparte): "Armá tu raqueta", un armador por pasos.
+
+El sistema de diseño está en DESIGN.md: blanco y negro con un único acento lima, una
+grotesca suiza en un solo peso y la vitrina de productos sobre fondo de estudio.
 
 ## Stack
 - Next.js con App Router, JavaScript (sin TypeScript), sin Tailwind.
@@ -17,4 +20,4 @@ pasos donde el cliente elige mate, bombilla, termo, yerba y presentación, con d
 - Server Components por defecto; "use client" solo donde haya interactividad.
 - Precios, descuentos y stock siempre se calculan y validan en el servidor.
 - Precios en ARS como enteros.
-- Después de cada commit, hacé git push a main (Vercel publica automáticamente).
+- Después de cada commit, hacé git push a la rama actual. Nunca hagas push a main sin que te lo pida.
