@@ -9,7 +9,8 @@ export default function GaleriaProducto({ producto }) {
 
   return (
     <div className={styles.galeria}>
-      {fotos.map((foto, i) => (
+      <div className={styles.vistas}>
+        {fotos.map((foto, i) => (
         <div key={foto ?? i} className={styles.vista}>
           <FotoVitrina
             foto={foto}
@@ -27,7 +28,8 @@ export default function GaleriaProducto({ producto }) {
             prioridad={i === 0}
           />
         </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

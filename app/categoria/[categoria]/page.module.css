@@ -1,65 +1,23 @@
-.pagina {
-  max-width: none;
-  padding: 0;
-}
-
-/* Encabezado a todo el ancho en el color de la categoría */
+/* Encabezado blanco: migas, el nombre gigante, la bajada y la cantidad */
 .encabezado {
-  --foco: var(--sobre-acento);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: end;
-  gap: var(--espacio-6);
-  padding: var(--espacio-12)
-    max(var(--gutter), (100% - var(--ancho-max)) / 2 + var(--gutter))
-    var(--espacio-16);
-  background: var(--acento);
-  color: var(--sobre-acento);
-}
-
-.encabezadoContenido {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-4);
+  padding: var(--espacio-4) 0 var(--espacio-10);
 }
 
 .titulo {
   margin-top: var(--espacio-4);
   font-size: var(--t-titulo-1);
+  line-height: 1;
 }
 
 .descripcion {
   max-width: 44ch;
+  color: var(--grafito);
   font-size: var(--t-entrada);
 }
 
-/* Sello ovalado relleno, como el de un paquete */
-.sello {
-  align-self: flex-start;
-  padding: var(--espacio-2) var(--espacio-4);
-  border-radius: 50%;
-  background: var(--sobre-acento);
-  color: var(--acento);
-  font-family: var(--fuente-titulos);
-  font-size: 1.5rem;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1;
-  transform: rotate(-4deg);
-}
-
-.foto {
-  position: relative;
-  width: clamp(120px, 24vw, 280px);
-  aspect-ratio: 1;
-}
-
-.contenido {
-  max-width: var(--ancho-max);
-  margin: 0 auto;
-  padding: var(--espacio-16) var(--gutter) var(--espacio-24);
-}
-
 .cuenta {
-  margin-bottom: var(--espacio-8);
+  color: var(--grafito);
 }

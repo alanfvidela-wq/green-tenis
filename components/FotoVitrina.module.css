@@ -23,5 +23,5 @@
 /* Placeholder: la silueta de la categoría, plana y apenas más oscura que el
    fondo */
 .silueta {
-  fill: color-mix(in srgb, var(--tinta) 8%, var(--estudio));
+  fill: color-mix(in srgb, var(--negro) 6%, var(--estudio));
 }

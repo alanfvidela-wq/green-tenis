@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorVariante from "@/components/SelectorVariante";
-import { getFicha, SELLOS } from "@/lib/fichas";
+import { getFicha } from "@/lib/fichas";
 import { getCategoria, getProductoPorSlug } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -11,7 +11,7 @@ export async function generateMetadata({ params }) {
   const producto = await getProductoPorSlug(slug);
   if (!producto) return { title: "Producto no encontrado" };
   return {
-    title: `${producto.nombre} ${producto.marca}`,
+    title: `${producto.marca} ${producto.nombre}`,
     description: producto.descripcion,
   };
 }
@@ -25,7 +25,7 @@ export default async function PaginaProducto({ params }) {
   const ficha = [["Marca", producto.marca], ...getFicha(producto.slug)];
 
   return (
-    <main data-categoria={categoria.slug}>
+    <main>
       <nav className="migas" aria-label="Ubicación">
         <Link href="/">Inicio</Link>
         <span aria-hidden="true">/</span>
@@ -38,16 +38,15 @@ export default async function PaginaProducto({ params }) {
         <GaleriaProducto producto={producto} />
 
         <div className={styles.info}>
-          <p className="dato">{producto.marca}</p>
+          <p className={styles.marca}>{producto.marca}</p>
           <h1 className={styles.nombre}>{producto.nombre}</h1>
           <p className={styles.descripcion}>{producto.descripcion}</p>
-          <p className={styles.sello}>{SELLOS[categoria.slug]}</p>
 
-          <section className={styles.etiqueta} aria-labelledby="titulo-ficha">
-            <h2 id="titulo-ficha" className={styles.etiquetaTitulo}>
-              Datos del paquete
+          <section className={styles.ficha} aria-labelledby="titulo-ficha">
+            <h2 id="titulo-ficha" className={styles.fichaTitulo}>
+              Ficha técnica
             </h2>
-            <dl className={styles.ficha}>
+            <dl>
               {ficha.map(([dato, valor]) => (
                 <div key={dato} className={styles.fila}>
                   <dt>{dato}</dt>

@@ -1,15 +1,15 @@
 /* Pantalla completa: sube por debajo del header, que flota transparente encima */
 .hero {
-  --foco: var(--tinta);
+  --foco: var(--lima);
   position: relative;
-  display: flex;
-  align-items: flex-end;
+  display: grid;
+  place-items: center;
   margin-top: calc(-1 * var(--alto-header));
   height: 100svh;
   min-height: 560px;
   overflow: hidden;
-  background: var(--kraft);
-  color: var(--tinta);
+  background: var(--negro);
+  color: var(--blanco);
 }
 
 /* Poster y video ocupan todo el hero, uno encima del otro */
@@ -25,117 +25,68 @@
 .poster,
 .video {
   object-fit: cover;
-  /* El mate queda a la derecha; la cortina clara, a la izquierda, para el texto */
-  object-position: 62% 50%;
 }
 
-/* Velo de avena desde la izquierda: la única excepción a los colores planos.
-   Aclara la cortina lo justo para que el titular en tinta se lea siempre. */
-.velo {
+/* Capa negra plana y pareja (no es un degradado): la cancha es clara y el
+   titular lima tiene que leerse */
+.capa {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    to right,
-    color-mix(in srgb, var(--kraft) 78%, transparent) 0%,
-    color-mix(in srgb, var(--kraft) 46%, transparent) 30%,
-    transparent 52%
-  );
+  background: rgb(0 0 0 / 0.4);
 }
 
 .texto {
   position: relative;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: var(--espacio-4);
-  width: 100%;
+  align-items: center;
+  gap: var(--espacio-5);
   max-width: var(--ancho-max);
-  margin: 0 auto;
-  padding: 0 var(--gutter) var(--espacio-16);
+  padding: var(--alto-header) var(--gutter) 0;
+  text-align: center;
 }
 
 .titulo {
-  max-width: 10ch;
+  max-width: 12ch;
+  color: var(--lima);
   font-size: var(--t-titulo-1);
-  line-height: 0.88;
+  line-height: 1.02;
 }
 
 .frase {
-  max-width: 34ch;
-  font-size: clamp(1.0625rem, 1.6vw, 1.3125rem);
-  line-height: 1.4;
+  max-width: 40ch;
+  font-size: var(--t-entrada);
+  line-height: 1.5;
 }
 
-.acciones {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-6);
-  margin-top: var(--espacio-2);
-}
-
-/* La acción principal (.boton, verde vivo), más grande para que resalte */
+/* La acción principal, más grande para que resalte */
 .cta {
   min-height: 56px;
-  padding-inline: var(--espacio-8);
-  font-size: 1.1875rem;
+  margin-top: var(--espacio-2);
+  padding-inline: var(--espacio-10);
 }
 
-/* Sello amarillo que gira despacio al lado del botón, como un sticker */
-.sello {
-  --fondo-sello: var(--amarillo);
-  width: 104px;
-  height: 104px;
-  flex-shrink: 0;
-  color: var(--tinta);
-  transform: rotate(-8deg);
-}
-
-.sello :global(.textoSello) {
-  fill: var(--tinta);
-  stroke: none;
-  font-family: var(--fuente-datos);
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.sello :global(.giro) {
-  transform-origin: 100px 100px;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .sello :global(.giro) {
-    animation: girar 22s linear infinite;
-  }
-}
-
-@keyframes girar {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* Pausa/play: círculo claro sin borde, en la esquina de abajo a la derecha */
+/* Pausa/play: círculo blanco sin borde, en la esquina de abajo a la derecha */
 .pausa {
   position: absolute;
   z-index: 1;
   right: var(--gutter);
-  bottom: var(--espacio-16);
+  bottom: var(--espacio-8);
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
   border: none;
   border-radius: 50%;
-  background: var(--papel);
-  color: var(--tinta);
+  background: var(--blanco);
+  color: var(--negro);
   cursor: pointer;
   transition: background-color var(--transicion);
 }
 
 .pausa:hover {
-  background: var(--verde-claro);
+  background: var(--lima);
 }
 
 .icono {
@@ -143,39 +94,12 @@
   height: 18px;
 }
 
-/* Mobile: vertical, recortado sobre el mate; el texto va abajo, sobre un
-   velo de avena que sube desde el borde */
 @media (max-width: 760px) {
-  .poster,
-  .video {
-    object-position: 50% 50%;
-  }
-
-  .velo {
-    background: linear-gradient(
-      to top,
-      color-mix(in srgb, var(--kraft) 96%, transparent) 0%,
-      color-mix(in srgb, var(--kraft) 82%, transparent) 34%,
-      transparent 60%
-    );
-  }
-
   .texto {
-    gap: var(--espacio-3);
-    padding-bottom: var(--espacio-8);
+    gap: var(--espacio-4);
   }
 
   .titulo {
     max-width: 9ch;
-  }
-
-  .sello {
-    width: 84px;
-    height: 84px;
-  }
-
-  .pausa {
-    top: calc(var(--alto-header) + var(--espacio-4));
-    bottom: auto;
   }
 }

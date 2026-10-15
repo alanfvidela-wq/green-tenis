@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { CORTE_MOBILE, VIDEOS_HERO } from "@/lib/heroVideo";
-import { SelloRedondo } from "./Ilustraciones";
 import VideoFondo from "./VideoFondo";
 import styles from "./Hero.module.css";
 
-// Hero de la home: la mesa de la mañana a pantalla completa, con el header
-// flotando encima y el titular en tinta sobre la cortina clara.
+// Hero de la home: el video de la cancha a pantalla completa, con el header
+// flotando encima, una capa negra plana y el titular lima centrado.
 // El poster va en un <picture> del servidor, así se ve desde el primer pintado.
 export default function Hero() {
   return (
@@ -26,25 +25,19 @@ export default function Hero() {
         claseIcono={styles.icono}
       />
 
-      <div className={styles.velo} aria-hidden="true" />
+      <div className={styles.capa} aria-hidden="true" />
 
       <div className={styles.texto}>
         <h1 id="hero-titulo" className={styles.titulo}>
-          Que no se corte la ronda
+          Que la pelota vuelva
         </h1>
         <p className={styles.frase}>
-          Elegís mate, bombilla, termo y yerba, y te llevás el combo con
-          descuento.
+          Raquetas, zapatillas, pelotas y todo lo que va en el bolso. El tercer
+          set lo ponés vos.
         </p>
-        <div className={styles.acciones}>
-          <Link href="/arma-tu-combo" className={`boton ${styles.cta}`}>
-            Armá tu combo
-          </Link>
-          <SelloRedondo
-            className={styles.sello}
-            texto="Elaborada con palo, cebada con paciencia, "
-          />
-        </div>
+        <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>
+          Ver raquetas
+        </Link>
       </div>
     </section>
   );

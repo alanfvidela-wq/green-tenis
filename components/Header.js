@@ -26,7 +26,7 @@ export default async function Header() {
           className={styles.carrito}
           aria-label={`Carrito, ${cantidad} ${cantidad === 1 ? "producto" : "productos"}`}
         >
-          Carrito [{cantidad}]
+          Carrito ({cantidad})
         </Link>
       </div>
     </CabeceraFlotante>

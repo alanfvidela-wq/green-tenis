@@ -1,15 +1,24 @@
-/* Galería en celdas de vitrina: pegadas, separadas por líneas de 1px */
+/* Galería en el marco de la vitrina: 1px negro, 16px de radio y celdas de
+   estudio pegadas, separadas por líneas de 1px */
 .galeria {
+  overflow: hidden;
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+  background: var(--blanco);
+}
+
+.vistas {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
+  margin: 0 -1px -1px 0;
 }
 
 .vista {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  outline: 1px solid var(--linea-vitrina);
+  border-right: 1px solid var(--negro);
+  border-bottom: 1px solid var(--negro);
   background: var(--estudio);
 }
 
@@ -17,22 +26,15 @@
   grid-column: 1 / -1;
 }
 
-/* En mobile, de borde a borde */
-@media (max-width: 859px) {
-  .galeria {
-    margin-inline: calc(var(--gutter) * -1);
-  }
-}
-
 /* En escritorio la primera vista nunca es más alta que la pantalla, y si es
    la única, queda fija mientras se lee la ficha */
 @media (min-width: 860px) {
   .galeria {
-    width: min(100%, (100svh - var(--alto-header) - var(--espacio-12)) * 0.8);
+    width: min(100%, (100svh - var(--alto-header) - var(--espacio-10)) * 0.8);
   }
 
-  .galeria:has(> .vista:only-child) {
+  .galeria:has(.vista:only-child) {
     position: sticky;
-    top: calc(var(--alto-header) + var(--espacio-6));
+    top: calc(var(--alto-header) + var(--espacio-5));
   }
 }

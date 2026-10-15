@@ -1,100 +1,65 @@
+/* Error y 404: tipográficos y centrados, sin dibujos */
 .estado {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  align-content: center;
-  justify-items: start;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: var(--espacio-4);
   min-height: 70vh;
   padding-block: var(--espacio-16) var(--espacio-24);
+  text-align: center;
 }
 
-@media (min-width: 760px) {
-  .estado {
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: var(--espacio-12);
-  }
-
-  .estado > :not(.dibujo) {
-    grid-column: 2;
-  }
-
-  .dibujo {
-    grid-row: 1 / span 5;
-    align-self: center;
-  }
-}
-
-.dibujo {
-  width: clamp(140px, 26vw, 280px);
-  aspect-ratio: 1;
-}
-
-/* El bodegón del combo es apaisado y más ancho que un dibujo suelto */
-.dibujoAncho {
-  width: clamp(240px, 36vw, 420px);
-  aspect-ratio: 8 / 5;
-}
-
-/* Sello ovalado rojo, relleno */
+/* El código gigante, en negro: el lima nunca va como texto sobre blanco */
 .codigo {
-  padding: var(--espacio-1) var(--espacio-4);
-  border-radius: 50%;
-  background: var(--rojo);
-  color: var(--papel);
-  font-family: var(--fuente-titulos);
-  font-size: 2rem;
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.1;
-  transform: rotate(-6deg);
+  font-size: clamp(5rem, 18vw, 12rem);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
 }
 
 .titulo {
-  font-size: var(--t-titulo-1);
-  line-height: 0.9;
+  font-size: var(--t-titulo-2);
 }
 
 .texto {
-  max-width: 46ch;
+  max-width: 40ch;
+  color: var(--grafito);
   font-size: var(--t-entrada);
 }
 
 .acciones {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: var(--espacio-3);
-  margin-top: var(--espacio-2);
+  margin-top: var(--espacio-4);
 }
 
-/* Carga: la pava calentando y la góndola vacía */
+/* Carga: el texto y la vitrina vacía */
 .carga {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--espacio-6);
-  padding-block: var(--espacio-16) var(--espacio-24);
-}
-
-.pava {
-  width: 140px;
-  aspect-ratio: 1;
+  gap: var(--espacio-8);
+  padding-block: var(--espacio-10) var(--espacio-24);
 }
 
 .cargaTexto {
-  font-family: var(--fuente-titulos);
   font-size: var(--t-titulo-2);
+  line-height: 1.05;
   letter-spacing: var(--tracking-titulos);
-  line-height: 0.9;
-  text-align: center;
 }
 
-/* La vitrina vacía: las mismas celdas de estudio y las mismas líneas de 1px */
+/* La vitrina vacía: el mismo marco, las mismas celdas y líneas de 1px */
+.marco {
+  overflow: hidden;
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+}
+
 .gondola {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  align-self: stretch;
-  margin-top: var(--espacio-8);
+  margin: 0 -1px -1px 0;
 }
 
 @media (min-width: 700px) {
@@ -103,22 +68,9 @@
   }
 }
 
-/* Lugar vacío de un producto: la celda de estudio, sin dibujo */
 .hueco {
   aspect-ratio: 4 / 5;
-  outline: 1px solid var(--linea-vitrina);
+  border-right: 1px solid var(--negro);
+  border-bottom: 1px solid var(--negro);
   background: var(--estudio);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .pava :global(.vapor) {
-    animation: vapor 1.4s ease-in-out infinite;
-  }
-}
-
-@keyframes vapor {
-  50% {
-    opacity: 0.2;
-    transform: translateY(-4px);
-  }
 }

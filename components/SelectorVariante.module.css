@@ -8,7 +8,6 @@
 .precio {
   font-family: var(--fuente-datos);
   font-size: 2.25rem;
-  font-weight: 700;
   line-height: 1;
 }
 
@@ -17,10 +16,10 @@
 }
 
 .legend {
-  margin-bottom: var(--espacio-2);
-  font-family: var(--fuente-datos);
+  margin-bottom: var(--espacio-3);
   font-size: var(--t-dato);
-  font-weight: 700;
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
 }
 
 .opciones {
@@ -29,30 +28,35 @@
   gap: var(--espacio-2);
 }
 
+/* Cada opción es una píldora con borde de 1px; la activa, lima */
 .opcion {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: center;
   gap: 2px;
-  min-height: 48px;
-  padding: var(--espacio-2) var(--espacio-4);
-  border: none;
-  border-radius: var(--radio);
-  background: var(--papel);
-  font-family: var(--fuente-datos);
+  min-height: 52px;
+  padding: var(--espacio-2) var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  line-height: 1.2;
   text-align: left;
   transition:
     background-color var(--transicion),
-    color var(--transicion);
+    border-color var(--transicion);
 }
 
 .opcion:hover:not(:disabled) {
-  background: var(--verde-claro);
+  border-color: var(--lima);
+  background: var(--lima);
 }
 
+/* Sin stock: hormigón, tachada */
 .opcion:disabled {
-  background: color-mix(in srgb, var(--kraft-oscuro) 25%, var(--kraft));
-  color: var(--tinta-suave);
+  border-color: var(--hormigon);
+  background: var(--hormigon);
+  color: var(--grafito);
   cursor: not-allowed;
 }
 
@@ -62,30 +66,19 @@
 
 .activa,
 .activa:hover:not(:disabled) {
-  background: var(--tinta);
-  color: var(--papel);
-}
-
-.opcionNombre {
-  font-weight: 700;
+  border-color: var(--lima);
+  background: var(--lima);
 }
 
 .opcionStock {
-  font-size: var(--t-dato);
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: 0.75rem;
 }
 
+.activa .opcionStock,
 .pocas {
-  font-weight: 700;
-}
-
-.activa .pocas {
-  color: var(--amarillo);
-}
-
-.opcion:not(.activa) .pocas,
-.agotada {
-  color: var(--rojo);
-  font-weight: 700;
+  color: var(--negro);
 }
 
 .agregar {
@@ -93,7 +86,6 @@
 }
 
 .nota {
-  font-family: var(--fuente-datos);
+  color: var(--grafito);
   font-size: var(--t-dato);
-  font-weight: 700;
 }

@@ -1,7 +1,0 @@
-/* Sombra de contacto: sigue la forma del producto y cae apenas debajo,
-   como si estuviera apoyado. No es una sombra de la tarjeta. */
-.foto {
-  object-fit: contain;
-  filter: drop-shadow(0 10px 8px color-mix(in srgb, var(--tinta) 22%, transparent))
-    drop-shadow(0 2px 2px color-mix(in srgb, var(--tinta) 18%, transparent));
-}

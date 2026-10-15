@@ -1,10 +1,10 @@
-/* Bloque verde a todo el ancho con la cinta que corre */
+/* Banda negra a todo el ancho con la cinta que corre */
 .marquesina {
   display: flex;
   overflow: hidden;
-  padding: var(--espacio-8) 0;
-  background: var(--verde);
-  color: var(--papel);
+  padding: var(--espacio-5) 0;
+  background: var(--negro);
+  color: var(--blanco);
 }
 
 .cinta {
@@ -12,29 +12,29 @@
   flex-shrink: 0;
   align-items: center;
   list-style: none;
-  font-family: var(--fuente-titulos);
-  font-size: clamp(2rem, 4.4vw, 3.75rem);
-  letter-spacing: var(--tracking-titulos);
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  letter-spacing: var(--tracking-nav);
   line-height: 1;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
 .cinta li {
   display: flex;
   align-items: center;
-  gap: var(--espacio-8);
-  padding-right: var(--espacio-8);
+  gap: var(--espacio-6);
+  padding-right: var(--espacio-6);
 }
 
-.hojita {
-  width: 0.6em;
-  height: 0.6em;
-  color: var(--verde-vivo);
+.pelota {
+  width: 0.9em;
+  height: 0.9em;
+  flex-shrink: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .cinta {
-    animation: correr 48s linear infinite;
+    animation: correr 40s linear infinite;
   }
 
   /* Se frena al pasar el mouse, para poder leerla */

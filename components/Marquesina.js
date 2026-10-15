@@ -1,16 +1,16 @@
-import { Hojita } from "./Ilustraciones";
+import Pelota from "./Pelota";
 import styles from "./Marquesina.module.css";
 
-// Cinta verde con las leyendas de la casa, que corre sola de derecha a
-// izquierda. Van dos copias seguidas para que el loop no tenga corte; la
-// segunda es solo decorativa.
+// Cinta negra con las leyendas de la casa, que corre sola de derecha a
+// izquierda, separadas por pelotitas. Van dos copias seguidas para que el loop
+// no tenga corte; la segunda es solo decorativa.
 export default function Marquesina({ items }) {
   const cinta = (oculta) => (
     <ul className={styles.cinta} aria-hidden={oculta || undefined}>
       {items.map((item) => (
         <li key={item}>
           {item}
-          <Hojita className={styles.hojita} />
+          <Pelota className={styles.pelota} />
         </li>
       ))}
     </ul>

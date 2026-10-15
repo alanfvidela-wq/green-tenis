@@ -1,11 +1,17 @@
 /* Wordmark en el header y el footer. Toma el color del texto que lo rodea. */
 .logo {
-  display: inline-block;
-  font-family: var(--font-logo), Georgia, serif;
-  font-size: 2.75rem;
-  font-weight: 900;
-  font-variation-settings: "SOFT" 100;
-  letter-spacing: -0.01em;
+  display: inline-flex;
+  align-items: baseline;
+  font-size: 1.875rem;
+  letter-spacing: -0.04em;
   line-height: 1;
   white-space: nowrap;
+}
+
+/* El punto: una pelota del tamaño de un punto grande, sobre la línea de base */
+.punto {
+  width: 0.3em;
+  height: 0.3em;
+  margin-left: 0.06em;
+  flex-shrink: 0;
 }

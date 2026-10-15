@@ -40,14 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Modelos 3D originales (pesados); en public/ va la versión optimizada
-/modelos-fuente/
-
-modelos-fuente/
-
 # Videos originales (pesados); en public/videos va la versión comprimida
 /public/videos/fuente/
 /public/videos/fuentes/
 
-# Fotos de producto originales; en public/productos va la versión procesada
+# Fotos de producto originales; en public/productos/estudio va la versión procesada
 /public/productos/fuente/

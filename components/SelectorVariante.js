@@ -42,7 +42,7 @@ export default function SelectorVariante({ variantes }) {
               >
                 <span className={styles.opcionNombre}>{variante.nombre}</span>
                 <span
-                  className={`${styles.opcionStock} ${sinStock ? styles.agotada : ""} ${variante.stock > 0 && variante.stock <= 3 ? styles.pocas : ""}`}
+                  className={`${styles.opcionStock} ${variante.stock > 0 && variante.stock <= 3 ? styles.pocas : ""}`}
                 >
                   {textoStock(variante.stock)}
                 </span>

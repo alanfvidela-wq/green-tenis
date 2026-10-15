@@ -1,53 +1,34 @@
-import {
-  Courier_Prime,
-  Fraunces,
-  Instrument_Serif,
-  Work_Sans,
-} from "next/font/google";
+import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-const titulos = Instrument_Serif({
-  variable: "--font-titulos",
-  subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
-});
-
-const texto = Work_Sans({
+// Grotesca suiza en un solo peso (alternativa gratuita a Whyte)
+const texto = Inter_Tight({
   variable: "--font-texto",
   subsets: ["latin"],
+  weight: "400",
 });
 
-const datos = Courier_Prime({
+// Voz técnica para precios, talles y la ficha
+const datos = JetBrains_Mono({
   variable: "--font-datos",
   subsets: ["latin"],
-  weight: ["400", "700"],
-});
-
-// Wordmark «Amargo»: Fraunces 900 con el eje SOFT al máximo
-const logo = Fraunces({
-  variable: "--font-logo",
-  subsets: ["latin"],
-  axes: ["SOFT"],
+  weight: "400",
 });
 
 export const metadata = {
   title: {
-    default: "Amargo — Todo para el mate",
-    template: "%s | Amargo",
+    default: "green. — Todo para el tenis",
+    template: "%s | green.",
   },
   description:
-    "Mates, bombillas, termos, yerbas y accesorios. Armá tu combo y cebá a tu manera.",
+    "Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de tenis. Lo que hace falta para que la pelota vuelva.",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html
-      lang="es"
-      className={`${titulos.variable} ${texto.variable} ${datos.variable} ${logo.variable}`}
-    >
+    <html lang="es" className={`${texto.variable} ${datos.variable}`}>
       <body>
         <a href="#contenido" className="saltar">
           Ir al contenido

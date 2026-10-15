@@ -1,55 +1,51 @@
-/* Fijo arriba: sólido y claro, salvo cuando flota sobre la foto del hero */
+/* Fijo arriba: blanco, salvo cuando flota sobre el video del hero */
 .header {
-  --foco: var(--tinta);
   position: fixed;
   top: 0;
   right: 0;
   left: 0;
   z-index: 10;
-  background: var(--papel);
-  color: var(--tinta);
+  background: var(--blanco);
+  color: var(--negro);
   transition:
     background-color 300ms ease,
     color 300ms ease;
 }
 
-/* Sobre el hero: sin fondo, con el mismo texto en tinta (la foto es clara) */
+/* Sobre el hero: sin fondo y con el texto en blanco */
 .header[data-transparente] {
+  --foco: var(--lima);
   background: transparent;
+  color: var(--blanco);
 }
 
 .contenido {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: var(--espacio-6);
+  gap: var(--espacio-8);
   max-width: var(--ancho-max);
   margin: 0 auto;
-  /* Aire arriba: ni el logo ni el carrito tocan el borde */
-  padding: var(--espacio-6) var(--gutter) var(--espacio-4);
+  padding: var(--espacio-4) var(--gutter);
 }
 
-.logo {
-  color: var(--verde);
-  transition: color 300ms ease;
-}
-
-/* Navegación a máquina de escribir, como en Graza */
+/* Navegación en mayúsculas con tracking */
 .nav {
   display: flex;
   justify-content: flex-end;
   gap: var(--espacio-6);
-  font-family: var(--fuente-datos);
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
 }
 
 .nav a {
-  padding: var(--espacio-1) 0;
+  padding: var(--espacio-2) 0;
+  white-space: nowrap;
   text-decoration: underline;
   text-decoration-color: transparent;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
   transition: text-decoration-color var(--transicion);
 }
 
@@ -57,47 +53,50 @@
   text-decoration-color: currentColor;
 }
 
-/* Carrito: píldora clara con la cantidad, siempre sobre fondo claro */
+/* Carrito: píldora con borde de 1px; sobre el video, lima */
 .carrito {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  padding: 0 var(--espacio-4);
-  border-radius: 999px;
-  background: var(--kraft);
-  color: var(--tinta);
-  font-family: var(--fuente-datos);
-  font-size: 1rem;
-  font-weight: 700;
+  min-height: 40px;
+  padding: 0 var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  color: var(--negro);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
   white-space: nowrap;
-  transition: background-color var(--transicion);
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
 }
 
 .header[data-transparente] .carrito {
-  background: var(--papel);
+  border-color: var(--lima);
+  background: var(--lima);
 }
 
 .carrito:hover,
 .header[data-transparente] .carrito:hover {
-  background: var(--verde-claro);
+  border-color: var(--lima);
+  background: var(--lima);
 }
 
 /* En pantallas chicas la navegación baja a una segunda fila con scroll horizontal */
 @media (max-width: 860px) {
   .contenido {
     grid-template-columns: 1fr auto;
-    row-gap: var(--espacio-3);
-    padding-bottom: var(--espacio-3);
+    row-gap: var(--espacio-2);
+    padding-bottom: var(--espacio-2);
   }
 
   .nav {
     grid-column: 1 / -1;
     grid-row: 2;
     justify-content: flex-start;
-    gap: var(--espacio-4);
+    gap: var(--espacio-5);
     overflow-x: auto;
-    padding-bottom: var(--espacio-1);
-    white-space: nowrap;
     scrollbar-width: none;
   }
 }

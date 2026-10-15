@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Mate } from "@/components/Ilustraciones";
 import styles from "./estados.module.css";
 
 export const metadata = {
@@ -9,12 +8,11 @@ export const metadata = {
 export default function NotFound() {
   return (
     <main className={styles.estado}>
-      <Mate className={styles.dibujo} color="#b9a07c" yerba="#c9c08e" />
       <p className={styles.codigo}>404</p>
-      <h1 className={styles.titulo}>Se nos lavó el mate</h1>
+      <h1 className={styles.titulo}>Se fue larga</h1>
       <p className={styles.texto}>
-        Lo que buscás no está, o ya se terminó. Pasá por la góndola, que siempre
-        hay algo para cebar.
+        Lo que buscás no está, o picó afuera. Volvé al inicio, que siempre hay
+        otra pelota.
       </p>
       <div className={styles.acciones}>
         <Link href="/" className="boton">

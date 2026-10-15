@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { TermoVolcado } from "@/components/Ilustraciones";
 import styles from "./estados.module.css";
 
 export default function Error({ error, retry }) {
@@ -12,11 +11,10 @@ export default function Error({ error, retry }) {
 
   return (
     <main className={styles.estado}>
-      <TermoVolcado className={styles.dibujo} />
-      <p className={styles.codigo}>Uy</p>
-      <h1 className={styles.titulo}>Se nos volcó el termo</h1>
+      <p className={styles.codigo}>Error</p>
+      <h1 className={styles.titulo}>Doble falta</h1>
       <p className={styles.texto}>
-        Algo falló de nuestro lado. Secamos la mesa y probás de nuevo.
+        Algo falló de nuestro lado. Juntamos las pelotas y sacás de nuevo.
       </p>
       <div className={styles.acciones}>
         <button type="button" className="boton" onClick={() => retry()}>

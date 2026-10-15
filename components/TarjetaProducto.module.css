@@ -1,10 +1,11 @@
-/* Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md).
-   El contorno de 1px cae en el espacio de 1px de la grilla: son las líneas
-   que separan las celdas. */
+/* Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md). Dibuja su
+   línea derecha y la de abajo; el marco de GrillaProductos esconde las del
+   borde. */
 .celda {
   min-width: 0;
   container-type: inline-size;
-  outline: 1px solid var(--linea-vitrina);
+  border-right: 1px solid var(--negro);
+  border-bottom: 1px solid var(--negro);
   background: var(--estudio);
 }
 
@@ -17,12 +18,14 @@
   aspect-ratio: 4 / 5;
   overflow: hidden;
   padding: var(--espacio-3);
-  color: var(--tinta);
+  color: var(--negro);
+  font-size: var(--t-dato);
+  line-height: 1.35;
 }
 
 /* Foco por dentro de la celda: no lo tapa la vecina */
 .producto:focus-visible {
-  outline: 3px solid var(--tinta);
+  outline: 3px solid var(--negro);
   outline-offset: -3px;
 }
 
@@ -38,19 +41,15 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  font-family: var(--fuente-texto);
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25;
+  font-size: var(--t-dato);
+  line-height: 1.35;
   letter-spacing: normal;
   text-wrap: pretty;
 }
 
 .variante {
   overflow: hidden;
-  color: var(--tinta-suave);
-  font-size: var(--t-dato);
-  line-height: 1.35;
+  color: var(--grafito);
   white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -60,8 +59,6 @@
   align-items: baseline;
   justify-content: space-between;
   gap: var(--espacio-2);
-  font-family: var(--fuente-datos);
-  font-weight: 700;
 }
 
 /* En celdas angostas, precio y «Comprar» uno abajo del otro en todas las
@@ -75,13 +72,14 @@
 }
 
 .precio {
-  font-size: 0.875rem;
+  font-family: var(--fuente-datos);
   white-space: nowrap;
 }
 
-/* Link discreto: tinta, sin fondo; se subraya con el mouse o el foco */
+/* Link discreto: negro, en mayúsculas; se subraya con el mouse o el foco */
 .comprar {
-  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
   text-underline-offset: 3px;
 }
 
@@ -104,10 +102,6 @@
 @media (min-width: 1000px) {
   .producto {
     padding: var(--espacio-4);
-  }
-
-  .nombre {
-    font-size: 0.9375rem;
   }
 }
 

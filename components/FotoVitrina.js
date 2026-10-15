@@ -2,41 +2,52 @@ import Image from "next/image";
 import styles from "./FotoVitrina.module.css";
 
 // Siluetas planas por categoría para el placeholder, dibujadas en la caja de
-// producto (proporción 96:100). Tocan la caja por su lado más largo.
+// producto (proporción 96:100), con el mismo encuadre que pide la spec de
+// fotos. Tocan la caja por su lado más largo.
 const SILUETAS = {
-  mates: (
+  // De frente y vertical: el marco de la cabeza, el puente y el mango
+  raquetas: (
     <>
-      <rect x="57" y="0" width="5" height="40" rx="2.5" transform="rotate(14 59 40)" />
-      <rect x="27" y="30" width="42" height="14" rx="3" />
-      <ellipse cx="48" cy="69" rx="31" ry="31" />
+      <path
+        fillRule="evenodd"
+        d="M25 30a23 30 0 1 0 46 0a23 30 0 1 0-46 0ZM29 30a19 26 0 1 0 38 0a19 26 0 1 0-38 0Z"
+      />
+      <path d="M36 53 45 72h6l9-19-5 2-7 12-7-12Z" />
+      <rect x="44.5" y="70" width="7" height="30" rx="1.5" />
     </>
   ),
-  bombillas: (
+  // El pie derecho de perfil, con la punta a la derecha
+  zapatillas: (
     <>
-      <rect x="40" y="0" width="12" height="5" rx="2.5" />
-      <rect x="43" y="2" width="6" height="82" rx="3" />
-      <ellipse cx="46" cy="90" rx="9" ry="10" />
+      <path d="M4 64c0-12 3-22 10-27l15-7c4-2 8-1 10 3l12 13c6 5 18 7 28 9 11 2 17 6 17 12v5H4Z" />
+      <rect x="2" y="71" width="94" height="7" rx="3.5" />
     </>
   ),
-  termos: (
+  // El tubo cerrado, parado, con una pelota al lado
+  pelotas: (
     <>
-      <rect x="41" y="0" width="12" height="6" rx="2" />
-      <rect x="34" y="4" width="28" height="14" rx="3" />
-      <rect x="30" y="16" width="36" height="84" rx="4" />
+      <rect x="16" y="0" width="40" height="8" rx="3" />
+      <rect x="18" y="6" width="36" height="94" rx="4" />
+      <circle cx="70" cy="88" r="12" />
     </>
   ),
-  yerbas: (
+  // El rollo de cuerda
+  "cuerdas-y-grips": (
+    <path
+      fillRule="evenodd"
+      d="M6 50a42 42 0 1 0 84 0a42 42 0 1 0-84 0ZM22 50a26 26 0 1 0 52 0a26 26 0 1 0-52 0Z"
+    />
+  ),
+  // El raquetero parado, con su manija
+  bolsos: (
     <>
-      <path d="M18 8 30 0h36l12 8Z" />
-      <rect x="18" y="8" width="60" height="92" />
+      <path d="M38 16V8q0-8 10-8t10 8v8h-5V9q0-4-5-4t-5 4v7Z" />
+      <rect x="22" y="14" width="52" height="86" rx="18" />
     </>
   ),
-  accesorios: (
-    <>
-      <rect x="42" y="6" width="12" height="8" rx="2" />
-      <rect x="17" y="12" width="62" height="12" rx="3" />
-      <rect x="20" y="22" width="56" height="78" rx="3" />
-    </>
+  // Una remera de frente
+  ropa: (
+    <path d="M30 6 40 2q8 6 16 0l10 4 28 16-10 20-12-6v64H24V36l-12 6L2 22Z" />
   ),
 };
 
@@ -58,7 +69,7 @@ export default function FotoVitrina({
       <div className={`${styles.foto} ${className}`}>
         <svg className={styles.caja} viewBox="0 0 96 100" aria-hidden="true">
           <g className={styles.silueta}>
-            {SILUETAS[categoria] ?? SILUETAS.accesorios}
+            {SILUETAS[categoria] ?? SILUETAS.raquetas}
           </g>
         </svg>
       </div>

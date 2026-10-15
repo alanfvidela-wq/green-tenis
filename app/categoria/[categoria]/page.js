@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import GrillaProductos from "@/components/GrillaProductos";
-import FotoProducto from "@/components/FotoProducto";
-import { SELLOS } from "@/lib/fichas";
 import { getCategoria, getProductosPorCategoria } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -21,29 +19,21 @@ export default async function PaginaCategoria({ params }) {
   const productos = await getProductosPorCategoria(slug);
 
   return (
-    <main className={styles.pagina} data-categoria={slug}>
+    <main>
       <header className={styles.encabezado}>
-        <div className={styles.encabezadoContenido}>
-          <nav className="migas" aria-label="Ubicación">
-            <Link href="/">Inicio</Link>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">{categoria.nombre}</span>
-          </nav>
-          <h1 className={styles.titulo}>{categoria.nombre}</h1>
-          <p className={styles.descripcion}>{categoria.descripcion}</p>
-          <p className={styles.sello}>{SELLOS[slug]}</p>
-        </div>
-        <div className={styles.foto}>
-          <FotoProducto src={categoria.imagen} sizes="260px" prioridad />
-        </div>
+        <nav className="migas" aria-label="Ubicación">
+          <Link href="/">Inicio</Link>
+          <span aria-hidden="true">/</span>
+          <span aria-current="page">{categoria.nombre}</span>
+        </nav>
+        <h1 className={styles.titulo}>{categoria.nombre}</h1>
+        <p className={styles.descripcion}>{categoria.descripcion}</p>
+        <p className={`dato ${styles.cuenta}`}>
+          {productos.length} {productos.length === 1 ? "producto" : "productos"}
+        </p>
       </header>
 
-      <div className={styles.contenido}>
-        <p className={`dato ${styles.cuenta}`}>
-          {productos.length} en la góndola
-        </p>
-        <GrillaProductos productos={productos} />
-      </div>
+      <GrillaProductos productos={productos} />
     </main>
   );
 }
