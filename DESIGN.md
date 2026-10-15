@@ -17,6 +17,10 @@ sitios usarían cajas y sombras.
   color.
 - **Si chocan, gana twotwo** (por ejemplo, en los radios y en el color de las
   líneas).
+- `docs/referencias/slush.md` **manda solo en la sección «Anatomía de una
+  raqueta»**: volumen inflado, stickers, tipografía enorme y flotación. Es una
+  excepción acotada, con su propia paleta y sus propias reglas (ver
+  «Excepción: Anatomía de una raqueta»).
 - De esas marcas no se copian textos, logos ni nombres. Los valores de color y
   las fuentes de este documento son propios.
 
@@ -40,6 +44,9 @@ sitios usarían cajas y sombras.
    encabezados de estado (404, error).
 8. **Textos que describen.** Títulos cortos y bajadas que dicen qué hay. Sin
    slogans, leyendas ni frases inventadas (ver «Voz»).
+
+Estas reglas valen para todo el sitio menos «Anatomía de una raqueta», que es
+una excepción acotada con reglas propias. La regla 8 vale también ahí.
 
 ## Paleta
 
@@ -66,7 +73,7 @@ negro sobre hormigón 16,7:1.
 
 | Rol   | Fuente         | Uso                                                        |
 | ----- | -------------- | ---------------------------------------------------------- |
-| Todo  | Inter Tight    | Un solo peso (400): titulares, texto, navegación y botones |
+| Todo  | Inter Tight    | Un solo peso (400): titulares, texto, navegación y botones. El 800 es solo de la excepción de la anatomía |
 | Datos | JetBrains Mono | 400: precios, talles, contadores y la ficha técnica        |
 
 Inter Tight es la alternativa gratuita (Google Fonts) a una grotesca suiza
@@ -138,14 +145,16 @@ radio es del marco, no de cada celda.
    encima. Ver «Hero».
 2. **Lo que más sale** (blanco): los seis destacados en la vitrina, en tres
    columnas (dos filas llenas).
-3. **Anatomía de una raqueta** (blanco): la raqueta dibujada en línea, fija,
-   y un paso por parte con el scroll. Ver «Anatomía de una raqueta».
+3. **Anatomía de una raqueta** (azul de cancha, de borde a borde): la
+   raqueta inflada, fija, y un paso por parte con el scroll. Es la única
+   sección con otro estilo; ver «Excepción: Anatomía de una raqueta».
 4. **Categorías** (blanco): una fila por categoría, separadas por líneas de
    1px: nombre, bajada y cantidad. Al pasar el mouse, la fila se pinta lima.
 5. **Footer** (negro).
 
-Todo va sobre blanco; las secciones se separan con aire, no con fondos
-alternados. El negro aparece solo en el footer. No hay cintas con leyendas ni
+Todo va sobre blanco (menos la anatomía, que va sobre azul); las secciones
+se separan con aire, no con fondos alternados. El negro aparece solo en el
+footer. No hay cintas con leyendas ni
 bloques de slogan: la home muestra productos, cómo es una raqueta y las
 categorías.
 
@@ -221,72 +230,136 @@ grande; si hay más, van de a dos debajo. En escritorio queda fija mientras se
 lee la ficha y nunca es más alta que la pantalla. Acá el producto no se apaga
 aunque no haya stock: eso lo dice el selector de opciones, al lado.
 
-## Anatomía de una raqueta
+## Componente `Raqueta`
+
+La raqueta de frente y vertical, dibujada en SVG con código
+(`components/Raqueta.js`). Es reutilizable: la usa la anatomía y la va a usar
+«Armá tu raqueta».
+
+- **Partes**: cada una es un grupo (`data-parte`) que se puede resaltar o animar
+  por separado: aro, encordado (16 verticales × 19 horizontales, calculadas
+  desde el patrón), punto dulce (una zona, no una pieza), antivibrador,
+  garganta, mango, grip, overgrip y tapa.
+- **Props**: `resaltadas` (las partes en lima), `estilo`, `encuadre`
+  (`ajustado`, solo la raqueta, o `lienzo`, 400×560 con aire para las
+  etiquetas) y `prefijo` (para los ids de los degradados si hay más de una en
+  la página). Exporta `ANCLAS` (el punto de cada parte), `PATRON` y `LIENZO`.
+- **Estilo `linea`** (el del sitio, el que va en «Armá tu raqueta»): línea
+  negra de 1,5px sobre blanco, sin rellenos. Es un dibujo técnico, no una
+  ilustración. Resaltar es poner un marcador lima debajo de la línea (sobre
+  blanco, una línea lima sola no se leería); el resto baja a gris (negro al
+  28%). Las cuerdas llevan un marcador más fino para no volverse una mancha.
+- **Estilo `inflada`**: solo para la anatomía (ver abajo).
+
+## Excepción: Anatomía de una raqueta
 
 Una sección de la home, entre «Lo que más sale» y «Categorías», que explica la
-raqueta parte por parte. De otras referencias se toma solo la idea de una
-animación atada al scroll; todo lo demás sigue este documento.
+raqueta parte por parte. **Es la única sección que no sigue este documento**:
+toma de `docs/referencias/slush.md` el volumen inflado, los stickers, la
+tipografía enorme y la flotación, adaptados a green. Lo que no está en esta
+sección sigue las reglas generales. No se copian textos, logos ni
+ilustraciones de esa referencia, ni su arcoíris de colores.
 
-### El dibujo
+### Color y fondo
 
-- **Componente `Raqueta`** (`components/Raqueta.js`): la raqueta de frente y
-  vertical, dibujada en SVG con código. Es reutilizable (va a usarse en «Armá
-  tu raqueta»): recibe `resaltadas` (las partes en lima) y `encuadre`
-  (`ajustado`, solo la raqueta, o `lienzo`, 400×560 con aire para las
-  etiquetas). Exporta `ANCLAS` (el punto de cada parte), `PATRON` y `LIENZO`.
-- **Línea negra de 1,5px sobre blanco**, sin rellenos, puntas redondeadas. Es
-  un dibujo técnico, no una ilustración: sin sombras, sin color, sin gestos.
-  El grosor queda en 1,5px en pantalla aunque la cámara se acerque.
-- **Cada parte es un grupo** (`data-parte`) que se puede resaltar o animar por
-  separado: aro, encordado (16 verticales × 19 horizontales, calculadas desde
-  el patrón), punto dulce (una zona, en línea punteada), antivibrador,
-  garganta, mango, grip, overgrip y tapa.
-- **Resaltar es marcar en lima.** La parte resaltada lleva debajo un trazo lima
-  grueso, como un marcador, y arriba sigue la línea negra: sobre blanco, una
-  línea lima sola no se leería. Las zonas cerradas (punto dulce,
-  antivibrador, tapa) se rellenan de lima; las cuerdas llevan un marcador más
-  fino para no volverse una mancha. Con una parte resaltada, el resto baja a
-  gris (negro al 28%).
+| Token           | Hex       | Uso                                                       |
+| --------------- | --------- | --------------------------------------------------------- |
+| `--azul-cancha` | `#A3C4E8` | El fondo de la sección, de borde a borde: un azul pastel de cancha rápida |
+| `--blanco`      | `#FFFFFF` | La raqueta, los stickers inactivos y el nombre gigante    |
+| `--negro`       | `#000000` | Contornos, texto, líneas guía                             |
+| `--lima`        | `#DCF900` | La pelota, la parte activa y el sticker activo            |
 
-### La sección
+- **Nada más**: ni el resto del arcoíris de la referencia ni grises.
+- **Corte limpio**: la sección entra y sale con un borde recto, sin ola, sin
+  degradado y sin línea. Arriba y abajo está el blanco del resto de la home.
+- Contrastes: negro sobre el azul 11,6:1. El blanco sobre el azul (1,8:1) solo
+  se usa en el nombre gigante, que es decorativo y repite el título del paso.
 
-- **Desktop**: la raqueta queda fija (sticky) a la izquierda y los pasos van
-  pasando a la derecha, uno por pantalla. **Mobile**: la raqueta fija arriba
-  (46% del alto) y los pasos abajo.
+### La raqueta inflada
+
+- **Plástico blando**: cada parte tiene cuerpo, con degradados suaves (blanco
+  que va a un azul muy pálido, con la luz arriba a la izquierda; cilindros más
+  claros en el centro), un brillo blanco donde pega la luz y un **contorno
+  negro grueso** (2,6 unidades por lado, unos 3px).
+- **Textura de ruido**: un PNG chico y estático (`public/texturas/ruido.png`)
+  aplicado como patrón sobre los cuerpos. No es un filtro SVG y no se anima.
+- **Resaltar es pasar a lima**: la parte activa cambia a su versión lima
+  (degradado lima con el mismo volumen); el resto queda al 35% de opacidad.
+- **La pelota**: una pelota de tenis inflada, lima con contorno y costuras
+  negras, flota arriba a la izquierda. Es lo único lima cuando no hay paso
+  activo.
+
+### Stickers y tipografía
+
+- **Stickers**: cada parte se nombra con un sticker: borde negro de 3px, forma
+  de píldora o de esquinas redondeadas (14px), apenas rotado (±2 a 4°), en
+  mayúsculas, Inter Tight 800. El del paso activo es lima; sin JavaScript o
+  sin movimiento, todos son blancos. Lo une a su parte una línea guía negra de
+  3px que sale de un punto blanco con borde negro. Nunca va sobre una zona lima.
+- **Nombre gigante**: el nombre de la parte activa, enorme y apretado (Inter
+  Tight 800, interlineado 0.8, tracking −0,045em), en blanco, detrás de la
+  raqueta.
+- **Titular y pasos**: el titular de la sección en Inter Tight 800,
+  interlineado 0.8; los títulos de los pasos también en 800, interlineado
+  0.85. El dato técnico va en mono y el texto, en 400.
+- Fuera de esta sección, el 800 no se usa.
+
+### Estructura
+
+- **Desktop**: la raqueta queda fija (sticky) a la izquierda, en un escenario
+  del alto de la pantalla, y los pasos van pasando a la derecha, uno por
+  pantalla. **Mobile**: la raqueta fija arriba (46% del alto, de borde a
+  borde) y los pasos abajo.
 - **Un paso por parte, de arriba hacia abajo**: contorno, encordado, punto
   dulce, garganta, mango y grip, overgrip y tapa. Cada paso tiene el número,
-  el nombre de la parte (`h3`), un dato técnico concreto en mono (patrón
-  16×19 contra 18×20, tamaños de grip, largo de 27″) y una frase corta que
-  dice qué cambia en el juego. Los pasos están en `lib/anatomia.js`.
+  el nombre de la parte (`h3`), un dato técnico concreto en mono (patrón 16×19
+  contra 18×20, tamaños de grip, largo de 27″) y una frase corta que dice qué
+  cambia en el juego. El antivibrador se resalta con el encordado. Los pasos
+  están en `lib/anatomia.js`.
 - **Todo el texto es HTML** (títulos y párrafos), nunca texto dentro del SVG.
-  Las etiquetas sobre el dibujo también son HTML y repiten el título del paso,
-  por eso van ocultas para lectores de pantalla.
-- **Etiqueta**: píldora lima con el nombre en mayúsculas, unida a su parte por
-  una línea guía negra de 1px que sale de un punto negro. Nunca va sobre una
-  zona lima (lima sobre lima): si la parte es grande, se aleja.
+  Los stickers y el nombre gigante también son HTML y repiten el título del
+  paso, por eso van ocultos para lectores de pantalla.
 
 ### Movimiento
 
-- **La cámara**: el encuadre (viewBox) va de parte en parte con el scroll. El
-  paso que cruza la línea de lectura (el centro de la pantalla; en mobile, el
-  centro de lo que queda debajo de la raqueta) decide adónde mira, y la
-  cámara se acerca y se mueve hacia esa parte con entrada y salida suaves y
-  un poco de inercia. Es continuo: entre un paso y otro, la cámara está en el
-  medio. Antes del primer paso y después del último se ve la raqueta entera.
-- **Al activarse un paso**: su parte se pone lima, el resto baja a gris y
-  aparece su etiqueta con la línea guía (250 a 300ms). El paso activo se lee
-  en negro y los demás bajan al 30%.
-- **Movimientos propios**: las cuerdas se dibujan (`stroke-dashoffset`, una
-  tras otra, primero las verticales) al llegar al encordado; el punto dulce
-  late suave (escala 1,1 cada 1,8 s) mientras está activo; el overgrip se
-  enrolla vuelta por vuelta, de abajo hacia arriba, al llegar a su paso.
-- **Flotación**: la raqueta sube y baja 6px cada 6 segundos.
+- **La cámara**: un `transform` (translate y scale) sobre la raqueta, que va de
+  parte en parte con el scroll. El paso que cruza la línea de lectura (el
+  centro de la pantalla; en mobile, el centro de lo que queda debajo de la
+  raqueta) decide adónde mira; la cámara se acerca y se mueve con entrada y
+  salida suaves y un poco de inercia. Es continuo: entre un paso y otro está
+  en el medio. Antes del primer paso y después del último se ve la raqueta
+  entera.
+- **Al activarse un paso**: su parte pasa a lima, el resto se desvanece, el
+  sticker entra flotando (sube, se endereza y crece, con un rebote corto) y el
+  nombre gigante aparece detrás. El paso activo se lee entero y los demás
+  bajan al 35%.
+- **Movimientos propios**: las cuerdas crecen una tras otra (primero las
+  verticales) al llegar al encordado; el punto dulce late suave (escala 1,1
+  cada 1,8 s) mientras está activo; el overgrip se enrolla vuelta por vuelta,
+  de abajo hacia arriba, al llegar a su paso.
+- **Flotación y parallax**: la raqueta sube y baja 7px y rota ±0,8° cada 6
+  segundos; cada sticker flota a su ritmo; la pelota sube, baja y gira con el
+  scroll; el nombre gigante se queda un poco atrás de la raqueta.
+
+### Rendimiento
+
+- **Solo se anima `transform` y `opacity`**: la cámara, los stickers y sus
+  líneas (posicionados en unidades del contenedor, `cqw`/`cqh`), las cuerdas
+  (`scale`), el overgrip, el parallax y las apariciones. Nada de `left`,
+  `top`, `viewBox` ni `stroke-dashoffset`.
+- La textura de ruido es estática y ningún elemento animado lleva filtros SVG.
+- Mientras la cámara se mueve, va en su propia capa (`will-change: transform`);
+  cuando se queda quieta se saca, para que se repinte nítida al zoom en que
+  quedó.
 - **Sin librerías**: un componente cliente (`AnatomiaRaqueta`) mide el scroll
-  con `requestAnimationFrame` y mueve el viewBox. No usa `animation-timeline`
-  porque Firefox no lo soporta: funciona igual en Chrome, Safari y Firefox.
-- **Con `prefers-reduced-motion`** (o sin JavaScript): la raqueta entera,
-  quieta, con las cuerdas y el overgrip dibujados y todas las etiquetas a la
-  vista.
+  con `requestAnimationFrame`. No usa `animation-timeline`, que Firefox no
+  soporta: funciona igual en Chrome, Safari y Firefox.
+
+### Sin movimiento
+
+Con `prefers-reduced-motion` (o sin JavaScript): la raqueta inflada entera,
+quieta, sin parte activa, con las cuerdas y el overgrip puestos y los siete
+stickers a la vista, en blanco, cada uno con su línea guía. No flota nada.
 
 ## Fotos de producto
 
@@ -377,12 +450,12 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 
 - **Hero**: el loop del video. Se puede pausar.
 - **Vitrina**: el producto se acerca apenas con el hover o el foco.
-- **Anatomía de una raqueta**: la cámara sigue al scroll. Ver
-  «Anatomía de una raqueta».
+- **Anatomía de una raqueta**: la cámara sigue al scroll y todo flota. Ver
+  «Excepción: Anatomía de una raqueta».
 - **Categorías**: la fila se pinta lima al pasar el mouse.
 - **Header**: pasa de transparente a blanco con una transición suave.
 - Con `prefers-reduced-motion` el hero muestra solo el poster, la anatomía
-  muestra la raqueta entera y quieta con todas sus etiquetas, y no hay
+  muestra la raqueta entera y quieta con todos sus stickers, y no hay
   animaciones ni transiciones.
 
 ## Accesibilidad
@@ -402,7 +475,7 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 | Negritas para jerarquizar                | Un solo peso; la jerarquía sale del tamaño y del gris                 |
 | Radios intermedios (4, 8, 24px)          | 50px para lo que se toca, 16px para lo que se mira                    |
 | Tarjetas con sombra y radio en la grilla | La vitrina: celdas pegadas dentro de un marco de 1px                  |
-| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. La única excepción es el dibujo técnico de la raqueta, en línea |
+| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. Las únicas excepciones son la raqueta (componente `Raqueta`) y la pelota de la anatomía |
 | Lima de fondo o lima sobre lima          | El lima va sobre negro o lleva texto negro; nunca de fondo de sección |
 | Texto centrado en párrafos y productos   | A la izquierda; solo se centran el hero y los estados                 |
 | Slogans, leyendas y frases inventadas    | Textos que describen qué hay y para qué sirve                         |

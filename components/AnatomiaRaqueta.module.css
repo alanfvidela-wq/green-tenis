@@ -1,12 +1,52 @@
-/* Anatomía de una raqueta (ver DESIGN.md). Desktop: la raqueta fija a la
-   izquierda y los pasos a la derecha. Mobile: la raqueta fija arriba y los
-   pasos abajo. */
+/* «Anatomía de una raqueta»: la excepción inflada de la home (ver DESIGN.md).
+   Azul de cancha rápida de borde a borde, blanco, negro y lima. Todo lo que
+   se mueve es transform u opacity. */
+.seccion {
+  --azul-cancha: #a3c4e8;
+  --foco: var(--negro);
+  /* clip y no hidden: hidden la volvería contenedor de scroll y la raqueta
+     dejaría de quedar fija */
+  overflow: clip;
+  padding: var(--espacio-16) 0 var(--espacio-24);
+  background: var(--azul-cancha);
+  color: var(--negro);
+}
+
+.contenido {
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Tipografía enorme y apretada: Inter Tight 800, interlineado 0.8 */
+.encabezado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  margin-bottom: var(--espacio-8);
+}
+
+.titular {
+  max-width: 11ch;
+  font-size: clamp(3.25rem, 10vw, 8.5rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+}
+
+.bajada {
+  max-width: 44ch;
+  font-size: var(--t-entrada);
+}
+
 .anatomia {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
 }
 
-/* Lo que queda fijo mientras pasan los pasos */
+/* Lo que queda fijo mientras pasan los pasos. Recorta lo que la cámara deja
+   afuera; en desktop ocupa todo el alto bajo el header, así el recorte cae
+   debajo del header y fuera de la pantalla. */
 .escenario {
   position: sticky;
   z-index: 1;
@@ -14,90 +54,209 @@
   display: grid;
   place-items: center;
   height: 46svh;
-  padding-block: var(--espacio-2);
-  background: var(--blanco);
+  overflow: clip;
+  container-type: inline-size;
+  background: var(--azul-cancha);
 }
 
-/* La escena tiene la proporción del lienzo de la raqueta (5:7): así las
-   etiquetas, en %, caen justo sobre su parte */
+/* La escena tiene la proporción del lienzo de la raqueta (5:7) y es el
+   contenedor de las marcas: sus posiciones van en cqw/cqh */
 .escena {
   position: relative;
+  z-index: 1;
   width: min(100%, (46svh - var(--espacio-4)) * 5 / 7);
   aspect-ratio: 5 / 7;
+  container-type: size;
 }
 
-.raqueta,
-.guias {
+/* La raqueta flota y rota suave; adentro, la cámara la acerca */
+.flotador,
+.camara {
   position: absolute;
   inset: 0;
+}
+
+.camara {
+  transform-origin: 0 0;
+}
+
+.raqueta {
   width: 100%;
   height: 100%;
 }
 
-/* La cámara: lo que queda afuera del encuadre no se ve */
-.escena .raqueta {
-  overflow: hidden;
-}
+/* ---------- El nombre gigante, detrás de la raqueta ---------- */
 
-/* Líneas guía de 1px negras, de la parte a su etiqueta */
-.guias {
-  overflow: visible;
+.nombres {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
   pointer-events: none;
-  stroke: var(--negro);
-  stroke-width: 1px;
 }
 
-.guias line {
-  vector-effect: non-scaling-stroke;
+/* Los nombres de dos palabras bajan a dos líneas */
+.nombre {
+  grid-area: 1 / 1;
+  max-width: 100%;
+  color: var(--blanco);
+  font-size: 17cqi;
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.045em;
+  text-align: center;
+  opacity: 0;
 }
 
-/* Punto de anclaje de la línea guía */
+.seccion[data-animado] .nombre {
+  transform: translateY(8%);
+  transition:
+    opacity 400ms ease,
+    transform 600ms var(--suave);
+}
+
+.seccion[data-animado] .nombre[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Stickers con su línea guía ---------- */
+
+.marca {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Línea guía: 1cqw de largo, estirada con scaleX hasta el sticker */
+.guia {
+  position: absolute;
+  top: -1.5px;
+  left: 0;
+  width: 1cqw;
+  height: 3px;
+  background: var(--negro);
+  transform-origin: 0 50%;
+  transform: translate(calc(var(--x) * 1cqw), calc(var(--y) * 1cqh))
+    rotate(var(--angulo)) scaleX(var(--largo));
+}
+
+/* Punto de anclaje sobre la parte */
 .punto {
   position: absolute;
-  width: 7px;
-  height: 7px;
+  top: -6px;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  border: 3px solid var(--negro);
   border-radius: 50%;
-  background: var(--negro);
-  transform: translate(-50%, -50%);
-  pointer-events: none;
+  background: var(--blanco);
+  transform: translate(calc(var(--x) * 1cqw), calc(var(--y) * 1cqh));
 }
 
-/* Etiqueta: píldora lima con texto negro, en mayúsculas */
-.etiqueta {
+.sticker {
   position: absolute;
-  padding: var(--espacio-1) var(--espacio-3);
+  top: 0;
+  left: 0;
+  transform: translate(calc(var(--ex) * 1cqw), calc(var(--ey) * 1cqh)) translateY(-50%);
+}
+
+/* Del lado izquierdo, el sticker termina donde llega la línea */
+.izquierda {
+  transform: translate(calc(var(--ex) * 1cqw), calc(var(--ey) * 1cqh)) translate(-100%, -50%);
+}
+
+.entrada {
+  display: block;
+}
+
+/* El sticker: borde negro grueso, píldora o esquinas redondeadas, apenas
+   rotado. Sin sombra. */
+.etiqueta {
+  display: block;
+  padding: 0.45em 1em 0.5em;
+  border: 3px solid var(--negro);
   border-radius: var(--radio-pildora);
-  background: var(--lima);
-  color: var(--negro);
-  font-size: 0.75rem;
-  letter-spacing: var(--tracking-nav);
-  line-height: 1.4;
+  background: var(--blanco);
+  font-size: clamp(0.75rem, 1.2vw, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
   text-transform: uppercase;
   white-space: nowrap;
-  transform: translateY(-50%);
-  pointer-events: none;
+  transform: rotate(var(--giro));
 }
 
-/* Del lado izquierdo, la etiqueta termina donde llega la línea */
-.izquierda {
-  transform: translate(-100%, -50%);
+.redondeado {
+  border-radius: 14px;
 }
 
-/* Animada, solo se ve la etiqueta del paso activo */
-.anatomia[data-animado] .etiqueta,
-.anatomia[data-animado] .punto,
-.anatomia[data-animado] .guias line {
+/* Animada: solo se ve la marca del paso activo, y su sticker es lima */
+.seccion[data-animado] .guia,
+.seccion[data-animado] .punto,
+.seccion[data-animado] .entrada {
   opacity: 0;
-  transition: opacity 250ms ease;
 }
 
-.anatomia[data-animado] .etiqueta[data-visible],
-.anatomia[data-animado] .punto[data-visible],
-.anatomia[data-animado] .guias line[data-visible] {
+.seccion[data-animado] .etiqueta {
+  background: var(--lima);
+}
+
+.seccion[data-animado] .marca[data-visible] .guia,
+.seccion[data-animado] .marca[data-visible] .punto {
   opacity: 1;
 }
 
-/* Los pasos */
+/* El sticker entra flotando: sube, se endereza y crece un poco */
+.seccion[data-animado] .entrada {
+  transform: translateY(18px) rotate(-8deg) scale(0.85);
+  transition:
+    opacity 250ms ease,
+    transform 550ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.seccion[data-animado] .marca[data-visible] .entrada {
+  opacity: 1;
+  transform: none;
+}
+
+.seccion[data-animado] .guia,
+.seccion[data-animado] .punto {
+  transition: opacity 250ms ease;
+}
+
+/* ---------- La pelota ---------- */
+
+/* Arriba a la izquierda: ahí no cae ningún sticker */
+.pelota {
+  position: absolute;
+  z-index: 2;
+  top: 5%;
+  left: 4%;
+  width: clamp(56px, 13cqi, 104px);
+  pointer-events: none;
+}
+
+.pelota svg {
+  display: block;
+  width: 100%;
+}
+
+/* En mobile el escenario va de borde a borde, para que los stickers tengan
+   lugar */
+@media (max-width: 859px) {
+  .escenario {
+    margin-inline: calc(var(--gutter) * -1);
+  }
+
+  .etiqueta {
+    font-size: 0.7rem;
+  }
+}
+
+/* ---------- Los pasos ---------- */
+
 .pasos {
   list-style: none;
 }
@@ -112,38 +271,37 @@
   padding-block: var(--espacio-8);
 }
 
-/* Animada, el paso activo en negro y los demás en gris */
-.anatomia[data-animado] .paso {
-  opacity: 0.3;
+.seccion[data-animado] .paso {
+  opacity: 0.35;
   transition: opacity 300ms ease;
 }
 
-.anatomia[data-animado] .paso[data-activo] {
+.seccion[data-animado] .paso[data-activo] {
   opacity: 1;
 }
 
 .numero {
   font-family: var(--fuente-datos);
   font-size: var(--t-dato);
-  color: var(--grafito);
 }
 
 .titulo {
-  font-size: clamp(2rem, 4vw, 3rem);
-  line-height: 1.05;
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 0.85;
+  letter-spacing: -0.035em;
 }
 
 /* El dato técnico, en mono */
 .dato {
   padding-top: var(--espacio-3);
-  border-top: 1px solid var(--negro);
+  border-top: 2px solid var(--negro);
   font-family: var(--fuente-datos);
   font-size: 0.875rem;
   line-height: 1.6;
 }
 
 .frase {
-  color: var(--grafito);
   font-size: var(--t-entrada);
 }
 
@@ -154,19 +312,18 @@
   }
 
   .escenario {
-    top: calc(var(--alto-header) + var(--espacio-5));
     align-self: start;
-    height: calc(100svh - var(--alto-header) - var(--espacio-10));
-    padding-block: 0;
+    height: calc(100svh - var(--alto-header));
+    background: none;
   }
 
   .escena {
-    width: min(100%, (100svh - var(--alto-header) - var(--espacio-10)) * 5 / 7);
+    width: min(100%, (100svh - var(--alto-header) - var(--espacio-16)) * 5 / 7);
   }
 
   /* Aire arriba y abajo para que el primer y el último paso lleguen al centro */
   .pasos {
-    padding-block: 20svh;
+    padding-block: 25svh;
   }
 
   .paso {
@@ -174,15 +331,51 @@
   }
 }
 
-/* Flotación leve de la raqueta */
+/* Flotación: la raqueta, los stickers y la pelota, cada uno a su ritmo
+   (solo transform) */
 @media (prefers-reduced-motion: no-preference) {
-  .anatomia[data-animado] .escena {
+  .seccion[data-animado] .flotador {
     animation: flotar 6s ease-in-out infinite;
+  }
+
+  .seccion[data-animado] .etiqueta {
+    animation: flotarSticker 4.2s ease-in-out infinite;
+  }
+
+  .seccion[data-animado] .pelotaFlota {
+    animation: flotarPelota 5s ease-in-out infinite;
   }
 }
 
 @keyframes flotar {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-0.8deg);
+  }
+
   50% {
-    transform: translateY(-6px);
+    transform: translateY(-7px) rotate(0.8deg);
+  }
+}
+
+@keyframes flotarSticker {
+  0%,
+  100% {
+    transform: rotate(var(--giro)) translateY(0);
+  }
+
+  50% {
+    transform: rotate(calc(var(--giro) + 2deg)) translateY(-4px);
+  }
+}
+
+@keyframes flotarPelota {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-10px) rotate(12deg);
   }
 }

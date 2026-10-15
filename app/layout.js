@@ -3,11 +3,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-// Grotesca suiza en un solo peso (alternativa gratuita a Whyte)
+// Grotesca suiza (alternativa gratuita a Whyte). En todo el sitio va en 400;
+// el 800 es solo para la excepción de «Anatomía de una raqueta».
 const texto = Inter_Tight({
   variable: "--font-texto",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["400", "800"],
 });
 
 // Voz técnica para precios, talles y la ficha

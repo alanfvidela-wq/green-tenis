@@ -1,12 +1,5 @@
-/* Raqueta en línea negra de 1,5px sobre blanco. Ver «Anatomía de una
-   raqueta» en DESIGN.md. */
+/* Raqueta en SVG. Ver «Raqueta» y «Anatomía de una raqueta» en DESIGN.md. */
 .raqueta {
-  --gris-raqueta: color-mix(in srgb, var(--negro) 28%, var(--blanco));
-  /* Grosores: fijos en pantalla mientras el viewBox no cambia. Con la cámara
-     en movimiento ([data-camara]) los calcula AnatomiaRaqueta. */
-  --trazo: 1.5px;
-  --resalte: 8px;
-  --resalte-fino: 3px;
   display: block;
   overflow: visible;
   fill: none;
@@ -14,68 +7,112 @@
   stroke-linejoin: round;
 }
 
-.raqueta * {
+/* ---------- Estilo «linea»: línea negra de 1,5px sobre blanco ---------- */
+
+.linea {
+  --gris-raqueta: color-mix(in srgb, var(--negro) 28%, var(--blanco));
+  --trazo: 1.5px;
+  --resalte: 8px;
+  --resalte-fino: 3px;
+}
+
+.linea * {
   vector-effect: non-scaling-stroke;
 }
 
-.raqueta[data-camara] * {
-  vector-effect: none;
-}
-
-/* La línea */
-.raqueta [data-capa="trazo"] {
+.linea [data-capa="trazo"] {
   stroke: var(--negro);
   stroke-width: var(--trazo);
 }
 
 /* El punto dulce no es una pieza: es una zona, en línea punteada */
-.raqueta [data-capa="trazo"] [data-parte="punto-dulce"] {
+.linea [data-capa="trazo"] [data-parte="punto-dulce"] {
   stroke-dasharray: 2 3;
 }
 
 /* Con una parte resaltada, el resto baja a gris */
-.raqueta[data-resaltando] [data-capa="trazo"] [data-parte]:not([data-resaltada]) {
+.linea[data-resaltando] [data-capa="trazo"] [data-parte]:not([data-resaltada]) {
   stroke: var(--gris-raqueta);
 }
 
-/* El resalte: lima, grueso, debajo de la línea; solo en la parte resaltada */
-.raqueta [data-capa="resalte"] {
+/* El resalte: un marcador lima debajo de la línea, solo en la parte resaltada */
+.linea [data-capa="resalte"] {
   stroke: var(--lima);
   stroke-width: var(--resalte);
 }
 
-.raqueta [data-capa="resalte"] [data-parte] {
+.linea [data-capa="resalte"] [data-parte] {
   opacity: 0;
 }
 
-.raqueta [data-capa="resalte"] [data-parte][data-resaltada] {
+.linea [data-capa="resalte"] [data-parte][data-resaltada] {
   opacity: 1;
 }
 
-/* En las cuerdas el resalte es más fino: si no, 35 líneas juntas se vuelven
+/* En las cuerdas el marcador es más fino: si no, 35 líneas juntas se vuelven
    una mancha lima */
-.raqueta [data-capa="resalte"] [data-parte="encordado"] {
+.linea [data-capa="resalte"] [data-parte="encordado"] {
   stroke-width: var(--resalte-fino);
 }
 
 /* Las zonas cerradas se rellenan de lima */
-.raqueta [data-capa="resalte"] [data-parte="punto-dulce"],
-.raqueta [data-capa="resalte"] [data-parte="antivibrador"],
-.raqueta [data-capa="resalte"] [data-parte="tapa"] {
+.linea [data-capa="resalte"] [data-parte="punto-dulce"],
+.linea [data-capa="resalte"] [data-parte="antivibrador"],
+.linea [data-capa="resalte"] [data-parte="tapa"] {
   fill: var(--lima);
 }
 
+/* ---------- Estilo «inflada»: plástico inflado con contorno negro ---------- */
+
+/* La versión lima de cada parte aparece al resaltarla */
+.inflada [data-lima] {
+  opacity: 0;
+}
+
+.inflada [data-resaltada] [data-lima] {
+  opacity: 1;
+}
+
+/* Con una parte resaltada, el resto se desvanece */
+.inflada[data-resaltando] [data-parte]:not([data-resaltada]) {
+  opacity: 0.35;
+}
+
+/* Las cuerdas crecen desde arriba (verticales) o desde la izquierda
+   (horizontales); el overgrip se enrolla desde la izquierda */
+.inflada [data-cuerda],
+.inflada [data-vuelta] {
+  transform-box: fill-box;
+}
+
+.inflada [data-sentido="vertical"] {
+  transform-origin: 50% 0;
+}
+
+.inflada [data-sentido="horizontal"],
+.inflada [data-vuelta] {
+  transform-origin: 0 50%;
+}
+
+.inflada [data-parte="punto-dulce"] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .raqueta [data-capa="trazo"] [data-parte] {
+  .linea [data-capa="trazo"] [data-parte] {
     transition: stroke 300ms ease;
   }
 
-  .raqueta [data-capa="resalte"] [data-parte] {
+  .linea [data-capa="resalte"] [data-parte],
+  .inflada [data-parte],
+  .inflada [data-lima] {
     transition: opacity 300ms ease;
   }
 
-  /* El punto dulce late suave mientras está resaltado */
-  .raqueta [data-parte="punto-dulce"][data-resaltada] {
+  /* El punto dulce late suave mientras está resaltado (solo transform) */
+  .linea [data-parte="punto-dulce"][data-resaltada],
+  .inflada [data-parte="punto-dulce"][data-resaltada] {
     transform-box: fill-box;
     transform-origin: center;
     animation: latir 1.8s ease-in-out infinite;
