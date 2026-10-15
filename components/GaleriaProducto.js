@@ -3,19 +3,16 @@ import styles from "./GaleriaProducto.module.css";
 
 // Galería de la página de producto, en las celdas de la vitrina: la primera
 // vista grande y las demás de a dos debajo, sin texto encima. Mientras no
-// haya fotos de estudio, una sola vista con el recorte.
+// haya fotos de estudio, una sola celda con el placeholder.
 export default function GaleriaProducto({ producto }) {
-  const vistas = producto.fotos?.length
-    ? producto.fotos.map((foto) => ({ foto }))
-    : [{ recorte: producto.imagen }];
+  const fotos = producto.fotos?.length ? producto.fotos : [null];
 
   return (
     <div className={styles.galeria}>
-      {vistas.map((vista, i) => (
-        <div key={vista.foto ?? vista.recorte ?? i} className={styles.vista}>
+      {fotos.map((foto, i) => (
+        <div key={foto ?? i} className={styles.vista}>
           <FotoVitrina
-            foto={vista.foto}
-            recorte={vista.recorte}
+            foto={foto}
             categoria={producto.categoria}
             alt={
               i === 0

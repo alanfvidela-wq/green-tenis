@@ -5,14 +5,8 @@
   background: var(--estudio);
 }
 
-/* Foto de estudio: trae su fondo y ocupa la celda entera */
-.llena {
-  position: absolute;
-  inset: 0;
-}
-
 /* Caja de producto: del 14% al 86% del ancho y del 26% al 86% del alto.
-   Arriba queda el nombre; abajo, el precio. */
+   Arriba queda el nombre; abajo, el precio. Ahí va la silueta. */
 .caja {
   position: absolute;
   top: 26%;
@@ -21,12 +15,9 @@
   height: 60%;
 }
 
+/* Foto de estudio: trae su fondo y ocupa la celda entera */
 .estudio {
   object-fit: cover;
-}
-
-.recorte {
-  object-fit: contain;
 }
 
 /* Placeholder: la silueta de la categoría, plana y apenas más oscura que el

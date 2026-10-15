@@ -42,30 +42,21 @@ const SILUETAS = {
 
 // La foto de un producto en la vitrina (ver «Vitrina de productos» en
 // DESIGN.md). Llena una celda 4:5 con fondo de estudio y position: relative.
-// 1. Foto de estudio: ya trae el fondo, ocupa toda la celda.
-// 2. Recorte sin fondo (mientras tanto): en la caja de producto, sin sombra.
-// 3. Sin foto: placeholder neutro con la silueta de la categoría.
+// Con foto de estudio, la foto entera (ya trae el fondo). Sin ella, el
+// placeholder neutro con la silueta de la categoría: los recortes no entran
+// en la vitrina porque no tienen la misma luz.
 export default function FotoVitrina({
   foto,
-  recorte,
   categoria,
   alt = "",
   sizes,
   prioridad = false,
   className = "",
 }) {
-  const src = foto ?? recorte;
-
-  if (!src) {
+  if (!foto) {
     return (
       <div className={`${styles.foto} ${className}`}>
-        <svg
-          className={styles.caja}
-          viewBox="0 0 96 100"
-          role={alt ? "img" : undefined}
-          aria-label={alt || undefined}
-          aria-hidden={alt ? undefined : true}
-        >
+        <svg className={styles.caja} viewBox="0 0 96 100" aria-hidden="true">
           <g className={styles.silueta}>
             {SILUETAS[categoria] ?? SILUETAS.accesorios}
           </g>
@@ -76,17 +67,15 @@ export default function FotoVitrina({
 
   return (
     <div className={`${styles.foto} ${className}`}>
-      <div className={foto ? styles.llena : styles.caja}>
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          sizes={sizes}
-          fetchPriority={prioridad ? "high" : undefined}
-          loading={prioridad ? "eager" : undefined}
-          className={foto ? styles.estudio : styles.recorte}
-        />
-      </div>
+      <Image
+        src={foto}
+        alt={alt}
+        fill
+        sizes={sizes}
+        fetchPriority={prioridad ? "high" : undefined}
+        loading={prioridad ? "eager" : undefined}
+        className={styles.estudio}
+      />
     </div>
   );
 }

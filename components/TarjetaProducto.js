@@ -18,7 +18,6 @@ export default function TarjetaProducto({ producto, sizes }) {
       >
         <FotoVitrina
           foto={producto.fotos?.[0]}
-          recorte={producto.imagen}
           categoria={producto.categoria}
           sizes={sizes}
           className={styles.foto}

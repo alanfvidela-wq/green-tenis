@@ -350,21 +350,25 @@ de la otra, tienen que parecer la misma foto con distinto producto.
 
 ### Mientras tanto
 
-- **Recortes.** Hoy cada producto tiene un recorte sin fondo (`imagen`, ver
-  «Recortes»). En la vitrina va sobre el fondo de estudio, dentro de la misma
-  caja de producto y sin sombra: cumple el fondo, la proporción y el
-  centrado; la luz todavía no es pareja porque vienen de fuentes distintas.
-- **Placeholder.** Un producto sin foto de estudio ni recorte muestra el
-  placeholder de `FotoVitrina`, que respeta la especificación: celda 4:5 en
-  `--estudio` y la silueta plana de su categoría (mate, bombilla, termo,
-  paquete o lata) en tinta al 8%, centrada en la caja de producto. Sin
-  texto, sin ícono de imagen rota, sin líneas ni degradados.
+Hasta que estén las fotos de estudio, **toda la vitrina muestra el
+placeholder**: las grillas, «Lo que más sale» y la galería de producto. Los
+recortes no entran en la vitrina aunque existan: cada uno viene de una fuente
+y una luz distintas, y la vitrina tiene que verse pareja.
+
+- **Placeholder.** `FotoVitrina` dibuja una celda 4:5 en `--estudio` con la
+  silueta plana de la categoría (mate, bombilla, termo, paquete o lata) en
+  tinta al 8%, centrada en la caja de producto. Sin texto, sin ícono de
+  imagen rota, sin líneas ni degradados. Es decorativo (`aria-hidden`): el
+  nombre ya está en la celda.
+- **Cuando llegan las fotos.** Se cargan en `fotos` de cada producto y
+  reemplazan al placeholder solas, producto por producto. Sin stock, la
+  silueta se lava igual que una foto.
 
 ### Recortes
 
-Los recortes son fotos reales, al nivel de las de la home. Además de la
-vitrina, van en el encabezado de cada categoría y en «Qué hay en el almacén»
-(una foto representativa por categoría, en `CATEGORIAS`).
+Los recortes son fotos reales, al nivel de las de la home. Van fuera de la
+vitrina: en el encabezado de cada categoría y en «Qué hay en el almacén» (una
+foto representativa por categoría, en `CATEGORIAS`).
 
 - **Origen.** Productos de marca: foto del modelo, de la marca o de una tienda
   conocida (Carrefour, Jumbo, Mercado Libre). Artesanales: foto del tipo de
@@ -375,9 +379,9 @@ vitrina, van en el encabezado de cada categoría y en «Qué hay en el almacén�
   fondo, limpia restos sueltos, recorta al contorno y centra el producto en
   1000×1000 con fondo transparente, todos a la misma escala (caja de 820px) y
   con el mismo margen. Sale WebP en `public/productos/<slug>.webp`.
-- **Fuera de la vitrina.** `FotoProducto` usa `next/image` con `fill` y
+- **En pantalla.** `FotoProducto` usa `next/image` con `fill` y
   `object-fit: contain`, y le pone la sombra de contacto (`drop-shadow` en
-  tinta, muy suave). En la vitrina, `FotoVitrina` los pone sin sombra.
+  tinta, muy suave).
 
 ## Fotos y video
 
