@@ -1,9 +1,9 @@
 @AGENTS.md
 # Proyecto "green."
 
-E-commerce de "green.", una tienda de tenis: raquetas, zapatillas, pelotas, cuerdas y grips,
-bolsos y ropa. Vende productos de marcas reales. Mecánica principal (pendiente, va en un
-pedido aparte): "Armá tu raqueta", un armador por pasos.
+E-commerce de "green.", una tienda de tenis: raquetas, pelotas, cuerdas y grips, y bolsos,
+más combos armados por la tienda con descuento. Vende productos de marcas reales. Mecánica
+principal (pendiente, va en un pedido aparte): "Armá tu raqueta", un armador por pasos.
 
 El sistema de diseño está en DESIGN.md: blanco y negro con un único acento lima, una
 grotesca suiza en un solo peso y la vitrina de productos sobre fondo de estudio.
