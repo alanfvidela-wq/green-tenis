@@ -74,7 +74,7 @@ negro sobre hormigón 16,7:1.
 | Rol   | Fuente         | Uso                                                        |
 | ----- | -------------- | ---------------------------------------------------------- |
 | Todo  | Inter Tight    | Un solo peso (400): titulares, texto, navegación y botones. El 800 es solo de la excepción de la anatomía |
-| Datos | JetBrains Mono | 400: precios, talles, contadores y la ficha técnica        |
+| Datos | JetBrains Mono | 400: precios, contadores y la ficha técnica                |
 
 Inter Tight es la alternativa gratuita (Google Fonts) a una grotesca suiza
 como Whyte: compacta, neutra y con buen color a tamaño display. JetBrains Mono
@@ -129,7 +129,7 @@ radio es del marco, no de cada celda.
 
 ## Header
 
-- **Sin línea.** Wordmark a la izquierda, las seis categorías en mayúsculas y
+- **Sin línea.** Wordmark a la izquierda, las cuatro categorías en mayúsculas y
   el carrito a la derecha.
 - **Carrito**: píldora «Carrito (0)» con borde de 1px negro. Sobre el video,
   píldora lima. La cantidad se lee en el servidor (`lib/carrito.js`).
@@ -426,19 +426,16 @@ la otra, tienen que parecer la misma foto con distinto producto.
   precio: nada del producto entra en esas franjas.
 - **Encuadre por categoría**:
   - Raquetas: de frente, verticales, con la cabeza arriba y sin funda.
-  - Zapatillas: el pie derecho de perfil, del lado de afuera, con la punta a la
-    derecha.
   - Pelotas: el tubo cerrado, parado, con una pelota suelta al lado.
   - Cuerdas y grips: el set o el rollo de frente, en su envase.
   - Bolsos: parados, de frente, con los cierres cerrados.
-  - Ropa: en maniquí invisible, de frente.
 - **Misma luz**: una fuente grande y difusa arriba a la izquierda (a 45°),
   relleno suave desde la derecha, 5000 K, la misma exposición para todo el
   catálogo. Solo la sombra natural, corta y suave, donde el producto apoya.
 - **Misma cámara**: equivalente a 100 mm, a la altura del centro del producto.
 - **Vistas**: la primera es la de catálogo. Se pueden sumar vistas de detalle
-  para la galería (el puente de la raqueta, la suela), con la misma luz, el
-  mismo fondo y la misma caja.
+  para la galería (el puente de la raqueta, el cierre del bolso), con la misma
+  luz, el mismo fondo y la misma caja.
 - **Archivos**: `public/productos/estudio/<slug>-1.webp`, `-2.webp`, etc.,
   listados en `fotos` del producto en `lib/productos.js`. Con `fotos` cargadas,
   `FotoVitrina` las usa enteras (`object-fit: cover`).
@@ -447,8 +444,8 @@ la otra, tienen que parecer la misma foto con distinto producto.
 
 Hasta que estén las fotos de estudio, **toda la vitrina muestra el
 placeholder**: `FotoVitrina` dibuja la celda 4:5 en `--estudio` con la silueta
-plana de la categoría (raqueta, zapatilla, tubo de pelotas, rollo de cuerda,
-bolso raquetero o remera) en negro al 6%, centrada en la caja de producto. Sin
+plana de la categoría (raqueta, tubo de pelotas, rollo de cuerda o bolso
+raquetero) en negro al 6%, centrada en la caja de producto. Sin
 texto, sin ícono de imagen rota, sin líneas ni degradados. Es decorativo
 (`aria-hidden`): el nombre ya está en la celda. Las fotos reemplazan al
 placeholder solas, producto por producto. Sin stock, la silueta se lava igual

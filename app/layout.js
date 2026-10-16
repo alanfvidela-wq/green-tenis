@@ -11,7 +11,7 @@ const texto = Inter_Tight({
   weight: ["400", "800"],
 });
 
-// Voz técnica para precios, talles y la ficha
+// Voz técnica para precios, contadores y la ficha
 const datos = JetBrains_Mono({
   variable: "--font-datos",
   subsets: ["latin"],
@@ -24,7 +24,7 @@ export const metadata = {
     template: "%s | green.",
   },
   description:
-    "Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de tenis.",
+    "Raquetas, pelotas, cuerdas, grips y bolsos de tenis.",
 };
 
 export default function RootLayout({ children }) {

@@ -176,7 +176,7 @@ button {
   color: var(--negro);
 }
 
-/* Datos chicos: precios, talles, contadores */
+/* Datos chicos: precios, contadores */
 .dato {
   font-family: var(--fuente-datos);
   font-size: var(--t-dato);

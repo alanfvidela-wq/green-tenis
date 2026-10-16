@@ -32,8 +32,8 @@ export default function Hero() {
           Todo para jugar al tenis
         </h1>
         <p className={styles.frase}>
-          Raquetas, zapatillas, pelotas, cuerdas, bolsos y ropa de las marcas
-          que ya conocés.
+          Raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
+          conocés.
         </p>
         <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>
           Ver raquetas

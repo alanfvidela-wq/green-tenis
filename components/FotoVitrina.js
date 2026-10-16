@@ -16,13 +16,6 @@ const SILUETAS = {
       <rect x="44.5" y="70" width="7" height="30" rx="1.5" />
     </>
   ),
-  // El pie derecho de perfil, con la punta a la derecha
-  zapatillas: (
-    <>
-      <path d="M4 64c0-12 3-22 10-27l15-7c4-2 8-1 10 3l12 13c6 5 18 7 28 9 11 2 17 6 17 12v5H4Z" />
-      <rect x="2" y="71" width="94" height="7" rx="3.5" />
-    </>
-  ),
   // El tubo cerrado, parado, con una pelota al lado
   pelotas: (
     <>
@@ -44,10 +37,6 @@ const SILUETAS = {
       <path d="M38 16V8q0-8 10-8t10 8v8h-5V9q0-4-5-4t-5 4v7Z" />
       <rect x="22" y="14" width="52" height="86" rx="18" />
     </>
-  ),
-  // Una remera de frente
-  ropa: (
-    <path d="M30 6 40 2q8 6 16 0l10 4 28 16-10 20-12-6v64H24V36l-12 6L2 22Z" />
   ),
 };
 
