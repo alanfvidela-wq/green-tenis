@@ -20,4 +20,4 @@ grotesca suiza en un solo peso y la vitrina de productos sobre fondo de estudio.
 - Server Components por defecto; "use client" solo donde haya interactividad.
 - Precios, descuentos y stock siempre se calculan y validan en el servidor.
 - Precios en ARS como enteros.
-- Después de cada commit, hacé git push a la rama actual. Nunca hagas push a main sin que te lo pida.
+- Después de cada commit, hacé git push a main (Vercel publica automáticamente).
