@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorVariante from "@/components/SelectorVariante";
 import { getFicha } from "@/lib/fichas";
-import { getCategoria, getProductoPorSlug } from "@/lib/productos";
+import { getCategoria, getProductoPorSlug, tienePreciosDistintos } from "@/lib/productos";
 import styles from "../../detalle.module.css";
 
 export async function generateMetadata({ params }) {
@@ -56,7 +56,12 @@ export default async function PaginaProducto({ params }) {
             </dl>
           </section>
 
-          <SelectorVariante variantes={producto.variantes} />
+          <SelectorVariante
+            variantes={producto.variantes}
+            elegir={producto.tipo === "raqueta" ? "grip y peso" : null}
+            precioBase={producto.precioBase}
+            preciosDistintos={tienePreciosDistintos(producto)}
+          />
         </div>
       </div>
     </main>

@@ -261,8 +261,10 @@ venden como un producto más, con las mismas piezas.
   - el precio del combo y, debajo en grafito, cuánto sale por separado y cuánto
     se ahorra;
   - un grupo de opciones por cada producto a elegir, con las mismas píldoras
-    que el selector de producto (`OpcionesVariante`);
-  - «Agregar al carrito».
+    que el selector de producto (`OpcionesVariante`). Ninguno arranca elegido:
+    hasta que se elige todo, el precio es el «desde», debajo dice «10 % menos
+    que por separado» y, bajo el botón, qué falta elegir;
+  - «Agregar al carrito», apagado hasta que no falte nada.
 
 ## Componente `Raqueta`
 
@@ -503,7 +505,12 @@ WebP (el primer cuadro). El detalle y el control del loop están en `MEDIOS.md`.
   mayúsculas, el nombre a `--t-titulo-2`, la descripción, la **ficha técnica**
   (filas separadas por líneas de 1px, el dato en mono), el precio y el
   selector: opciones en píldora con borde de 1px, la activa en lima y las que
-  no tienen stock en hormigón. «Agregar al carrito» es la píldora lima.
+  no tienen stock en hormigón. «Agregar al carrito» es la píldora lima. En las
+  raquetas no hay grip ni peso elegidos de entrada: hasta que el cliente elige,
+  el precio es el «desde» (sin «desde» si todas las opciones valen lo mismo),
+  el botón está apagado y debajo dice «Falta elegir grip y peso». Los demás
+  productos arrancan con la primera opción con stock. El stock va en singular
+  o plural: «¡Queda 1!», «¡Quedan 3!».
 - **Combos y combo**: el listado y la página de un combo, con las piezas de la
   categoría y del producto. Ver «Combos».
 - **Carga**: «Cargando…» y la vitrina vacía.

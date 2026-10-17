@@ -1,6 +1,7 @@
 import Link from "next/link";
 import GrillaProductos from "@/components/GrillaProductos";
 import { getCombos } from "@/lib/combos";
+import { contar } from "@/lib/formato";
 import styles from "../listado.module.css";
 
 const DESCRIPCION =
@@ -22,7 +23,7 @@ export default async function PaginaCombos() {
         <h1 className={styles.titulo}>Combos</h1>
         <p className={styles.descripcion}>{DESCRIPCION}</p>
         <p className={`dato ${styles.cuenta}`}>
-          {combos.length} {combos.length === 1 ? "combo" : "combos"}
+          {contar(combos.length, "combo", "combos")}
         </p>
       </header>
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import FotoVitrina from "./FotoVitrina";
-import { formatearPrecio } from "@/lib/formato";
+import { contar, formatearPrecio } from "@/lib/formato";
 import { comboTieneStock, comboTienePreciosDistintos } from "@/lib/combos";
 import styles from "./TarjetaProducto.module.css";
 
@@ -25,7 +25,7 @@ export default function TarjetaCombo({ combo, sizes }) {
         <div className={styles.rotulo}>
           <h3 className={styles.nombre}>{combo.nombre}</h3>
           <p className={styles.variante}>
-            {combo.items.length} productos, {combo.descuentoPct} % menos
+            {contar(combo.items.length, "producto", "productos")}, {combo.descuentoPct} % menos
           </p>
         </div>
         <div className={styles.pie}>

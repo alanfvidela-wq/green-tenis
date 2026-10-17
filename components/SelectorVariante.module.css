@@ -11,6 +11,13 @@
   line-height: 1;
 }
 
+/* «desde» va chico y en grafito: el número es el que manda */
+.desde {
+  color: var(--grafito);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-entrada);
+}
+
 .agregar {
   width: 100%;
 }

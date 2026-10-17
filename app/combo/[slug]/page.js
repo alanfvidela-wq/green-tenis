@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorCombo from "@/components/SelectorCombo";
-import { getComboPorSlug } from "@/lib/combos";
+import { comboTienePreciosDistintos, getComboPorSlug } from "@/lib/combos";
 import styles from "../../detalle.module.css";
 
 export async function generateMetadata({ params }) {
@@ -73,6 +73,8 @@ export default async function PaginaCombo({ params }) {
             items={combo.items}
             precios={combo.precios}
             descuentoPct={combo.descuentoPct}
+            precioDesde={combo.precioDesde}
+            preciosDistintos={comboTienePreciosDistintos(combo)}
           />
         </div>
       </div>

@@ -9,6 +9,7 @@ export function alcanza(variante, cantidad = 1) {
 function textoStock(stock) {
   if (stock === null) return "En stock";
   if (stock === 0) return "Sin stock";
+  if (stock === 1) return "¡Queda 1!";
   if (stock <= 3) return `¡Quedan ${stock}!`;
   return "En stock";
 }

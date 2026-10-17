@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import GrillaProductos from "@/components/GrillaProductos";
+import { contar } from "@/lib/formato";
 import { getCategoria, getProductosPorCategoria } from "@/lib/productos";
 import styles from "../../listado.module.css";
 
@@ -29,7 +30,7 @@ export default async function PaginaCategoria({ params }) {
         <h1 className={styles.titulo}>{categoria.nombre}</h1>
         <p className={styles.descripcion}>{categoria.descripcion}</p>
         <p className={`dato ${styles.cuenta}`}>
-          {productos.length} {productos.length === 1 ? "producto" : "productos"}
+          {contar(productos.length, "producto", "productos")}
         </p>
       </header>
 

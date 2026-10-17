@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getCantidadCarrito } from "@/lib/carrito";
+import { contar } from "@/lib/formato";
 import { CATEGORIAS } from "@/lib/productos";
 import CabeceraFlotante from "./CabeceraFlotante";
 import Logo from "./Logo";
@@ -25,7 +26,7 @@ export default async function Header() {
         <Link
           href="/carrito"
           className={styles.carrito}
-          aria-label={`Carrito, ${cantidad} ${cantidad === 1 ? "producto" : "productos"}`}
+          aria-label={`Carrito, ${contar(cantidad, "producto", "productos")}`}
         >
           Carrito ({cantidad})
         </Link>

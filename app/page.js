@@ -8,6 +8,7 @@ import {
   PASOS_ANATOMIA,
   TITULO_ANATOMIA,
 } from "@/lib/anatomia";
+import { contar } from "@/lib/formato";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
 import styles from "./page.module.css";
 
@@ -60,7 +61,7 @@ export default async function Home() {
                       {categoria.descripcion}
                     </span>
                     <span className={`dato ${styles.categoriaCantidad}`}>
-                      {cantidad} productos
+                      {contar(cantidad, "producto", "productos")}
                     </span>
                   </Link>
                 </li>
