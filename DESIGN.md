@@ -436,9 +436,10 @@ la otra, tienen que parecer la misma foto con distinto producto.
 - **Vistas**: la primera es la de catálogo. Se pueden sumar vistas de detalle
   para la galería (el puente de la raqueta, el cierre del bolso), con la misma
   luz, el mismo fondo y la misma caja.
-- **Archivos**: `public/productos/estudio/<slug>-1.webp`, `-2.webp`, etc.,
-  listados en `fotos` del producto en `lib/productos.js`. Con `fotos` cargadas,
-  `FotoVitrina` las usa enteras (`object-fit: cover`).
+- **Archivos**: `estudio/<slug>-1.webp`, `-2.webp`, etc., en el bucket
+  `productos` de Supabase Storage, y una fila por foto en la tabla `fotos` (la
+  ruta y el orden). Con fotos cargadas, `FotoVitrina` las usa enteras
+  (`object-fit: cover`).
 
 ### Mientras tanto: placeholder
 

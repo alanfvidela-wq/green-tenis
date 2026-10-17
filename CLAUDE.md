@@ -11,7 +11,8 @@ grotesca suiza en un solo peso y la vitrina de productos sobre fondo de estudio.
 ## Stack
 - Next.js con App Router, JavaScript (sin TypeScript), sin Tailwind.
 - Estilos: CSS Modules + variables CSS en app/globals.css.
-- Datos simulados en lib/ con funciones async; después se migra a Supabase.
+- Datos en Supabase (Postgres): lib/ los lee con funciones async. El esquema está en
+  supabase/migrations/ y se aplica a mano en el SQL Editor.
 
 ## Cómo trabajar
 - Trabajá de forma autónoma, sin pedir confirmación en cada paso. Respuestas breves.

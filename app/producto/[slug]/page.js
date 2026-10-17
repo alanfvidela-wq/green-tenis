@@ -22,7 +22,7 @@ export default async function PaginaProducto({ params }) {
   if (!producto) notFound();
 
   const categoria = getCategoria(producto.categoria);
-  const ficha = [["Marca", producto.marca], ...getFicha(producto.slug)];
+  const ficha = [["Marca", producto.marca], ...getFicha(producto)];
 
   return (
     <main>
