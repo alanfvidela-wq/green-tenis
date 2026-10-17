@@ -1,3 +1,6 @@
+/* Página de un producto o de un combo: la galería a la izquierda y, a la
+   derecha, la marca, el nombre, la descripción, la ficha y el selector */
+
 .detalle {
   display: grid;
   grid-template-columns: 1fr;
@@ -68,4 +71,13 @@
 .fila dd {
   font-family: var(--fuente-datos);
   font-size: 0.875rem;
+}
+
+/* En la ficha de un combo, cada producto lleva a su página */
+.enlace {
+  text-underline-offset: 3px;
+}
+
+.enlace:hover {
+  text-decoration: underline;
 }

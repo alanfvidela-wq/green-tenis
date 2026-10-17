@@ -1,0 +1,69 @@
+.fieldset {
+  border: none;
+}
+
+.legend {
+  margin-bottom: var(--espacio-3);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--espacio-2);
+}
+
+/* Cada opción es una píldora con borde de 1px; la activa, lima */
+.opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: var(--espacio-2) var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  line-height: 1.2;
+  text-align: left;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.opcion:hover:not(:disabled) {
+  border-color: var(--lima);
+  background: var(--lima);
+}
+
+/* Sin stock: hormigón, tachada */
+.opcion:disabled {
+  border-color: var(--hormigon);
+  background: var(--hormigon);
+  color: var(--grafito);
+  cursor: not-allowed;
+}
+
+.opcion:disabled .opcionNombre {
+  text-decoration: line-through;
+}
+
+.activa,
+.activa:hover:not(:disabled) {
+  border-color: var(--lima);
+  background: var(--lima);
+}
+
+.opcionStock {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: 0.75rem;
+}
+
+.activa .opcionStock,
+.pocas {
+  color: var(--negro);
+}

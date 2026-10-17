@@ -129,8 +129,8 @@ radio es del marco, no de cada celda.
 
 ## Header
 
-- **Sin línea.** Wordmark a la izquierda, las cuatro categorías en mayúsculas y
-  el carrito a la derecha.
+- **Sin línea.** Wordmark a la izquierda, las cuatro categorías y «Combos» en
+  mayúsculas, y el carrito a la derecha.
 - **Carrito**: píldora «Carrito (0)» con borde de 1px negro. Sobre el video,
   píldora lima. La cantidad se lee en el servidor (`lib/carrito.js`).
 - **Fijo y flotante.** En la home arranca transparente sobre el video, con el
@@ -179,8 +179,9 @@ donde el producto es lo único con color y todo lo demás se dice en voz baja.
 Lo que choca con twotwo (radios, color de las líneas) sigue a twotwo.
 
 **Dónde va.** La grilla de cada categoría y cualquier listado de productos
-(`GrillaProductos` + `TarjetaProducto`), «Lo que más sale» en la home y la
-galería de `/producto/[slug]` (`GaleriaProducto`). La foto de cada celda la
+(`GrillaProductos` + `TarjetaProducto`), el listado de combos
+(`TarjetaCombo`), «Lo que más sale» en la home y la galería de
+`/producto/[slug]` y `/combo/[slug]` (`GaleriaProducto`). La foto de cada celda la
 pone `FotoVitrina`. La pantalla de carga dibuja la misma grilla vacía.
 
 ### La grilla
@@ -229,6 +230,39 @@ del mismo marco de 1px y 16px de radio, sin texto encima. La primera vista va
 grande; si hay más, van de a dos debajo. En escritorio queda fija mientras se
 lee la ficha y nunca es más alta que la pantalla. Acá el producto no se apaga
 aunque no haya stock: eso lo dice el selector de opciones, al lado.
+
+## Combos
+
+Kits armados por la tienda («Kit para arrancar»: raqueta, tubo de pelotas y
+overgrip) con un descuento sobre la suma de sus productos. Se muestran y se
+venden como un producto más, con las mismas piezas.
+
+- **Precio y stock** (`lib/combos.js`): se calculan en el servidor a partir de
+  los ítems. El precio es la suma menos el descuento redondeado para abajo (la
+  misma cuenta que hace `crear_pedido` en la base). El stock es cuántos combos
+  alcanzan con el ítem más escaso. Si un ítem tiene variantes (grip y peso), el
+  cliente elige una: el precio de cada combinación llega calculado y la página
+  solo muestra el que corresponde. Un combo con algún producto inactivo no se
+  muestra.
+- **La celda** (`TarjetaCombo`): la misma de la vitrina. La línea de la
+  variante dice cuántos productos trae y el descuento («3 productos, 10 %
+  menos»), y el precio es el del combo («desde» si cambia con las opciones). El
+  descuento va en el texto, nunca en un sello sobre la foto. Sin foto propia, el
+  placeholder es el de su primer producto.
+- **El listado** (`/combos`): como una categoría. Migas, «Combos» a
+  `--t-titulo-1`, la bajada, la cantidad y la vitrina. Va en el header y en el
+  footer, después de las categorías.
+- **La página** (`/combo/[slug]`): como la de producto. La galería muestra las
+  fotos del combo, si tiene, y después la primera de cada producto. A la
+  derecha:
+  - «Combo» en mayúsculas, el nombre y la descripción;
+  - la ficha «Qué trae»: una fila por producto, que lleva a su página, con la
+    cantidad y la variante («1 × Tubo x3») o «a elección»;
+  - el precio del combo y, debajo en grafito, cuánto sale por separado y cuánto
+    se ahorra;
+  - un grupo de opciones por cada producto a elegir, con las mismas píldoras
+    que el selector de producto (`OpcionesVariante`);
+  - «Agregar al carrito».
 
 ## Componente `Raqueta`
 
@@ -470,6 +504,8 @@ WebP (el primer cuadro). El detalle y el control del loop están en `MEDIOS.md`.
   (filas separadas por líneas de 1px, el dato en mono), el precio y el
   selector: opciones en píldora con borde de 1px, la activa en lima y las que
   no tienen stock en hormigón. «Agregar al carrito» es la píldora lima.
+- **Combos y combo**: el listado y la página de un combo, con las piezas de la
+  categoría y del producto. Ver «Combos».
 - **Carga**: «Cargando…» y la vitrina vacía.
 - **Error y 404**: tipográficos, sin dibujos. El código gigante, un título que
   dice qué pasó («Página no encontrada», «Algo salió mal») y la píldora para
@@ -478,7 +514,7 @@ WebP (el primer cuadro). El detalle y el control del loop están en `MEDIOS.md`.
 ## Footer
 
 Banda negra a todo el ancho. El wordmark gigante en blanco con su pelota lima,
-las categorías en mayúsculas y los legales a 13px. Sin líneas de
+las categorías y «Combos» en mayúsculas, y los legales a 13px. Sin líneas de
 color ni íconos sociales.
 
 ## Voz

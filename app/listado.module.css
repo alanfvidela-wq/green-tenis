@@ -1,4 +1,5 @@
-/* Encabezado blanco: migas, el nombre gigante, la bajada y la cantidad */
+/* Encabezado de los listados (categoría, combos): migas, el nombre gigante,
+   la bajada y la cantidad */
 .encabezado {
   display: flex;
   flex-direction: column;
@@ -20,4 +21,10 @@
 
 .cuenta {
   color: var(--grafito);
+}
+
+/* Listado sin nada para mostrar */
+.vacio {
+  color: var(--grafito);
+  font-size: var(--t-entrada);
 }

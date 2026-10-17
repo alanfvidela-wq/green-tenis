@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import GrillaProductos from "@/components/GrillaProductos";
 import { getCategoria, getProductosPorCategoria } from "@/lib/productos";
-import styles from "./page.module.css";
+import styles from "../../listado.module.css";
 
 export async function generateMetadata({ params }) {
   const { categoria: slug } = await params;

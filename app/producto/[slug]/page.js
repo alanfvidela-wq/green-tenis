@@ -4,7 +4,7 @@ import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorVariante from "@/components/SelectorVariante";
 import { getFicha } from "@/lib/fichas";
 import { getCategoria, getProductoPorSlug } from "@/lib/productos";
-import styles from "./page.module.css";
+import styles from "../../detalle.module.css";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;

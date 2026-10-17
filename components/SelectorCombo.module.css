@@ -1,0 +1,15 @@
+.precios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+/* Cuánto sale por separado y cuánto se ahorra, en grafito; los montos en mono */
+.ahorro {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+.monto {
+  font-family: var(--fuente-datos);
+}

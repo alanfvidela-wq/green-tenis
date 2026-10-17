@@ -13,12 +13,13 @@ export default async function Header() {
       <div className={styles.contenido}>
         <Logo className={styles.logo} />
 
-        <nav className={styles.nav} aria-label="Categorías">
+        <nav className={styles.nav} aria-label="Secciones">
           {CATEGORIAS.map((categoria) => (
             <Link key={categoria.slug} href={`/categoria/${categoria.slug}`}>
               {categoria.nombre}
             </Link>
           ))}
+          <Link href="/combos">Combos</Link>
         </nav>
 
         <Link

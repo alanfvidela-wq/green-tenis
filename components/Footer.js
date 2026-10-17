@@ -9,7 +9,7 @@ export default function Footer() {
       <div className={styles.contenido}>
         <Logo className={styles.logo} />
 
-        <nav aria-label="Categorías del pie">
+        <nav aria-label="Secciones del pie">
           <ul className={styles.lista}>
             {CATEGORIAS.map((categoria) => (
               <li key={categoria.slug}>
@@ -18,6 +18,9 @@ export default function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link href="/combos">Combos</Link>
+            </li>
           </ul>
         </nav>
 
