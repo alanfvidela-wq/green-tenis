@@ -190,7 +190,7 @@
   text-transform: uppercase;
 }
 
-.resumen dl {
+.totales {
   border-top: 1px solid var(--negro);
   transition: opacity var(--transicion);
 }

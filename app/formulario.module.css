@@ -1,0 +1,82 @@
+/* Páginas de cuenta y formularios (ingresar, registrarme, checkout): una
+   columna angosta, etiquetas en mayúsculas y campos en píldora con borde de
+   1px, como las opciones del selector */
+
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  max-width: 30rem;
+  padding-top: var(--espacio-10);
+}
+
+.titulo {
+  font-size: var(--t-titulo-2);
+  line-height: 1.05;
+}
+
+.bajada {
+  color: var(--grafito);
+  font-size: var(--t-entrada);
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  margin-top: var(--espacio-4);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.etiqueta {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.entrada {
+  min-height: 48px;
+  padding: 0 var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  color: var(--negro);
+  font: inherit;
+}
+
+.entrada:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 2px;
+}
+
+.ayuda {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+/* Lo que salió mal: en negro, sin color, con una línea al costado */
+.error {
+  padding-left: var(--espacio-2);
+  border-left: 1px solid var(--negro);
+  font-size: var(--t-dato);
+}
+
+.enviar {
+  width: 100%;
+}
+
+.alternativa {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+.alternativa a {
+  color: var(--negro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

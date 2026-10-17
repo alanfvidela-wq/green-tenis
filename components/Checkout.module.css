@@ -1,0 +1,60 @@
+/* El checkout usa el armado del carrito (dos columnas, resumen fijo a la
+   derecha); acá va lo propio: los datos de quien compra y las filas compactas
+   del resumen */
+
+.datos {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-4);
+}
+
+.cuenta {
+  color: var(--grafito);
+}
+
+.email {
+  color: var(--negro);
+}
+
+.lineas {
+  border-top: 1px solid var(--negro);
+  list-style: none;
+}
+
+.linea {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+  font-size: 0.875rem;
+}
+
+.detalle {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+.problema {
+  margin-top: var(--espacio-1);
+  padding-left: var(--espacio-2);
+  border-left: 1px solid var(--negro);
+  font-size: var(--t-dato);
+}
+
+.monto {
+  font-family: var(--fuente-datos);
+  white-space: nowrap;
+}
+
+.editar {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  text-underline-offset: 3px;
+}
+
+.editar:hover {
+  text-decoration: underline;
+}

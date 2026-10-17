@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import FotoVitrina from "./FotoVitrina";
+import Totales from "./Totales";
 import { useCarrito } from "@/hooks/useCarrito";
 import { useCotizacion } from "@/hooks/useCotizacion";
 import { formatearPrecio } from "@/lib/formato";
@@ -132,24 +133,7 @@ export default function Carrito() {
         <h2 id="titulo-resumen" className={styles.resumenTitulo}>
           Resumen
         </h2>
-        {cotizacion && (
-          <dl className={alDia ? undefined : styles.viejo}>
-            <div className={styles.fila}>
-              <dt>Subtotal</dt>
-              <dd>{formatearPrecio(cotizacion.lista)}</dd>
-            </div>
-            {cotizacion.descuento > 0 && (
-              <div className={styles.fila}>
-                <dt>Descuento de combos</dt>
-                <dd>−{formatearPrecio(cotizacion.descuento)}</dd>
-              </div>
-            )}
-            <div className={`${styles.fila} ${styles.total}`}>
-              <dt>Total</dt>
-              <dd>{formatearPrecio(cotizacion.total)}</dd>
-            </div>
-          </dl>
-        )}
+        {cotizacion && <Totales cotizacion={cotizacion} alDia={alDia} />}
         {puedePagar ? (
           <Link href="/checkout" className={`boton ${styles.pagar}`}>
             Ir a pagar

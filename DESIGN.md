@@ -130,7 +130,8 @@ radio es del marco, no de cada celda.
 ## Header
 
 - **Sin línea.** Wordmark a la izquierda, las cuatro categorías y «Combos» en
-  mayúsculas, y el carrito a la derecha.
+  mayúsculas, y a la derecha «Mi cuenta» (un link más, que lleva a
+  `/mis-pedidos`) y el carrito. El header no lee la sesión.
 - **Carrito**: píldora «Carrito (0)» con borde de 1px negro. Sobre el video,
   píldora lima. La cantidad sale del carrito guardado en el navegador
   (`BotonCarrito`, con `useCarrito`); hasta leerlo dice solo «Carrito».
@@ -291,6 +292,23 @@ venden como un producto más, con las mismas piezas.
   subtotal, descuento de combos y total en filas de 1px, y «Ir a pagar» (lima),
   apagado mientras se recalcula o si alguna línea tiene un problema.
 - **Vacío**: «Tu carrito está vacío» y la píldora «Ver raquetas».
+
+## Cuenta
+
+- **Con email y contraseña** (Supabase Auth, sin confirmación por mail: al
+  crear la cuenta ya queda la sesión iniciada). La contraseña tiene al menos 8
+  caracteres; lo controla el formulario y también Supabase.
+- **Rutas protegidas**: `/checkout` y `/mis-pedidos`. Sin sesión, llevan a
+  `/ingresar?siguiente=<ruta>` y, al ingresar o crear la cuenta, se vuelve ahí.
+  El carrito no se toca: vive en el navegador.
+- **Ingresar y crear cuenta** (`/ingresar`, `/registrarme`): una columna
+  angosta con el título a `--t-titulo-2`, una bajada que dice para qué («Para
+  terminar la compra, ingresá con tu cuenta») y el formulario: etiquetas en
+  mayúsculas a 13px y campos en píldora con borde de 1px, como las opciones.
+  Los errores van en negro con una línea de 1px al costado, igual que los
+  problemas del carrito. Debajo, el link a la otra página.
+- **Cerrar sesión**: en `/mis-pedidos`, con una píldora blanca
+  (`.boton-secundario`).
 
 ## Componente `Raqueta`
 

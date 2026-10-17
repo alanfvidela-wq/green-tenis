@@ -20,7 +20,12 @@ export default function Header() {
           <Link href="/combos">Combos</Link>
         </nav>
 
-        <BotonCarrito className={styles.carrito} />
+        <div className={styles.acciones}>
+          <Link href="/mis-pedidos" className={styles.cuenta}>
+            Mi cuenta
+          </Link>
+          <BotonCarrito className={styles.carrito} />
+        </div>
       </div>
     </CabeceraFlotante>
   );
