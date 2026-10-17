@@ -1,6 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import { useCarrito } from "@/hooks/useCarrito";
 import { formatearPrecio } from "@/lib/formato";
 import OpcionesVariante, { alcanza } from "./OpcionesVariante";
 import base from "./SelectorVariante.module.css";
@@ -9,24 +11,41 @@ import styles from "./SelectorCombo.module.css";
 const listaNombres = new Intl.ListFormat("es", { type: "conjunction" });
 
 // El precio y las opciones de un combo. Los ítems a elegir arrancan sin nada
-// elegido: hasta que se elige todo se ve el precio «desde». Los precios
-// llegan calculados del servidor para cada combinación de opciones (ver
-// lib/combos.js): acá solo se elige cuál mostrar.
+// elegido: hasta que se elige todo se ve el precio «desde» y no se puede
+// agregar. Los precios llegan calculados del servidor para cada combinación
+// de opciones (ver lib/combos.js): acá solo se elige cuál mostrar.
 export default function SelectorCombo({
+  comboId,
   items,
   precios,
   descuentoPct,
   precioDesde,
   preciosDistintos = false,
 }) {
+  const { agregarCombo } = useCarrito();
   const aElegir = items.filter((item) => item.elige);
   const [elegidas, setElegidas] = useState({});
+  const [agregado, setAgregado] = useState(false);
   const faltan = aElegir.filter((item) => !elegidas[item.id]);
   const elegido =
     faltan.length === 0 ? precios[aElegir.map((item) => elegidas[item.id]).join(",")] : null;
   const agotado = items.some(
     (item) => !item.variantes.some((v) => alcanza(v, item.cantidad)),
   );
+
+  let nota = null;
+  if (agotado) nota = null;
+  else if (faltan.length > 0) {
+    nota = `Falta elegir: ${listaNombres.format(
+      faltan.map((item) => `${item.producto.marca} ${item.producto.nombre}`),
+    )}.`;
+  } else if (agregado) {
+    nota = (
+      <>
+        Agregado al carrito. <Link href="/carrito">Ver carrito</Link>
+      </>
+    );
+  }
 
   return (
     <div className={base.selector}>
@@ -53,20 +72,27 @@ export default function SelectorCombo({
           variantes={item.variantes}
           cantidad={item.cantidad}
           elegidaId={elegidas[item.id] ?? null}
-          onElegir={(id) => setElegidas((actuales) => ({ ...actuales, [item.id]: id }))}
+          onElegir={(id) => {
+            setElegidas((actuales) => ({ ...actuales, [item.id]: id }));
+            setAgregado(false);
+          }}
         />
       ))}
 
-      <button type="button" className={`boton ${base.agregar}`} disabled>
+      <button
+        type="button"
+        className={`boton ${base.agregar}`}
+        disabled={agotado || !elegido}
+        onClick={() => {
+          agregarCombo(comboId, elegidas);
+          setAgregado(true);
+        }}
+      >
         {agotado ? "Sin stock" : "Agregar al carrito"}
       </button>
-      {!agotado && (
-        <p className={base.nota}>
-          {faltan.length > 0
-            ? `Falta elegir: ${listaNombres.format(
-                faltan.map((item) => `${item.producto.marca} ${item.producto.nombre}`),
-              )}.`
-            : "El carrito llega pronto."}
+      {nota && (
+        <p className={base.nota} role="status">
+          {nota}
         </p>
       )}
     </div>

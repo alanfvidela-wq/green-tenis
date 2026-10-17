@@ -132,7 +132,8 @@ radio es del marco, no de cada celda.
 - **Sin línea.** Wordmark a la izquierda, las cuatro categorías y «Combos» en
   mayúsculas, y el carrito a la derecha.
 - **Carrito**: píldora «Carrito (0)» con borde de 1px negro. Sobre el video,
-  píldora lima. La cantidad se lee en el servidor (`lib/carrito.js`).
+  píldora lima. La cantidad sale del carrito guardado en el navegador
+  (`BotonCarrito`, con `useCarrito`); hasta leerlo dice solo «Carrito».
 - **Fijo y flotante.** En la home arranca transparente sobre el video, con el
   texto en blanco. Al scrollear (un poco antes de terminar el hero) pasa a
   fondo blanco y texto negro, con una transición de 300ms. En las demás páginas
@@ -265,6 +266,31 @@ venden como un producto más, con las mismas piezas.
     hasta que se elige todo, el precio es el «desde», debajo dice «10 % menos
     que por separado» y, bajo el botón, qué falta elegir;
   - «Agregar al carrito», apagado hasta que no falte nada.
+
+## Carrito
+
+- **Dónde vive**: en el navegador (`localStorage`), con solo ids y cantidades:
+  la variante de un producto suelto, o el combo con la variante elegida de cada
+  ítem (`lib/lineas.js`, `useCarrito`). Nunca guarda precios.
+- **Quién pone los precios**: el servidor. `cotizarCarrito` (Server Action en
+  `lib/carrito.js`) lee de Supabase los precios, el descuento de cada combo (la
+  misma cuenta que `crear_pedido`) y el stock, sumando lo que se pide de cada
+  variante entre sueltos y combos. Lo que no alcanza, lo que ya no está a la
+  venta o lo que falta elegir lo dice en la línea.
+- **Agregar**: «Agregar al carrito» suma una unidad y, debajo, dice «Agregado
+  al carrito. Ver carrito». Si ya estaba, suma a la misma línea.
+- **La página** (`/carrito`): título como el de una categoría. Las líneas van
+  separadas por 1px:
+  - la celda de estudio chica, con la foto o la silueta;
+  - la marca (o «Combo») en mayúsculas, el nombre y, en grafito, la variante o
+    lo que trae el combo;
+  - lo que impide comprarla, en negro con una línea de 1px al costado;
+  - la cantidad en una píldora (− n +, con tope por stock) y «Quitar»;
+  - el subtotal en mono y, en los combos, cuánto se ahorra.
+- **El resumen**, a la derecha (abajo en mobile), fijo mientras se scrollea:
+  subtotal, descuento de combos y total en filas de 1px, y «Ir a pagar» (lima),
+  apagado mientras se recalcula o si alguna línea tiene un problema.
+- **Vacío**: «Tu carrito está vacío» y la píldora «Ver raquetas».
 
 ## Componente `Raqueta`
 

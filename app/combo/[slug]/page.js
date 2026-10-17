@@ -70,6 +70,7 @@ export default async function PaginaCombo({ params }) {
           </section>
 
           <SelectorCombo
+            comboId={combo.id}
             items={combo.items}
             precios={combo.precios}
             descuentoPct={combo.descuentoPct}

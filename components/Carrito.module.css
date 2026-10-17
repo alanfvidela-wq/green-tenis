@@ -1,0 +1,233 @@
+/* El carrito: las líneas a la izquierda y el resumen a la derecha (abajo en
+   mobile). Filas separadas por líneas de 1px, los montos en mono. */
+.carrito {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-10);
+}
+
+@media (min-width: 900px) {
+  .carrito {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+  }
+}
+
+.estado {
+  color: var(--grafito);
+  font-size: var(--t-entrada);
+}
+
+.vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-4);
+}
+
+/* ---------- Las líneas ---------- */
+
+.lineas {
+  border-top: 1px solid var(--negro);
+  list-style: none;
+}
+
+.lineas[aria-busy="true"] .precio {
+  opacity: 0.5;
+}
+
+.linea {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  grid-template-areas:
+    "foto info precio"
+    "foto acciones acciones";
+  gap: var(--espacio-3) var(--espacio-4);
+  padding: var(--espacio-4) 0;
+  border-bottom: 1px solid var(--negro);
+}
+
+@media (min-width: 700px) {
+  .linea {
+    grid-template-columns: 96px minmax(0, 1fr) auto auto;
+    grid-template-areas: "foto info acciones precio";
+    align-items: start;
+  }
+}
+
+/* La celda de estudio chica, con su silueta si no hay foto */
+.foto {
+  position: relative;
+  grid-area: foto;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 1px solid var(--negro);
+}
+
+.info {
+  grid-area: info;
+  min-width: 0;
+}
+
+.marca {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.titulo {
+  font-size: var(--t-texto);
+  letter-spacing: normal;
+  line-height: 1.35;
+}
+
+.nombre {
+  text-underline-offset: 3px;
+}
+
+.nombre:hover {
+  text-decoration: underline;
+}
+
+.detalle {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+/* Lo que impide comprar la línea: en negro, sin color, con una línea al lado */
+.problema {
+  margin-top: var(--espacio-2);
+  padding-left: var(--espacio-2);
+  border-left: 1px solid var(--negro);
+  font-size: var(--t-dato);
+}
+
+.acciones {
+  display: flex;
+  grid-area: acciones;
+  align-items: center;
+  gap: var(--espacio-4);
+}
+
+/* La cantidad en una píldora: − n + */
+.cantidad {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  font-family: var(--fuente-datos);
+}
+
+.cantidad button {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  font-size: var(--t-entrada);
+  line-height: 1;
+  transition: background-color var(--transicion);
+}
+
+.cantidad button:hover:not(:disabled) {
+  background: var(--lima);
+}
+
+.cantidad button:disabled {
+  color: var(--hormigon);
+  cursor: not-allowed;
+}
+
+.cantidad span {
+  min-width: 2ch;
+  text-align: center;
+}
+
+/* «Quitar»: un link discreto, como «Comprar» en la vitrina */
+.quitar {
+  border: none;
+  background: none;
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  text-underline-offset: 3px;
+}
+
+.quitar:hover {
+  text-decoration: underline;
+}
+
+.precio {
+  grid-area: precio;
+  font-family: var(--fuente-datos);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.ahorro {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+/* ---------- El resumen ---------- */
+
+.resumen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+}
+
+@media (min-width: 900px) {
+  .resumen {
+    position: sticky;
+    top: calc(var(--alto-header) + var(--espacio-5));
+  }
+}
+
+.resumenTitulo {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.resumen dl {
+  border-top: 1px solid var(--negro);
+  transition: opacity var(--transicion);
+}
+
+.viejo {
+  opacity: 0.5;
+}
+
+.fila {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+}
+
+.fila dt {
+  color: var(--grafito);
+}
+
+.fila dd {
+  font-family: var(--fuente-datos);
+}
+
+.total dt {
+  color: var(--negro);
+}
+
+.total dd {
+  font-size: var(--t-titulo-3);
+}
+
+.pagar {
+  width: 100%;
+}
+
+.nota {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}

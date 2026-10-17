@@ -1,14 +1,11 @@
 import Link from "next/link";
-import { getCantidadCarrito } from "@/lib/carrito";
-import { contar } from "@/lib/formato";
 import { CATEGORIAS } from "@/lib/productos";
+import BotonCarrito from "./BotonCarrito";
 import CabeceraFlotante from "./CabeceraFlotante";
 import Logo from "./Logo";
 import styles from "./Header.module.css";
 
-export default async function Header() {
-  const cantidad = await getCantidadCarrito();
-
+export default function Header() {
   return (
     <CabeceraFlotante className={styles.header}>
       <div className={styles.contenido}>
@@ -23,13 +20,7 @@ export default async function Header() {
           <Link href="/combos">Combos</Link>
         </nav>
 
-        <Link
-          href="/carrito"
-          className={styles.carrito}
-          aria-label={`Carrito, ${contar(cantidad, "producto", "productos")}`}
-        >
-          Carrito ({cantidad})
-        </Link>
+        <BotonCarrito className={styles.carrito} />
       </div>
     </CabeceraFlotante>
   );

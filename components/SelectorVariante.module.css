@@ -26,3 +26,9 @@
   color: var(--grafito);
   font-size: var(--t-dato);
 }
+
+.nota a {
+  color: var(--negro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
