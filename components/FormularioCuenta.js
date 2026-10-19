@@ -1,11 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
+import CamposContrasena from "./CamposContrasena";
 import { ingresar, registrarme } from "@/lib/cuenta";
 import styles from "@/app/formulario.module.css";
 
-// Email y contraseña para ingresar o crear la cuenta. Si sale bien, la acción
-// redirige a «siguiente»; si no, devuelve el error y el email escrito.
+// Email y contraseña para ingresar o crear la cuenta (al crearla, la
+// contraseña se repite). Si sale bien, la acción redirige a «siguiente»; si
+// no, devuelve el error y el email escrito.
 export default function FormularioCuenta({ modo, siguiente }) {
   const registro = modo === "registrarme";
   const [estado, enviar, enviando] = useActionState(registro ? registrarme : ingresar, null);
@@ -29,23 +31,20 @@ export default function FormularioCuenta({ modo, siguiente }) {
         />
       </label>
 
-      <label className={styles.campo}>
-        <span className={styles.etiqueta}>Contraseña</span>
-        <input
-          type="password"
-          name="contrasena"
-          required
-          minLength={registro ? 8 : undefined}
-          autoComplete={registro ? "new-password" : "current-password"}
-          aria-describedby={registro ? "ayuda-contrasena" : undefined}
-          className={styles.entrada}
-        />
-        {registro && (
-          <span id="ayuda-contrasena" className={styles.ayuda}>
-            Al menos 8 caracteres.
-          </span>
-        )}
-      </label>
+      {registro ? (
+        <CamposContrasena />
+      ) : (
+        <label className={styles.campo}>
+          <span className={styles.etiqueta}>Contraseña</span>
+          <input
+            type="password"
+            name="contrasena"
+            required
+            autoComplete="current-password"
+            className={styles.entrada}
+          />
+        </label>
+      )}
 
       {estado?.error && (
         <p className={styles.error} role="alert">

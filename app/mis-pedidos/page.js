@@ -9,12 +9,13 @@ import styles from "./pedidos.module.css";
 
 export const metadata = { title: "Mis pedidos" };
 
-export default async function PaginaMisPedidos() {
+export default async function PaginaMisPedidos({ searchParams }) {
   // El proxy ya redirige sin sesión; esto es la verificación de verdad
   const usuario = await getUsuario();
   if (!usuario) redirect("/ingresar?siguiente=/mis-pedidos");
 
   const pedidos = await getPedidos();
+  const { contrasena } = await searchParams;
 
   return (
     <main>
@@ -24,6 +25,11 @@ export default async function PaginaMisPedidos() {
           <span aria-hidden="true">/</span>
           <span aria-current="page">Mis pedidos</span>
         </nav>
+        {contrasena === "cambiada" && (
+          <p className={styles.aviso} role="status">
+            Listo: cambiaste tu contraseña.
+          </p>
+        )}
         <h1 className={listado.titulo}>Mis pedidos</h1>
         <p className={listado.descripcion}>Ingresaste como {usuario.email}.</p>
         <form action={salir}>

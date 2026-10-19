@@ -4,13 +4,13 @@ import { rutaSiguiente } from "./lib/siguiente";
 
 // Corre antes de las rutas de cuenta y de compra (ver `matcher`). Renueva la
 // sesión de Supabase si venció y redirige:
-// - sin sesión, /checkout y /mis-pedidos llevan a /ingresar, con la ruta en
-//   «siguiente» para volver después;
+// - sin sesión, /checkout, /mis-pedidos y /nueva-contrasena llevan a
+//   /ingresar, con la ruta en «siguiente» para volver después;
 // - con sesión, /ingresar y /registrarme llevan a «siguiente».
 // Es un control optimista (lee la sesión de la cookie): cada página y cada
 // acción protegida vuelve a pedir el usuario con getUsuario().
 
-const PROTEGIDAS = ["/checkout", "/mis-pedidos"];
+const PROTEGIDAS = ["/checkout", "/mis-pedidos", "/nueva-contrasena"];
 const DE_CUENTA = ["/ingresar", "/registrarme"];
 
 export async function proxy(request) {
@@ -65,5 +65,11 @@ export async function proxy(request) {
 }
 
 export const config = {
-  matcher: ["/checkout/:path*", "/mis-pedidos/:path*", "/ingresar", "/registrarme"],
+  matcher: [
+    "/checkout/:path*",
+    "/mis-pedidos/:path*",
+    "/nueva-contrasena",
+    "/ingresar",
+    "/registrarme",
+  ],
 };

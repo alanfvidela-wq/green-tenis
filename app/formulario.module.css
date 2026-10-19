@@ -70,6 +70,14 @@
   width: 100%;
 }
 
+/* Lo que pasó después de enviar: un bloque con borde de 1px y radio de 16px */
+.aviso {
+  margin-top: var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+}
+
 .alternativa {
   color: var(--grafito);
   font-size: var(--t-dato);

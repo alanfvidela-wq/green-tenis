@@ -298,10 +298,21 @@ venden como un producto más, con las mismas piezas.
 
 - **Con email y contraseña** (Supabase Auth, sin confirmación por mail: al
   crear la cuenta ya queda la sesión iniciada). La contraseña tiene al menos 8
-  caracteres; lo controla el formulario y también Supabase.
-- **Rutas protegidas**: `/checkout` y `/mis-pedidos`. Sin sesión, llevan a
-  `/ingresar?siguiente=<ruta>` y, al ingresar o crear la cuenta, se vuelve ahí.
-  El carrito no se toca: vive en el navegador.
+  caracteres; lo controla el formulario y también Supabase. Al crear la cuenta
+  (y al elegir una nueva) se escribe dos veces: si lo repetido no coincide,
+  debajo dice «Las contraseñas no coinciden» en el momento y el formulario no
+  se envía (`CamposContrasena`); el servidor lo vuelve a revisar.
+- **Rutas protegidas**: `/checkout`, `/mis-pedidos` y `/nueva-contrasena`. Sin
+  sesión, llevan a `/ingresar?siguiente=<ruta>` y, al ingresar o crear la
+  cuenta, se vuelve ahí. El carrito no se toca: vive en el navegador.
+- **Recuperar la contraseña**: «¿Olvidaste tu contraseña?» en `/ingresar` lleva
+  a `/recuperar`, que pide el email y responde siempre lo mismo («Si ese email
+  tiene cuenta, te mandamos un link…»), tenga cuenta o no. El link del mail
+  (plantilla en castellano en Supabase, con `token_hash`) llega a
+  `/auth/confirmar`, que inicia la sesión y lleva a `/nueva-contrasena`. Ahí se
+  elige la nueva y se vuelve a `/mis-pedidos` con «Listo: cambiaste tu
+  contraseña». Si el link venció o ya se usó, `/recuperar` lo dice y deja pedir
+  otro.
 - **Ingresar y crear cuenta** (`/ingresar`, `/registrarme`): una columna
   angosta con el título a `--t-titulo-2`, una bajada que dice para qué («Para
   terminar la compra, ingresá con tu cuenta») y el formulario: etiquetas en

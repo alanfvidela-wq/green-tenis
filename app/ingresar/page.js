@@ -20,6 +20,9 @@ export default async function PaginaIngresar({ searchParams }) {
       <FormularioCuenta modo="ingresar" siguiente={siguiente} />
 
       <p className={styles.alternativa}>
+        <Link href="/recuperar">¿Olvidaste tu contraseña?</Link>
+      </p>
+      <p className={styles.alternativa}>
         ¿No tenés cuenta?{" "}
         <Link href={`/registrarme?siguiente=${encodeURIComponent(siguiente)}`}>Creá una</Link>
       </p>
