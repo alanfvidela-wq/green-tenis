@@ -289,8 +289,9 @@ venden como un producto más, con las mismas piezas.
   - la cantidad en una píldora (− n +, con tope por stock) y «Quitar»;
   - el subtotal en mono y, en los combos, cuánto se ahorra.
 - **El resumen**, a la derecha (abajo en mobile), fijo mientras se scrollea:
-  subtotal, descuento de combos y total en filas de 1px, y «Ir a pagar» (lima),
-  apagado mientras se recalcula o si alguna línea tiene un problema.
+  subtotal, descuento de combos, envío («Gratis» por ahora) y total en filas de
+  1px (`Totales`, el mismo en el checkout y en los pedidos), y «Ir a pagar»
+  (lima), apagado mientras se recalcula o si alguna línea tiene un problema.
 - **Vacío**: «Tu carrito está vacío» y la píldora «Ver raquetas».
 
 ## Cuenta
@@ -309,6 +310,35 @@ venden como un producto más, con las mismas piezas.
   problemas del carrito. Debajo, el link a la otra página.
 - **Cerrar sesión**: en `/mis-pedidos`, con una píldora blanca
   (`.boton-secundario`).
+
+## Checkout
+
+- **`/checkout`** (con sesión), armado como el carrito. A la izquierda, «Comprás
+  como …» y los datos de envío: nombre y apellido, teléfono, calle y número,
+  piso o departamento (opcional), ciudad, provincia (las 24) y código postal,
+  con los campos del formulario de cuenta. A la derecha, «Tu pedido»: una fila
+  por línea con la cantidad, **marca y nombre** («Babolat Pure Drive»; los
+  combos, por su nombre), la variante o lo que trae el combo en grafito y el
+  subtotal en mono; después los totales y «Cambiar el carrito».
+- **Confirmar pedido** (la píldora lima): el servidor vuelve a cotizar el
+  carrito, valida el envío y crea el pedido con `crear_pedido`, que recalcula
+  todo, reserva el stock y lo deja pendiente de pago. Si la base lo rechaza
+  («No hay stock suficiente de …»), el mensaje aparece arriba del botón. Si
+  sale bien, se vacía el carrito y se va al pedido.
+
+## Mis pedidos
+
+- **El listado** (`/mis-pedidos`): el encabezado de un listado con la cuenta y
+  «Cerrar sesión», y una fila de 1px por pedido: «Pedido #1001» (lleva al
+  detalle), la fecha y hora en mono, el estado en mayúsculas y el total.
+- **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado y qué significa
+  (un pendiente explica que el pago con Mercado Pago llega más adelante y que,
+  sin pago en 30 minutos, se cancela; pasado ese tiempo se ve «Vencido»).
+  Debajo, «Qué compraste»: cada combo con sus productos sangrados y lo que se
+  ahorró, y los productos sueltos con marca y nombre, variante, cantidad por
+  precio y subtotal, todo con los precios congelados del pedido. Al costado,
+  los totales (con «Envío») y los datos de envío. Recién confirmado, arriba
+  dice «Listo: tu pedido quedó registrado».
 
 ## Componente `Raqueta`
 

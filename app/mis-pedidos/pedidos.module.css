@@ -1,0 +1,134 @@
+/* Mis pedidos: el listado y el detalle de un pedido. Filas separadas por
+   líneas de 1px, los montos y las fechas en mono. */
+
+.lista {
+  border-top: 1px solid var(--negro);
+  list-style: none;
+}
+
+.pedido {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--espacio-2) var(--espacio-4);
+  padding: var(--espacio-4) 0;
+  border-bottom: 1px solid var(--negro);
+}
+
+@media (min-width: 700px) {
+  .pedido {
+    grid-template-columns: 10rem minmax(0, 1fr) 12rem auto;
+    align-items: baseline;
+  }
+}
+
+.numero {
+  font-size: var(--t-titulo-3);
+  text-underline-offset: 4px;
+}
+
+.numero:hover {
+  text-decoration: underline;
+}
+
+.fecha {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.estado {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.monto {
+  font-family: var(--fuente-datos);
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* ---------- El detalle ---------- */
+
+.aviso {
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+}
+
+.detalle {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--espacio-10);
+}
+
+@media (min-width: 900px) {
+  .detalle {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    align-items: start;
+  }
+}
+
+.titulo {
+  margin-bottom: var(--espacio-3);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.lineas {
+  border-top: 1px solid var(--negro);
+  list-style: none;
+}
+
+.linea {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+}
+
+.nombre {
+  text-underline-offset: 3px;
+}
+
+.nombre:hover {
+  text-decoration: underline;
+}
+
+.dato {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+/* Los productos de un combo, con sangría bajo el combo */
+.items {
+  margin-top: var(--espacio-2);
+  padding-left: var(--espacio-4);
+  border-left: 1px solid var(--negro);
+  list-style: none;
+}
+
+.lateral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-8);
+}
+
+.envio {
+  border-top: 1px solid var(--negro);
+}
+
+.envio div {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+  font-size: 0.875rem;
+}
+
+.envio dt {
+  color: var(--grafito);
+}

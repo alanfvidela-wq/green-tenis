@@ -133,7 +133,14 @@ export default function Carrito() {
         <h2 id="titulo-resumen" className={styles.resumenTitulo}>
           Resumen
         </h2>
-        {cotizacion && <Totales cotizacion={cotizacion} alDia={alDia} />}
+        {cotizacion && (
+          <Totales
+            lista={cotizacion.lista}
+            descuento={cotizacion.descuento}
+            total={cotizacion.total}
+            alDia={alDia}
+          />
+        )}
         {puedePagar ? (
           <Link href="/checkout" className={`boton ${styles.pagar}`}>
             Ir a pagar

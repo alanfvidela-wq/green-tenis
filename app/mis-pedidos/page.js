@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { salir } from "@/lib/cuenta";
+import { formatearFecha, formatearPrecio } from "@/lib/formato";
+import { getPedidos } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
-import styles from "../listado.module.css";
+import listado from "../listado.module.css";
+import styles from "./pedidos.module.css";
 
 export const metadata = { title: "Mis pedidos" };
 
@@ -11,16 +14,18 @@ export default async function PaginaMisPedidos() {
   const usuario = await getUsuario();
   if (!usuario) redirect("/ingresar?siguiente=/mis-pedidos");
 
+  const pedidos = await getPedidos();
+
   return (
     <main>
-      <header className={styles.encabezado}>
+      <header className={listado.encabezado}>
         <nav className="migas" aria-label="Ubicación">
           <Link href="/">Inicio</Link>
           <span aria-hidden="true">/</span>
           <span aria-current="page">Mis pedidos</span>
         </nav>
-        <h1 className={styles.titulo}>Mis pedidos</h1>
-        <p className={styles.descripcion}>Ingresaste como {usuario.email}.</p>
+        <h1 className={listado.titulo}>Mis pedidos</h1>
+        <p className={listado.descripcion}>Ingresaste como {usuario.email}.</p>
         <form action={salir}>
           <button type="submit" className="boton boton-secundario">
             Cerrar sesión
@@ -28,7 +33,24 @@ export default async function PaginaMisPedidos() {
         </form>
       </header>
 
-      <p className={styles.vacio}>Todavía no hiciste pedidos.</p>
+      {pedidos.length === 0 ? (
+        <div className={listado.vacio}>
+          <p>Todavía no hiciste pedidos.</p>
+        </div>
+      ) : (
+        <ul className={styles.lista}>
+          {pedidos.map((pedido) => (
+            <li key={pedido.id} className={styles.pedido}>
+              <Link href={`/mis-pedidos/${pedido.id}`} className={styles.numero}>
+                Pedido #{pedido.numero}
+              </Link>
+              <p className={styles.fecha}>{formatearFecha(pedido.creadoEn)}</p>
+              <p className={styles.estado}>{pedido.estado.texto}</p>
+              <p className={styles.monto}>{formatearPrecio(pedido.total)}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }

@@ -13,6 +13,12 @@
   color: var(--grafito);
 }
 
+.formulario {
+  width: 100%;
+  max-width: 34rem;
+  margin-top: 0;
+}
+
 .email {
   color: var(--negro);
 }
