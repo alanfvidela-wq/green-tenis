@@ -12,8 +12,8 @@ export default function FormularioRecuperar() {
   if (estado?.enviado) {
     return (
       <p className={styles.aviso} role="status">
-        Si ese email tiene cuenta, te mandamos un link para elegir una contraseña nueva. Revisá
-        también el correo no deseado.
+        Si ese email tiene cuenta, te mandamos un link para elegir una contraseña nueva. Abrilo
+        en este mismo navegador y revisá también el correo no deseado.
       </p>
     );
   }

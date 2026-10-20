@@ -19,6 +19,13 @@ export default async function PaginaRecuperar({ searchParams }) {
           El link venció o ya se usó. Pedí uno nuevo.
         </p>
       )}
+      {error === "navegador" && (
+        <p className={styles.error} role="alert">
+          El link se tiene que abrir en el mismo navegador donde lo pediste: no desde la app de
+          mail del celular, otro navegador ni una ventana privada. Si pediste varios, sirve solo
+          el último. Pedí uno nuevo y abrilo acá.
+        </p>
+      )}
 
       <FormularioRecuperar />
 

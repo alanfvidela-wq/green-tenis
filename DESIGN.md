@@ -308,11 +308,16 @@ venden como un producto más, con las mismas piezas.
 - **Recuperar la contraseña**: «¿Olvidaste tu contraseña?» en `/ingresar` lleva
   a `/recuperar`, que pide el email y responde siempre lo mismo («Si ese email
   tiene cuenta, te mandamos un link…»), tenga cuenta o no. El link del mail
-  (plantilla en castellano en Supabase, con `token_hash`) llega a
-  `/auth/confirmar`, que inicia la sesión y lleva a `/nueva-contrasena`. Ahí se
-  elige la nueva y se vuelve a `/mis-pedidos` con «Listo: cambiaste tu
-  contraseña». Si el link venció o ya se usó, `/recuperar` lo dice y deja pedir
-  otro.
+  llega a `/auth/confirmar`, que inicia la sesión y lleva a
+  `/nueva-contrasena`. Ahí se elige la nueva y se vuelve a `/mis-pedidos` con
+  «Listo: cambiaste tu contraseña». Si el link venció o ya se usó, `/recuperar`
+  lo dice y deja pedir otro.
+- **Los dos formatos del link**: con la plantilla por defecto de Supabase llega
+  `?code=` (PKCE) y solo sirve en el mismo navegador donde se pidió, porque el
+  verificador quedó en una cookie de ese navegador; abierto en otro,
+  `/recuperar` explica eso. Con un SMTP propio se puede usar la plantilla en
+  castellano con `token_hash`, que sirve en cualquier navegador.
+  `/auth/confirmar` acepta los dos.
 - **Ingresar y crear cuenta** (`/ingresar`, `/registrarme`): una columna
   angosta con el título a `--t-titulo-2`, una bajada que dice para qué («Para
   terminar la compra, ingresá con tu cuenta») y el formulario: etiquetas en
