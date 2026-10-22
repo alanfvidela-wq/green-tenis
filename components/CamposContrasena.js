@@ -1,30 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import EntradaContrasena from "./EntradaContrasena";
 import styles from "@/app/formulario.module.css";
 
 const MINIMO = 8;
 
-// «Contraseña» y «Repetir contraseña». Si lo repetido no coincide, lo avisa en
-// el momento y frena el envío del formulario; la acción del servidor lo vuelve
-// a revisar. Los usan el registro y /nueva-contrasena.
+// «Contraseña» y «Repetir contraseña», cada una con su botón para mostrarla.
+// Si lo repetido no coincide, lo avisa en el momento y frena el envío del
+// formulario; la acción del servidor lo vuelve a revisar. Los usan el
+// registro y /nueva-contrasena.
 export default function CamposContrasena({ etiqueta = "Contraseña" }) {
   const [contrasena, setContrasena] = useState("");
   const [repetida, setRepetida] = useState("");
-  const refRepetida = useRef(null);
   const distintas = repetida !== "" && repetida !== contrasena;
-
-  // El navegador no deja enviar el formulario mientras haya un mensaje acá
-  useEffect(() => {
-    refRepetida.current?.setCustomValidity(distintas ? "Las contraseñas no coinciden." : "");
-  }, [distintas]);
 
   return (
     <>
       <label className={styles.campo}>
         <span className={styles.etiqueta}>{etiqueta}</span>
-        <input
-          type="password"
+        <EntradaContrasena
           name="contrasena"
           required
           minLength={MINIMO}
@@ -32,7 +27,6 @@ export default function CamposContrasena({ etiqueta = "Contraseña" }) {
           aria-describedby="ayuda-contrasena"
           value={contrasena}
           onChange={(evento) => setContrasena(evento.target.value)}
-          className={styles.entrada}
         />
         <span id="ayuda-contrasena" className={styles.ayuda}>
           Al menos {MINIMO} caracteres.
@@ -41,17 +35,15 @@ export default function CamposContrasena({ etiqueta = "Contraseña" }) {
 
       <label className={styles.campo}>
         <span className={styles.etiqueta}>Repetir {etiqueta.toLowerCase()}</span>
-        <input
-          ref={refRepetida}
-          type="password"
+        <EntradaContrasena
           name="repetir"
           required
           autoComplete="new-password"
           aria-invalid={distintas}
           aria-describedby={distintas ? "aviso-repetir" : undefined}
+          invalido={distintas ? "Las contraseñas no coinciden." : ""}
           value={repetida}
           onChange={(evento) => setRepetida(evento.target.value)}
-          className={styles.entrada}
         />
         {distintas && (
           <span id="aviso-repetir" className={styles.error} role="alert">

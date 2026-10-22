@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import CamposContrasena from "./CamposContrasena";
+import EntradaContrasena from "./EntradaContrasena";
 import { ingresar, registrarme } from "@/lib/cuenta";
 import styles from "@/app/formulario.module.css";
 
@@ -36,13 +37,7 @@ export default function FormularioCuenta({ modo, siguiente }) {
       ) : (
         <label className={styles.campo}>
           <span className={styles.etiqueta}>Contraseña</span>
-          <input
-            type="password"
-            name="contrasena"
-            required
-            autoComplete="current-password"
-            className={styles.entrada}
-          />
+          <EntradaContrasena name="contrasena" required autoComplete="current-password" />
         </label>
       )}
 

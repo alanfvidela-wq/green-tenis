@@ -54,6 +54,57 @@
   outline-offset: 2px;
 }
 
+/* Un campo de contraseña con su botón adentro, a la derecha: el ojo para
+   mostrar u ocultar lo escrito */
+.conBoton {
+  position: relative;
+  display: flex;
+}
+
+.conBoton .entrada {
+  flex: 1;
+  min-width: 0;
+  padding-right: calc(var(--espacio-2) + 40px);
+}
+
+/* Sin el ojo propio de Edge: ya está el nuestro */
+.conBoton .entrada::-ms-reveal,
+.conBoton .entrada::-ms-clear {
+  display: none;
+}
+
+/* Lo que se toca va en píldora (acá, un círculo): sin fondo, lima al pasar el
+   mouse, como las opciones */
+.ojo {
+  position: absolute;
+  top: 50%;
+  right: var(--espacio-1);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  color: var(--negro);
+  transform: translateY(-50%);
+  transition: background-color var(--transicion);
+}
+
+.ojo:hover {
+  background: var(--lima);
+}
+
+.ojo svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .ayuda {
   color: var(--grafito);
   font-size: var(--t-dato);

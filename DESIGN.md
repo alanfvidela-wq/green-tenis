@@ -302,6 +302,13 @@ venden como un producto más, con las mismas piezas.
   (y al elegir una nueva) se escribe dos veces: si lo repetido no coincide,
   debajo dice «Las contraseñas no coinciden» en el momento y el formulario no
   se envía (`CamposContrasena`); el servidor lo vuelve a revisar.
+- **Mostrar la contraseña**: cada campo de contraseña (`EntradaContrasena`)
+  lleva adentro, a la derecha, un ojo de línea fina en negro (SVG en línea,
+  tachado cuando se ve lo escrito) en un círculo que se pinta lima al pasar el
+  mouse. Es un `type="button"` que no saca el foco del campo, con «Mostrar
+  contraseña» u «Ocultar contraseña» y `aria-pressed`. Al enviar, el campo
+  vuelve a ocultarse, así el navegador ofrece guardar la contraseña. Es el
+  único ícono de la interfaz: está porque hace algo, no de adorno.
 - **Rutas protegidas**: `/checkout`, `/mis-pedidos` y `/nueva-contrasena`. Sin
   sesión, llevan a `/ingresar?siguiente=<ruta>` y, al ingresar o crear la
   cuenta, se vuelve ahí. El carrito no se toca: vive en el navegador.
@@ -653,7 +660,7 @@ Poco y con sentido. Nada entra con fundido y desplazamiento genérico.
 | Negritas para jerarquizar                | Un solo peso; la jerarquía sale del tamaño y del gris                 |
 | Radios intermedios (4, 8, 24px)          | 50px para lo que se toca, 16px para lo que se mira                    |
 | Tarjetas con sombra y radio en la grilla | La vitrina: celdas pegadas dentro de un marco de 1px                  |
-| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. Las únicas excepciones son la raqueta (3D y `Raqueta`) y la pelota de la anatomía |
+| Ilustraciones, íconos decorativos, 3D    | Fotos de producto (o su placeholder) y tipografía. Las únicas excepciones son la raqueta (3D y `Raqueta`), la pelota de la anatomía y el ojo de los campos de contraseña, que es funcional |
 | Lima de fondo o lima sobre lima          | El lima va sobre negro o lleva texto negro; nunca de fondo de sección |
 | Texto centrado en párrafos y productos   | A la izquierda; solo se centran el hero y los estados                 |
 | Slogans, leyendas y frases inventadas    | Textos que describen qué hay y para qué sirve                         |
