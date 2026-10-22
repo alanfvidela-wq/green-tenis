@@ -1,39 +1,614 @@
 # API de green.
 
-La tienda casi no tiene API: las páginas leen de Supabase en el servidor y las
-mutaciones van por Server Actions (`lib/carrito.js`, `lib/checkout.js`,
-`lib/cuenta.js`). Bajo `/api/v1` van solo los endpoints que llama alguien de
-afuera. Hoy hay uno: el webhook de Mercado Pago.
+La tienda no depende de esta API: las páginas leen de Supabase en el servidor y
+las mutaciones van por Server Actions (`lib/carrito.js`, `lib/checkout.js`,
+`lib/cuenta.js`). `/api/v1` es la puerta para lo que llega de afuera: el
+catálogo, de solo lectura, los pedidos del usuario con sesión y el webhook de
+Mercado Pago.
+
+| Método | URL                            | Pide            | Devuelve                                   |
+| ------ | ------------------------------ | --------------- | ------------------------------------------ |
+| GET    | `/api/v1/productos`            | —               | El catálogo, paginado                      |
+| GET    | `/api/v1/productos/[slug]`     | —               | Un producto con su ficha                   |
+| GET    | `/api/v1/combos`               | —               | Los combos a la venta                      |
+| GET    | `/api/v1/combos/[slug]`        | —               | Un combo, con el precio de cada elección   |
+| GET    | `/api/v1/pedidos`              | Sesión          | Los pedidos del usuario                    |
+| GET    | `/api/v1/pedidos/[id]`         | Sesión          | Un pedido del usuario                      |
+| POST   | `/api/v1/webhooks/mercadopago` | Firma HMAC      | Recibe los avisos de pago de Mercado Pago  |
 
 ## Convenciones
 
-- **Base**: `/api/v1`. Cuerpos y respuestas en JSON.
-- **Validación**: con [Zod](https://zod.dev), siempre en el servidor. Lo que no
-  pasa el esquema responde 400 con qué campo falló.
-- **Errores**: todos con la misma forma, armada por el helper de `lib/api.js`
-  (`ErrorApi`, `validar` y `conErrores`, que envuelve el Route Handler):
+- **Base y versión**: `/api/v1`. Un cambio que rompa a quien ya la usa (sacar o
+  renombrar un campo, cambiar un tipo) va a `/api/v2`; sumar campos o
+  endpoints, no.
+- **Recursos**: sustantivos en plural (`/productos`, `/combos`, `/pedidos`), sin
+  verbos en la URL: lo que se hace lo dice el método HTTP. El identificador va
+  como parámetro de ruta (`/productos/[slug]`); los filtros y la paginación, en
+  la query (`?categoria=raquetas&page=2`).
+- **JSON**: cuerpos y respuestas en JSON. Una respuesta correcta envuelve el
+  recurso con su nombre (`{ "producto": … }`, `{ "productos": […], "paginacion": … }`);
+  una con error, en `{ "error": … }`. Los precios son enteros en ARS.
+- **Código**: cada endpoint es un Route Handler (`app/api/v1/**/route.js`)
+  envuelto en `conErrores` de `lib/api.js`. Los parámetros pasan por un esquema
+  de `lib/esquemas.js` con `validar`, y los datos salen de `lib/productos.js`,
+  `lib/combos.js` y `lib/pedidos.js`: las mismas funciones que usan las páginas.
+- **Métodos y rutas**: un método que la ruta no tiene (`POST /api/v1/productos`)
+  lo responde Next con `405 Method Not Allowed`, sin cuerpo. Una ruta que no
+  existe bajo `/api/v1` responde `404 ruta_inexistente` en JSON
+  (`app/api/v1/[...ruta]/route.js`), no la página HTML de Next.
+- **Caché**: todo se lee en cada request (el stock cambia). Los pedidos salen,
+  además, con `Cache-Control: private, no-store`.
 
-  ```json
-  {
-    "error": {
-      "codigo": "datos_invalidos",
-      "mensaje": "Los datos no tienen el formato esperado.",
-      "detalles": [{ "campo": "data.id", "mensaje": "El id del pago tiene que ser un número" }]
+### Errores
+
+Todos con la misma forma, armada por el helper de `lib/api.js`:
+
+```json
+{
+  "error": {
+    "codigo": "datos_invalidos",
+    "mensaje": "Los datos no tienen el formato esperado.",
+    "detalles": [{ "campo": "page", "mensaje": "Tiene que ser un número entero del 1 al 1000." }]
+  }
+}
+```
+
+- **`ErrorApi(status, codigo, mensaje, detalles)`** es un error esperado: sale
+  con su status y su código. `noEncontrado(mensaje)` y `sinSesion()` arman los
+  de siempre, y `validar(esquema, datos)` tira el 400 con `detalles`: uno por
+  cada campo que no pasó (Zod no corta en el primero). `detalles` aparece solo
+  en ese caso.
+- **`conErrores(manejador)`** envuelve cada handler: atrapa lo que tire, lo
+  registra en el log del servidor y responde el JSON. Un `ErrorApi` 4xx deja
+  una línea de aviso (`GET /api/v1/productos/x → 404 no_encontrado`); uno 5xx,
+  la misma línea como error. Cualquier otra excepción es un error nuestro: se
+  loguea completa, con el stack, y responde `500 error_interno` sin contar
+  nada más. **El stack nunca sale en la respuesta.**
+- Los errores internos de Next (`notFound()`, `redirect()`) no se atrapan:
+  `unstable_rethrow` los deja seguir.
+
+| Código                      | Status | Cuándo                                                              |
+| --------------------------- | ------ | ------------------------------------------------------------------- |
+| `datos_invalidos`           | 400    | La query, los parámetros de ruta o el cuerpo no pasan el esquema    |
+| `sin_sesion`                | 401    | El endpoint pide sesión y no hay (o venció y no se pudo renovar)    |
+| `firma_invalida`            | 401    | Webhook: falta `x-signature` o no coincide                          |
+| `sin_permiso`               | 403    | Hay sesión pero no alcanza. Reservado: hoy ningún endpoint lo usa (ver «Por qué un pedido ajeno da 404») |
+| `no_encontrado`             | 404    | El recurso no existe, o no es del usuario                           |
+| `ruta_inexistente`          | 404    | No hay ningún endpoint en esa ruta                                  |
+| —                           | 405    | El método no existe en esa ruta (lo responde Next, sin cuerpo)      |
+| `error_interno`             | 500    | Un error nuestro (falta una variable, falló la base…)               |
+| `mercadopago_no_responde`   | 502    | Webhook: Mercado Pago no respondió o respondió con error            |
+| `pago_online_no_disponible` | 503    | Webhook: falta configurar Mercado Pago (ver «Sin configurar»)       |
+
+## Por qué Zod
+
+[Zod](https://zod.dev) ya estaba en el proyecto (lo sumó el webhook de Mercado
+Pago) y ahora valida **todas** las entradas del servidor: la API, las Server
+Actions y el webhook. Frente a validar a mano, como se hacía antes
+(`limpiarEnvio`, un regex de email, `problemaContrasena`, cada uno con su
+estilo):
+
+- **El esquema es el contrato.** `lib/esquemas.js` dice en un lugar qué entra y
+  con qué reglas; el código que lo usa recibe datos ya validados.
+- **Errores por campo.** `safeParse` no corta en el primer problema: devuelve
+  todos, cada uno con su campo (`path`) y su mensaje. Es lo que necesita un 400
+  con `detalles`, y lo que el checkout junta en «Faltan datos: …».
+- **Convierte además de validar.** `z.coerce.number()` pasa el `"2"` de la query
+  a `2`; `.trim()`, `.toLowerCase()` y `.overwrite()` normalizan el email y el
+  código postal; `.default()` completa `page` y `limit`. Lo que sale del esquema
+  ya está limpio.
+- **Mensajes en castellano** en cada regla, sin un diccionario aparte.
+- **Costo bajo.** Una dependencia sin dependencias propias, y solo en el
+  servidor: `lib/esquemas.js` importa `server-only`, así que si un componente
+  del navegador lo importara, el build fallaría. Al navegador llegan 0 KB.
+
+Alternativas: Valibot (más chico, pero en el servidor el tamaño casi no
+importa) o JSON Schema con Ajv (más verboso, pensado para contratos entre
+lenguajes). El navegador sigue validando con atributos HTML (`required`,
+`maxLength`, `type="email"`), pero eso es para avisar antes: la validación que
+cuenta es la del servidor.
+
+## Catálogo
+
+Público: no pide sesión. Lee con la clave publicable, y RLS deja ver solo lo
+activo.
+
+### `GET /api/v1/productos`
+
+Los productos a la venta, en el orden de la tienda, de a una página.
+
+| Parámetro (query) | Tipo   | Por defecto | Reglas                                            |
+| ----------------- | ------ | ----------- | ------------------------------------------------- |
+| `categoria`       | texto  | todas       | `raquetas`, `pelotas`, `cuerdas-y-grips` o `bolsos` |
+| `page`            | entero | `1`         | De 1 a 1000                                       |
+| `limit`           | entero | `12`        | De 1 a 48                                         |
+
+Los parámetros que no son estos se ignoran. La paginación la hace la base:
+`.range()` pasa el offset y el limit a la consulta y `count: "exact"` trae el
+total, así que no se leen todos los productos para devolver doce. Una página
+después de la última responde 200 con la lista vacía.
+
+```
+curl "https://<dominio>/api/v1/productos?categoria=pelotas&limit=1"
+```
+
+**200**
+
+```json
+{
+  "productos": [
+    {
+      "id": 6,
+      "slug": "head-tour-xt",
+      "categoria": "pelotas",
+      "tipo": "pelota",
+      "marca": "Head",
+      "nombre": "Tour XT",
+      "descripcion": "Pelota presurizada para todas las superficies, con pique parejo.",
+      "destacado": true,
+      "precioBase": 18900,
+      "variantes": [
+        { "id": 20, "nombre": "Tubo x3", "precio": 18900, "stock": 60 },
+        { "id": 21, "nombre": "Pack x6 tubos", "precio": 108000, "stock": 12 },
+        { "id": 22, "nombre": "Caja x24 tubos", "precio": 399000, "stock": 3 }
+      ],
+      "fotos": ["https://<proyecto>.supabase.co/storage/v1/object/public/productos/estudio/head-tour-xt-1.webp"]
+    }
+  ],
+  "paginacion": { "page": 1, "limit": 1, "total": 5, "paginas": 5 }
+}
+```
+
+`precioBase` es el de la variante más barata («desde»). `stock: null` quiere
+decir que no se controla.
+
+**400** (`?categoria=zapatillas&page=0&limit=abc`)
+
+```json
+{
+  "error": {
+    "codigo": "datos_invalidos",
+    "mensaje": "Los datos no tienen el formato esperado.",
+    "detalles": [
+      { "campo": "categoria", "mensaje": "Tiene que ser una de estas: raquetas, pelotas, cuerdas-y-grips, bolsos." },
+      { "campo": "page", "mensaje": "Tiene que ser un número entero del 1 al 1000." },
+      { "campo": "limit", "mensaje": "Tiene que ser un número entero del 1 al 48." }
+    ]
+  }
+}
+```
+
+| Status | Cuándo                                     |
+| ------ | ------------------------------------------ |
+| 200    | Siempre que la query sea válida            |
+| 400    | `categoria`, `page` o `limit` no pasan      |
+| 500    | Falló la base                              |
+
+### `GET /api/v1/productos/[slug]`
+
+Un producto, con sus variantes y su ficha técnica.
+
+| Parámetro (ruta) | Reglas                                                        |
+| ---------------- | ------------------------------------------------------------- |
+| `slug`           | Minúsculas, números y guiones (`babolat-pure-drive`); hasta 120 caracteres |
+
+```
+curl "https://<dominio>/api/v1/productos/wilson-blade-98"
+```
+
+**200**: lo mismo que un ítem de la lista, más `ficha`. Para raquetas y cuerdas
+es un objeto con campos fijos; para lo demás, una lista de pares
+`[rótulo, valor]` o `null`.
+
+```json
+{
+  "producto": {
+    "id": 2,
+    "slug": "wilson-blade-98",
+    "categoria": "raquetas",
+    "tipo": "raqueta",
+    "marca": "Wilson",
+    "nombre": "Blade 98",
+    "descripcion": "Raqueta de control, con cabeza de 98 pulgadas. Para jugadores con un swing completo.",
+    "destacado": false,
+    "precioBase": 405000,
+    "variantes": [
+      { "id": 6, "nombre": "Grip 2 / 305 g", "precio": 405000, "stock": 3, "grip": 2, "pesoG": 305 }
+    ],
+    "fotos": [],
+    "ficha": {
+      "cabezaPulg2": 98,
+      "largoMm": 685,
+      "balanceMm": 320,
+      "patron": [16, 19],
+      "rigidezRa": null,
+      "tensionKg": [23, 27]
     }
   }
-  ```
+}
+```
 
-  `detalles` aparece solo cuando suma. Cualquier error que no sea un `ErrorApi`
-  se loguea y sale como `500` con `codigo: "error_interno"`, sin contar qué
-  pasó.
+**404**
 
-| Código                    | Status | Cuándo                                                  |
-| ------------------------- | ------ | ------------------------------------------------------- |
-| `datos_invalidos`         | 400    | La query o el cuerpo no pasan el esquema de Zod          |
-| `firma_invalida`          | 401    | Falta `x-signature` o no coincide                        |
-| `error_interno`           | 500    | Un error nuestro (falta una variable, falló la base…)    |
-| `mercadopago_no_responde` | 502    | Mercado Pago no respondió o respondió con error          |
-| `pago_online_no_disponible` | 503  | Falta configurar Mercado Pago (ver «Sin configurar»)     |
+```json
+{ "error": { "codigo": "no_encontrado", "mensaje": "No hay ningún producto con ese slug." } }
+```
+
+| Status | Cuándo                                                  |
+| ------ | ------------------------------------------------------- |
+| 200    | El producto existe y está a la venta                    |
+| 400    | El slug no tiene el formato (`/productos/Mal_Slug`)     |
+| 404    | No hay ningún producto activo con ese slug              |
+| 500    | Falló la base                                           |
+
+### `GET /api/v1/combos`
+
+Los combos a la venta, en el orden de la tienda. No tiene parámetros: son
+pocos. Un combo con algún ítem que ya no se vende no aparece.
+
+```
+curl "https://<dominio>/api/v1/combos"
+```
+
+**200**: `{ "combos": [ … ] }`, cada uno con la misma forma que en el detalle.
+
+| Status | Cuándo        |
+| ------ | ------------- |
+| 200    | Siempre       |
+| 500    | Falló la base |
+
+### `GET /api/v1/combos/[slug]`
+
+Un combo con sus ítems y el precio de cada elección posible.
+
+| Parámetro (ruta) | Reglas                            |
+| ---------------- | --------------------------------- |
+| `slug`           | Igual que en `/productos/[slug]`  |
+
+```
+curl "https://<dominio>/api/v1/combos/kit-para-arrancar"
+```
+
+**200**
+
+```json
+{
+  "combo": {
+    "id": 1,
+    "slug": "kit-para-arrancar",
+    "nombre": "Kit para arrancar",
+    "descripcion": "Raqueta, un tubo de pelotas y overgrips para empezar a jugar.",
+    "descuentoPct": 10,
+    "destacado": false,
+    "precioListaDesde": 400800,
+    "precioDesde": 360720,
+    "stock": 10,
+    "fotos": [],
+    "items": [
+      {
+        "id": 1,
+        "cantidad": 1,
+        "elige": true,
+        "producto": { "slug": "yonex-ezone-100", "categoria": "raquetas", "marca": "Yonex", "nombre": "Ezone 100", "fotos": [] },
+        "variantes": [
+          { "id": 13, "nombre": "Grip 1 / 300 g", "precio": 379000, "stock": 1 },
+          { "id": 14, "nombre": "Grip 2 / 300 g", "precio": 379000, "stock": 4 }
+        ]
+      },
+      {
+        "id": 2,
+        "cantidad": 1,
+        "elige": false,
+        "producto": { "slug": "head-tour-xt", "categoria": "pelotas", "marca": "Head", "nombre": "Tour XT", "fotos": [] },
+        "variantes": [{ "id": 20, "nombre": "Tubo x3", "precio": 18900, "stock": 60 }]
+      },
+      {
+        "id": 3,
+        "cantidad": 1,
+        "elige": false,
+        "producto": { "slug": "wilson-pro-overgrip", "categoria": "cuerdas-y-grips", "marca": "Wilson", "nombre": "Pro Overgrip", "fotos": [] },
+        "variantes": [{ "id": 39, "nombre": "Pack x3", "precio": 12900, "stock": 40 }]
+      }
+    ],
+    "precios": {
+      "13": { "lista": 410800, "descuento": 41080, "precio": 369720 },
+      "14": { "lista": 410800, "descuento": 41080, "precio": 369720 }
+    }
+  }
+}
+```
+
+- `elige: true`: el comprador elige la variante (en el ejemplo, el grip); si no,
+  va la única que trae.
+- `precios`: el precio de cada elección. La clave son los ids de las variantes
+  elegidas en los ítems con `elige: true`, en orden y separados por comas (`""`
+  si no hay nada para elegir). El descuento se redondea para abajo, con la
+  misma cuenta que `crear_pedido`.
+- `stock`: cuántos combos alcanzan con el stock de hoy (`null`: sin límite).
+
+| Status | Cuándo                                         |
+| ------ | ---------------------------------------------- |
+| 200    | El combo existe y todos sus ítems se venden    |
+| 400    | El slug no tiene el formato                    |
+| 404    | No hay ningún combo a la venta con ese slug    |
+| 500    | Falló la base                                  |
+
+## Pedidos
+
+Los pedidos del usuario con sesión. Son de solo lectura: se crean desde el
+checkout (`confirmarPedido`).
+
+### Autenticación
+
+Con la cookie de sesión de Supabase, la misma del sitio (`sb-<proyecto>-auth-token`,
+que se escribe al ingresar en `/ingresar`). No hay tokens aparte. El handler
+pide el usuario con `getUsuario()` (`lib/sesion.js`), que lo verifica contra
+Supabase Auth: no alcanza con que la cookie exista. Si el access token venció,
+lo renueva con el refresh token y escribe las cookies nuevas en la respuesta.
+El proxy (`proxy.js`) no corre en `/api` y no hace falta.
+
+Los dos endpoints controlan en este orden:
+
+1. **La sesión.** Si no hay, `401 sin_sesion`. Va primero: sin sesión no se
+   mira nada más, ni el formato del id.
+2. **Los parámetros**, con su esquema. Si no pasan, `400 datos_invalidos`.
+3. **La consulta**, con el cliente con sesión. RLS (la política «dueño o admin»
+   de `pedidos`, `pedido_items` y `pedido_combos`) deja ver solo los pedidos
+   del usuario: el handler no filtra por usuario a mano. Si no aparece, `404`.
+
+Para probarlos, con la sesión iniciada en el navegador, desde la consola de
+una página del sitio: `await (await fetch("/api/v1/pedidos")).json()`. Con curl
+hay que pasar la cookie (`curl -b "sb-…-auth-token=…"`).
+
+### `GET /api/v1/pedidos`
+
+Los pedidos del usuario, el más nuevo primero. Sin parámetros.
+
+```
+curl -b "sb-<proyecto>-auth-token=…" "https://<dominio>/api/v1/pedidos"
+```
+
+**200**
+
+```json
+{
+  "pedidos": [
+    {
+      "id": "0b6f5c9e-2f4d-4a51-9f0e-6d7c1a2b3c4d",
+      "numero": 42,
+      "total": 369720,
+      "creadoEn": "2026-10-22T17:30:00.123456+00:00",
+      "estado": { "clave": "pagado", "texto": "Pagado" }
+    }
+  ]
+}
+```
+
+`estado.clave` es el estado del pedido, más dos que calcula la tienda:
+`procesando` (pendiente, con un pago en curso en Mercado Pago) y `vencido`
+(pendiente, pasados los 30 minutos).
+
+**401**
+
+```json
+{ "error": { "codigo": "sin_sesion", "mensaje": "Hace falta iniciar sesión." } }
+```
+
+| Status | Cuándo                                    |
+| ------ | ----------------------------------------- |
+| 200    | Hay sesión (la lista puede venir vacía)   |
+| 401    | Sin sesión                                |
+| 500    | Falló la base                             |
+
+### `GET /api/v1/pedidos/[id]`
+
+Un pedido del usuario, con sus líneas, sus totales y los datos de envío.
+
+| Parámetro (ruta) | Reglas                                                    |
+| ---------------- | --------------------------------------------------------- |
+| `id`             | Un uuid (`0b6f5c9e-2f4d-4a51-9f0e-6d7c1a2b3c4d`)          |
+
+```
+curl -b "sb-<proyecto>-auth-token=…" "https://<dominio>/api/v1/pedidos/0b6f5c9e-2f4d-4a51-9f0e-6d7c1a2b3c4d"
+```
+
+**200**
+
+```json
+{
+  "pedido": {
+    "id": "0b6f5c9e-2f4d-4a51-9f0e-6d7c1a2b3c4d",
+    "numero": 42,
+    "email": "comprador@ejemplo.com",
+    "creadoEn": "2026-10-22T17:30:00.123456+00:00",
+    "estado": { "clave": "pagado", "texto": "Pagado" },
+    "venceEn": "2026-10-22T18:00:00.123Z",
+    "canceladoPor": null,
+    "initPoint": "https://www.mercadopago.com.ar/checkout/v1/redirect?pref_id=…",
+    "ultimoPago": "approved",
+    "pagoTrasCancelar": false,
+    "lista": 410800,
+    "descuento": 41080,
+    "envio": 0,
+    "total": 369720,
+    "envioDatos": {
+      "nombre": "Ana Pérez",
+      "telefono": "11 4444-5555",
+      "calle": "Av. Corrientes 1234",
+      "piso": "",
+      "ciudad": "CABA",
+      "provincia": "Ciudad Autónoma de Buenos Aires",
+      "codigoPostal": "C1043AAZ"
+    },
+    "combos": [
+      {
+        "id": "5d0e…",
+        "comboId": 1,
+        "nombre": "Kit para arrancar",
+        "descuentoPct": 10,
+        "lista": 410800,
+        "descuento": 41080,
+        "precio": 369720,
+        "lineas": [
+          {
+            "id": "9a1c…",
+            "slug": "yonex-ezone-100",
+            "href": "/producto/yonex-ezone-100",
+            "nombre": "Yonex Ezone 100",
+            "variante": "Grip 2 / 300 g",
+            "precioUnitario": 379000,
+            "cantidad": 1,
+            "subtotal": 379000
+          }
+        ]
+      }
+    ],
+    "sueltas": []
+  }
+}
+```
+
+Los precios y los nombres son los que quedaron copiados al comprar, aunque el
+catálogo haya cambiado después.
+
+**400** (`/pedidos/abc`, con sesión)
+
+```json
+{
+  "error": {
+    "codigo": "datos_invalidos",
+    "mensaje": "Los datos no tienen el formato esperado.",
+    "detalles": [{ "campo": "id", "mensaje": "Tiene que ser un uuid." }]
+  }
+}
+```
+
+**404**
+
+```json
+{ "error": { "codigo": "no_encontrado", "mensaje": "No hay ningún pedido tuyo con ese id." } }
+```
+
+| Status | Cuándo                                                        |
+| ------ | ------------------------------------------------------------- |
+| 200    | El pedido es del usuario (un admin ve todos: lo dice la política) |
+| 400    | Hay sesión y el id no es un uuid                              |
+| 401    | Sin sesión, con cualquier id                                  |
+| 404    | El pedido no existe **o es de otro usuario**                  |
+| 500    | Falló la base                                                 |
+
+### Por qué un pedido ajeno da 404 y no 403
+
+Un 403 («existe, pero no podés verlo») le confirma a quien pregunta que ese id
+es un pedido real de otra persona. Eso ya es una fuga: permite saber qué ids
+existen (enumerarlos) y armar ataques sobre esa base. Con un 404, «no existe» y
+«no es tuyo» son indistinguibles desde afuera. Es el mismo criterio de GitHub:
+un repositorio privado ajeno da 404, no 403.
+
+Además, con RLS es la respuesta honesta: la consulta corre con la sesión del
+usuario y la base ni siquiera devuelve la fila. El handler no sabe si el
+pedido existe; sabe que para ese usuario no está. Para dar un 403 habría que
+consultar con la service role, salteando RLS, solo para contar algo que
+conviene callar.
+
+El 403 queda para cuando revelar la existencia no importa y lo que falta es un
+permiso: por ejemplo, un endpoint de admin al que entra un usuario común.
+
+## Server Actions
+
+No están bajo `/api/v1`, pero son endpoints igual: Next las publica como `POST`
+a la página que las usa, y cualquiera puede llamarlas con cualquier argumento.
+Por eso validan con Zod como la API. En vez de un 400, devuelven el error en
+castellano para el formulario.
+
+| Acción              | Archivo           | Esquema               | Si no pasa                                                                                   |
+| ------------------- | ----------------- | --------------------- | -------------------------------------------------------------------------------------------- |
+| `cotizarCarrito`    | `lib/carrito.js`  | `Lineas`              | Lanza un error. El navegador siempre manda líneas limpias, así que solo falla un pedido armado a mano; el carrito muestra «No se pudo calcular el pedido» |
+| `confirmarPedido`   | `lib/checkout.js` | `Envio` y `Lineas`    | «Faltan datos: nombre y apellido, teléfono.», «El teléfono no parece válido.», «Elegí una provincia de la lista.», el formato del código postal, o «Algo cambió en tu carrito…» |
+| `ingresar`          | `lib/cuenta.js`   | `Ingreso`             | «Escribí tu email y tu contraseña.»                                                          |
+| `registrarme`       | `lib/cuenta.js`   | `Registro`            | «Escribí un email válido.», «La contraseña tiene que tener al menos 8 caracteres.» o «Las contraseñas no coinciden.» |
+| `cambiarContrasena` | `lib/cuenta.js`   | `ContrasenaNueva`     | Las mismas dos de la contraseña                                                              |
+| `pedirRecuperacion` | `lib/cuenta.js`   | `Recuperacion`        | «Escribí un email válido.»                                                                   |
+
+- **`Lineas`**: hasta 30 líneas (`{ tipo: "producto", varianteId, cantidad }` o
+  `{ tipo: "combo", comboId, elecciones, cantidad }`), con ids enteros positivos
+  y cantidades de 1 a 99. Las repetidas se unen en una. El carrito del
+  navegador limpia lo guardado en localStorage con `limpiarLineas`
+  (`lib/lineas.js`), con los mismos límites.
+- **`Envio`**: los campos de `CAMPOS_ENVIO` (`lib/envio.js`), sin espacios de
+  más y con su largo máximo; el código postal, en mayúsculas y sin espacios.
+- **Email**: sin espacios de más, en minúsculas y con el mismo criterio que el
+  `type="email"` del navegador.
+
+## Seguridad
+
+### Validación en el servidor
+
+Toda entrada pasa por un esquema de Zod antes de usarse: la query y los
+parámetros de ruta de la API, los argumentos de las Server Actions y el aviso
+del webhook. Lo que no pasa no llega a la base. La validación del navegador
+(atributos HTML, el aviso de contraseñas distintas) es solo para avisar antes:
+se puede saltear con un `fetch` armado a mano. Los precios, los descuentos y
+el stock nunca vienen del navegador: el carrito manda ids y cantidades, y el
+servidor (`cotizarCarrito`) y la base (`crear_pedido`) recalculan todo.
+
+### Consultas parametrizadas (inyección SQL)
+
+No hay SQL armado con texto en ningún lado. El código consulta con supabase-js
+(`.eq("slug", slug)`, `.in("id", ids)`, `.range(desde, hasta)`), que arma un
+pedido HTTP a PostgREST con cada valor como parámetro, codificado en la URL.
+PostgREST lo traduce a una consulta preparada, con el valor como parámetro y
+no pegado al SQL. Un slug como `'; drop table pedidos; --` es un texto que no
+coincide con ningún producto, no una instrucción.
+
+- Ninguna entrada del usuario se interpola en los filtros que se escriben como
+  texto (`.or()`, `.filter()`), que sí tienen su propia sintaxis.
+- Las funciones de la base (`crear_pedido`, `conciliar_pago`…) reciben sus
+  argumentos como `jsonb` y los usan como valores. Ninguna arma SQL dinámico
+  con `execute`.
+- Además, los esquemas ya rechazan lo que no tiene el formato (un slug con
+  comillas da 400 antes de consultar).
+
+### Escape de React (XSS)
+
+Todo lo que viene de la base (nombres, descripciones, datos de envío) se
+muestra con JSX, que escapa el texto: un `<script>` en una descripción se ve
+como texto y no se ejecuta. El proyecto no usa `dangerouslySetInnerHTML`. La
+API responde JSON (`application/json`), que el navegador no interpreta como
+HTML.
+
+### RLS (Row Level Security)
+
+Todas las tablas tienen RLS activado, y las políticas deciden qué ve cada uno
+aunque el código se equivoque:
+
+- **Catálogo**: lectura pública solo de lo activo. Por eso la clave
+  publicable puede estar en el código: con ella no se ve más que lo que muestra
+  la tienda, y no se puede escribir.
+- **Pedidos**: cada usuario ve los suyos y el admin, todos («dueño o admin»).
+  Nadie los escribe directo: solo las funciones.
+- **Funciones**: las que escriben con privilegios (`security definer`, con
+  `search_path` vacío) tienen el `execute` restringido. `crear_pedido` es solo
+  para `authenticated` y toma al usuario de `auth.uid()`, no de un argumento.
+  `conciliar_pago`, `guardar_preferencia` y `liberar_pedidos_vencidos` son solo
+  para `service_role`, con `SUPABASE_SECRET_KEY`, que nunca sale del servidor.
+
+### Lo demás
+
+- **Errores sin detalles internos**: `conErrores` responde un 500 genérico; el
+  stack y el mensaje original quedan solo en el log del servidor.
+- **Secretos**: ninguna variable secreta lleva `NEXT_PUBLIC_`, y
+  `lib/esquemas.js`, `lib/mercadopago.js`, `lib/cobros.js` y
+  `lib/supabaseServicio.js` importan `server-only`.
+- **Webhook**: la firma HMAC-SHA256 se compara en tiempo constante (ver abajo).
+- **Redirecciones**: `rutaSiguiente` (`lib/siguiente.js`) solo acepta rutas del
+  mismo sitio, así que `?siguiente=https://otro.com` no sirve para una
+  redirección abierta.
+- **Pedidos y cookies**: la API no manda encabezados CORS, así que otro sitio
+  no puede leer desde el navegador una respuesta que salió con la cookie del
+  usuario. Las cookies de Supabase son `SameSite=Lax`, y los datos personales
+  salen con `Cache-Control: private, no-store`, para que ningún caché
+  intermedio los guarde.
 
 ## `POST /api/v1/webhooks/mercadopago`
 
