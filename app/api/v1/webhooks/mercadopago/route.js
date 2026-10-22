@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { ErrorApi, conErrores, validar } from "@/lib/api";
 import { conciliarPago, pagoOnlineDisponible } from "@/lib/cobros";
-import { ErrorMercadoPago, firmaValida } from "@/lib/mercadopago";
+import { ErrorMercadoPago, secretosDelWebhook, verificarFirma } from "@/lib/mercadopago";
 
 // POST /api/v1/webhooks/mercadopago: los avisos de Mercado Pago (Webhooks).
 // Valida la firma, toma el id del pago, lo consulta en Mercado Pago y lo
@@ -13,21 +13,40 @@ import { ErrorMercadoPago, firmaValida } from "@/lib/mercadopago";
 // Mercado Pago reintente. Sin la configuración de Mercado Pago responde 503:
 // el aviso no se pierde y llega de nuevo cuando estén las variables.
 
-// ?data.id=123456&type=payment. data.id es el valor firmado.
+// ?data.id=123456&type=payment. data.id es el valor firmado. source_news solo
+// llega si la URL la tenía (la notification_url de las preferencias viejas)
 const Consulta = z.object({
   "data.id": z.string().optional(),
   type: z.string().optional(),
+  source_news: z.string().optional(),
 });
 
-// El cuerpo es solo una señal: se lee el tipo de evento y nada más
+// El cuerpo es solo una señal: se lee el tipo de evento y, para el log, si es
+// de producción (live_mode)
 const Aviso = z.object({
   type: z.string().optional(),
   action: z.string().optional(),
+  live_mode: z.boolean().optional(),
 });
 
 const AvisoDePago = z.object({
   "data.id": z.string().regex(/^\d{1,20}$/, "El id del pago tiene que ser un número"),
 });
+
+// Lo que se sabe de la firma y del aviso, en una línea para el log. Nunca las
+// claves ni los hashes.
+function describir(firma, aviso, consulta, request) {
+  const { dataId, requestId, ts, antiguedad, claves } = firma;
+  return [
+    `data.id=${dataId ?? "no vino"}`,
+    `x-request-id=${requestId ?? "no vino"}`,
+    ts ? `ts=${ts} (en ${antiguedad.unidad}, hace ${antiguedad.segundos} s)` : "ts=no vino",
+    `claves probadas=${claves}`,
+    `live_mode=${aviso.live_mode ?? "no vino"}`,
+    `source_news=${consulta.source_news ?? "no vino"}`,
+    `user-agent="${request.headers.get("user-agent") ?? ""}"`,
+  ].join(", ");
+}
 
 export const POST = conErrores(async (request) => {
   const { searchParams } = new URL(request.url);
@@ -36,16 +55,26 @@ export const POST = conErrores(async (request) => {
   if (!pagoOnlineDisponible()) {
     throw new ErrorApi(503, "pago_online_no_disponible", "El pago online todavía no está configurado.");
   }
-  const firmado = firmaValida({
+
+  const leido = Aviso.safeParse(await request.json().catch(() => null));
+  const aviso = leido.success ? leido.data : {};
+
+  const firma = verificarFirma({
     firma: request.headers.get("x-signature"),
     requestId: request.headers.get("x-request-id"),
     dataId: consulta["data.id"],
-    secreto: process.env.MP_WEBHOOK_SECRET,
+    secretos: secretosDelWebhook(),
   });
-  if (!firmado) throw new ErrorApi(401, "firma_invalida", "La firma del aviso no coincide.");
+  if (!firma.valida) {
+    console.warn(
+      `Webhook de Mercado Pago: firma rechazada (${firma.motivo}). ${describir(firma, aviso, consulta, request)}`,
+    );
+    throw new ErrorApi(401, "firma_invalida", "La firma del aviso no coincide.", [
+      { campo: "x-signature", mensaje: firma.motivo },
+    ]);
+  }
 
-  const aviso = Aviso.safeParse(await request.json().catch(() => null));
-  const tipo = (aviso.success && aviso.data.type) || consulta.type;
+  const tipo = aviso.type || consulta.type;
   if (tipo !== "payment") {
     return Response.json({ recibido: true, resultado: "ignorado", tipo: tipo ?? null });
   }
@@ -62,6 +91,8 @@ export const POST = conErrores(async (request) => {
     throw error;
   }
 
-  console.info(`Webhook de Mercado Pago: pago ${pagoId} → ${resultado}`);
+  console.info(
+    `Webhook de Mercado Pago: pago ${pagoId} → ${resultado} (firma válida con la clave ${firma.clave} de ${firma.claves}, live_mode=${aviso.live_mode ?? "no vino"}, source_news=${consulta.source_news ?? "no vino"})`,
+  );
   return Response.json({ recibido: true, resultado });
 });

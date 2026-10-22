@@ -624,9 +624,10 @@ Código: `app/api/v1/webhooks/mercadopago/route.js`, `lib/mercadopago.js`,
 ### Qué llega
 
 ```
-POST /api/v1/webhooks/mercadopago?data.id=123456&type=payment&source_news=webhooks
+POST /api/v1/webhooks/mercadopago?data.id=123456&type=payment
 x-signature: ts=1742505638683,v1=ced36ab6d33566bb1e16c125819b8d840d6b8ef136b0b9127c76064466f5229b
 x-request-id: bb56a2f1-6aae-46ac-982e-9dcd3581d08e
+User-Agent: MercadoPago WebHook v1.0 payment
 Content-Type: application/json
 
 {"action":"payment.updated","api_version":"v1","data":{"id":"123456"},
@@ -634,17 +635,25 @@ Content-Type: application/json
  "type":"payment","user_id":724484980}
 ```
 
-`source_news=webhooks` lo agrega la tienda en la `notification_url` de la
-preferencia, para recibir solo avisos de Webhooks (firmados) y no los IPN.
+Los avisos llegan a la URL registrada en el panel (Webhooks › Configurar
+notificaciones). Las preferencias **no** mandan `notification_url`: con ella,
+los avisos reales del pedido #4 (que llegaban con `source_news=webhooks`, el
+parámetro que la tienda le agregaba) dieron `401 firma_invalida`, mientras
+«Simular», que va a la URL del panel, daba 200. La documentación garantiza la
+firma para «la URL registrada»; no dice lo mismo de la `notification_url`. Las
+preferencias creadas antes del cambio la siguen teniendo: sus avisos llegan
+con `source_news=webhooks`, y el log lo muestra.
 
 ### Qué hace
 
 1. **Valida la firma.** De `x-signature` saca `ts` y `v1`, y arma el
    manifiesto `id:<data.id>;request-id:<x-request-id>;ts:<ts>;` (con `data.id`
    de la query, en minúsculas; lo que no llega se saca del manifiesto). Calcula
-   el HMAC-SHA256 en hexadecimal con `MP_WEBHOOK_SECRET` y lo compara con `v1`
-   en tiempo constante. Si no coincide: **401**. No se mira la antigüedad de
-   `ts`: un aviso repetido no hace daño (ver «Idempotencia»).
+   el HMAC-SHA256 en hexadecimal con cada clave de `MP_WEBHOOK_SECRET` (puede
+   traer varias, separadas por comas) y lo compara con `v1` en tiempo
+   constante. Si ninguna coincide: **401**, con el motivo en el log (ver
+   «Diagnóstico de la firma»). No se rechaza por la antigüedad de `ts`: un
+   aviso repetido no hace daño (ver «Idempotencia»).
 2. **Mira el tipo** (`type` del cuerpo o de la query). Si no es `payment`,
    responde **200** y no hace nada más.
 3. **Valida el id** del pago con Zod (`data.id`, numérico). Si no: **400**.
@@ -670,7 +679,7 @@ procesar después perdería el aviso si algo falla.
 | 200    | `{ "recibido": true, "resultado": "pagado" }`     | Un pago conciliado (ver resultados)            |
 | 200    | `{ "recibido": true, "resultado": "ignorado", "tipo": "…" }` | Un evento que no es un pago          |
 | 400    | `datos_invalidos`                                 | `data.id` falta o no es numérico               |
-| 401    | `firma_invalida`                                  | La firma no coincide                           |
+| 401    | `firma_invalida`, con el motivo en `detalles`     | La firma no coincide                           |
 | 500    | `error_interno`                                   | Falta una variable o falló la base             |
 | 502    | `mercadopago_no_responde`                         | No se pudo consultar el pago                   |
 | 503    | `pago_online_no_disponible`                       | Falta alguna de las tres variables             |
@@ -679,6 +688,42 @@ Resultados (`resultado`): `pagado`, `en_curso`, `rechazado`, `cancelado`,
 `revision`, `registrado` (se guardó el estado, sin cambios en el pedido),
 `sin_cambios` (el mismo aviso otra vez), `ajeno` (el pago no es de un pedido de
 la tienda: un cobro con QR, un link de pago) y `pago_inexistente`.
+
+### Diagnóstico de la firma
+
+Cada 401 deja una línea en el log (Vercel › el proyecto › Logs, buscando
+«Webhook de Mercado Pago»), sin las claves ni los hashes:
+
+```
+Webhook de Mercado Pago: firma rechazada (hash distinto). data.id=184583338061,
+x-request-id=bb56a2f1-…, ts=1792711789068 (en milisegundos, hace 1 s),
+claves probadas=2, live_mode=false, source_news=webhooks,
+user-agent="MercadoPago WebHook v1.0 payment"
+```
+
+El motivo es uno de estos:
+
+| Motivo                              | Qué quiere decir                                                            |
+| ----------------------------------- | --------------------------------------------------------------------------- |
+| `falta x-signature`                 | El aviso no vino firmado                                                    |
+| `x-signature sin ts o sin v1`       | El header vino, pero no con la forma `ts=…,v1=…`                            |
+| `hash distinto, sin x-request-id`   | No vino `x-request-id`: el manifiesto queda sin esa parte y no coincide     |
+| `hash distinto`                     | Vino todo, pero ninguna clave da el mismo HMAC: no es la clave que firma    |
+
+La respuesta lleva el mismo motivo en `detalles`, así que también se ve en el
+historial de notificaciones del panel de Mercado Pago. Un aviso que pasa deja
+`pago 184583338061 → pagado (firma válida con la clave 2 de 2,
+live_mode=false, source_news=no vino)`: con las dos claves cargadas, dice cuál
+firma.
+
+- **El `ts`**: el log dice si vino en milisegundos (13 dígitos, como lo manda
+  Mercado Pago) o en segundos, y cuánto hace. No se rechaza por antigüedad:
+  el SDK oficial, con su tolerancia prendida, lo multiplica por 1000 como si
+  fueran segundos y rechazaría todo aviso en milisegundos.
+- **Prueba o productivo**: el panel tiene una pestaña de modo de prueba y otra
+  de modo productivo, y la clave de cada una puede ser distinta. `live_mode`
+  dice de qué modo es el aviso (`false` en las compras con credenciales de
+  prueba).
 
 ### La conciliación
 
@@ -777,7 +822,7 @@ sequenceDiagram
   Note over S: Recalcula precios, reserva el stock,<br/>deja el pedido en pendiente_pago
   S-->>G: id del pedido
   G->>S: Lee el pedido guardado (RLS: solo el suyo)
-  G->>MP: POST /checkout/preferences<br/>ítems del pedido, payer, external_reference,<br/>back_urls, notification_url, vence a los 30 min
+  G->>MP: POST /checkout/preferences<br/>ítems del pedido, payer, external_reference,<br/>back_urls, vence a los 30 min
   MP-->>G: id, init_point
   G->>S: guardar_preferencia (service_role)
   G-->>C: init_point
@@ -789,7 +834,7 @@ sequenceDiagram
     C->>G: /mis-pedidos/[id]/pago/aprobado · pendiente · rechazado
     G-->>C: Solo un mensaje («Probar de nuevo» si se rechazó)
   and Mercado Pago avisa
-    MP->>G: POST /api/v1/webhooks/mercadopago (x-signature, data.id)
+    MP->>G: POST a la URL del panel (x-signature, data.id)
     G->>G: Valida la firma (401 si no coincide)
     G->>MP: GET /v1/payments/:id (Access Token)
     MP-->>G: status, external_reference, transaction_amount
@@ -862,7 +907,7 @@ al navegador. `lib/mercadopago.js`, `lib/supabaseServicio.js` y
 | Variable               | Para qué                                                    | De dónde sale                                                                                   |
 | ---------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `MP_ACCESS_TOKEN`      | Crear preferencias y consultar pagos                        | Mercado Pago › Tus integraciones › la aplicación › Credenciales de prueba (después, de producción) |
-| `MP_WEBHOOK_SECRET`    | Validar la firma de los avisos                              | Mercado Pago › la aplicación › Webhooks › Configurar notificaciones › clave secreta             |
+| `MP_WEBHOOK_SECRET`    | Validar la firma de los avisos. Puede traer varias claves separadas por comas (la de prueba y la productiva) | Mercado Pago › la aplicación › Webhooks › Configurar notificaciones › la clave secreta de cada pestaña |
 | `SUPABASE_SECRET_KEY`  | Llamar a `conciliar_pago` y `guardar_preferencia`           | Supabase › Project Settings › API Keys › Secret keys (`sb_secret_…`)                             |
 
 Las de Supabase que ya estaban (`NEXT_PUBLIC_SUPABASE_URL` y
@@ -911,14 +956,17 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
    Access Token (empieza con `APP_USR-`, como el de producción) va a
    `MP_ACCESS_TOKEN`.
 3. **El webhook**: en la aplicación, Webhooks › Configurar notificaciones. En
-   las dos pestañas (prueba y productivo), la URL
-   `https://<dominio de producción>/api/v1/webhooks/mercadopago` y el evento
-   **Pagos**. Guardar genera la clave secreta: «Revelar» y copiarla a
-   `MP_WEBHOOK_SECRET`. La preferencia manda su propia `notification_url` (la
-   misma ruta, con `?source_news=webhooks`), que tiene prioridad; la del panel
-   hace falta para tener el secret.
+   las dos pestañas (modo de prueba y modo productivo), la URL
+   `https://<dominio de producción>/api/v1/webhooks/mercadopago` (sin
+   parámetros) y el evento **Pagos**. Es la única URL de avisos: las
+   preferencias no mandan `notification_url`. Guardar genera la clave secreta:
+   «Revelar» en cada pestaña. Si son distintas, cargar las dos en
+   `MP_WEBHOOK_SECRET`, separadas por una coma (`clave_prueba,clave_productiva`).
 4. **Probarlo**: «Simular» en esa misma pantalla, con cualquier Data ID, tiene
-   que responder 200 con `"resultado": "pago_inexistente"`.
+   que responder 200 con `"resultado": "pago_inexistente"`. Con el id de un
+   pago real, lo concilia de verdad: el webhook nunca usa el cuerpo del aviso,
+   consulta el pago a Mercado Pago. Sirve para conciliar un pago cuyo aviso se
+   perdió.
 
 ### Una compra de prueba
 
@@ -937,10 +985,9 @@ DNI `12345678`. El nombre del titular elige el resultado: `APRO` aprobado,
 `npm run dev` sirve para todo menos el aviso: las `back_urls` vuelven a
 `http://localhost:3000` (sin `auto_return`, que la tienda solo pide con
 HTTPS: hay que tocar «Volver al sitio»), pero Mercado Pago no puede avisarle a
-localhost (la `notification_url` también va solo con HTTPS), así que el pedido
-queda pendiente. Para probar el webhook en local,
-abrir el sitio por un túnel HTTPS (cloudflared, ngrok): el origen de la
-preferencia pasa a ser el del túnel y la `notification_url` también.
+localhost, así que el pedido queda pendiente. Para probar el webhook en local,
+abrir el sitio por un túnel HTTPS (cloudflared, ngrok) y poner la URL del túnel
+en la pestaña de modo de prueba del panel mientras dure la prueba.
 
 ### Pasar a producción
 
