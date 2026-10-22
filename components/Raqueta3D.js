@@ -11,13 +11,15 @@ import { Color, MathUtils, Vector3 } from "three";
 // y a quién avisar dónde va el sticker del paso activo (onMarca).
 //
 // El modelo (public/models/raqueta.glb, optimizado con meshopt y texturas
-// WebP) trae tres mallas: el marco entero (con garganta, mango y tapa) y el
-// encordado en dos mallas. Por eso el encordado se resalta en lima y el resto
-// de las partes se marca con el sticker anclado a su posición 3D.
+// WebP) trae tres mallas: la raqueta (marco, garganta, empuñadura y tapón) y
+// el encordado en dos mallas. Por eso el encordado se resalta en lima y el
+// resto de las partes se marca con el sticker anclado a su posición 3D. El
+// antivibrador no viene en el modelo: es una pieza aparte, que también se
+// pone lima.
 
 export const URL_RAQUETA = "/models/raqueta.glb";
 
-// Medidas del modelo, en centímetros: de la tapa (y = 0) a la punta
+// Medidas del modelo, en centímetros: del tapón (y = 0) a la punta
 const LARGO = 70.5;
 const COMPLETA = { y: LARGO / 2, zoom: 1 };
 // El final: la raqueta entera, centrada y un poco más lejos
@@ -33,6 +35,9 @@ const FOV = 30;
 const AZIMUT = 0.32;
 const ELEVACION = 0.1;
 const LIMA = "#dcf900";
+// El antivibrador: entre las dos principales del medio, debajo de la última
+// cruzada (el reglamento no lo deja donde se cruzan las cuerdas)
+const ANTIVIBRADOR = { y: 34.8, blanco: new Color("#ffffff"), lima: new Color(LIMA) };
 
 const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
 const suavizar = (t) => t * t * (3 - 2 * t);
@@ -41,6 +46,8 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   const { scene } = useGLTF(URL_RAQUETA, false, true);
   const grupo = useRef(null);
   const disco = useRef(null);
+  const antivibrador = useRef(null);
+  const mezclaAntivibrador = useRef(0);
   const { camera, size } = useThree();
 
   // El export viene acostado (una rotación en la raíz): se endereza para que
@@ -144,6 +151,17 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     const latido = 1 + Math.sin(tiempo * 3.4) * 0.07;
     disco.current.scale.set(4.2 * latido, 5.4 * latido, 1);
 
+    // El antivibrador pasa de blanco a lima cuando es la parte del paso
+    const mezcla = (mezclaAntivibrador.current = MathUtils.damp(
+      mezclaAntivibrador.current,
+      paso?.partes.includes("antivibrador") ? 1 : 0,
+      6,
+      delta,
+    ));
+    const materialAntivibrador = antivibrador.current.material;
+    materialAntivibrador.color.lerpColors(ANTIVIBRADOR.blanco, ANTIVIBRADOR.lima, mezcla);
+    materialAntivibrador.emissiveIntensity = mezcla * 0.35;
+
     // El sticker del paso activo, anclado a la posición 3D de su parte. En el
     // final, todos juntos alrededor de la raqueta entera.
     const escena = medidas.current.escena;
@@ -176,9 +194,19 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
             toneMapped={false}
           />
         </mesh>
+        {/* Una pastilla de goma acostada sobre el plano de las cuerdas */}
+        <mesh
+          ref={antivibrador}
+          position={[0, ANTIVIBRADOR.y, 0]}
+          rotation={[0, 0, Math.PI / 2]}
+          scale={[1, 1, 0.7]}
+        >
+          <capsuleGeometry args={[0.5, 1.1, 6, 16]} />
+          <meshStandardMaterial color="#ffffff" roughness={0.45} emissive={LIMA} emissiveIntensity={0} />
+        </mesh>
       </group>
 
-      {/* Sombra de contacto debajo de la tapa. En mobile se calcula una sola
+      {/* Sombra de contacto debajo del tapón. En mobile se calcula una sola
           vez: así no traba. */}
       <ContactShadows
         position={[0, -1.5, 0]}

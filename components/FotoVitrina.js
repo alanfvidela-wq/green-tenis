@@ -5,7 +5,7 @@ import styles from "./FotoVitrina.module.css";
 // producto (proporción 96:100), con el mismo encuadre que pide la spec de
 // fotos. Tocan la caja por su lado más largo.
 const SILUETAS = {
-  // De frente y vertical: el marco de la cabeza, el puente y el mango
+  // De frente y vertical: el marco, la garganta y la empuñadura
   raquetas: (
     <>
       <path

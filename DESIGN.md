@@ -390,9 +390,18 @@ La raqueta de frente y vertical, dibujada en SVG con código
 sin 3D y la va a usar «Armá tu raqueta».
 
 - **Partes**: cada una es un grupo (`data-parte`) que se puede resaltar o animar
-  por separado: aro, encordado (16 verticales × 19 horizontales, calculadas
-  desde el patrón), punto dulce (una zona, no una pieza), antivibrador,
-  garganta, mango, grip, overgrip y tapa.
+  por separado, con la terminología técnica en castellano: marco (la cabeza,
+  la zona que rodea el encordado), protector (la pieza de arriba del marco),
+  ojales (un agujero en cada punta de cada cuerda, sobre la línea media del
+  marco), encordado (16 principales verticales × 19 cruzadas horizontales,
+  calculadas desde el patrón), punto dulce (una zona, no una pieza),
+  antivibrador (entre las principales, debajo de la última cruzada), garganta
+  (con el puente, que cierra la cabeza por debajo del encordado), empuñadura
+  (octogonal: de frente se ven las aristas de sus biseles), grip, overgrip y
+  tapón. En el código los ids van sin tildes ni eñes (`empunadura`, `tapon`).
+- **Cuerdas y ojales**: las cuerdas están en las mismas posiciones en los dos
+  estilos. Las cruzadas dejan lugar abajo para el antivibrador, y los pasos
+  están elegidos para que ningún ojal se pise con otro.
 - **Props**: `resaltadas` (las partes en lima), `estilo`, `encuadre`
   (`ajustado`, solo la raqueta, o `lienzo`, 400×560 con aire para las
   etiquetas) y `prefijo` (para los ids de los degradados si hay más de una en
@@ -401,7 +410,8 @@ sin 3D y la va a usar «Armá tu raqueta».
   negra de 1,5px sobre blanco, sin rellenos. Es un dibujo técnico, no una
   ilustración. Resaltar es poner un marcador lima debajo de la línea (sobre
   blanco, una línea lima sola no se leería); el resto baja a gris (negro al
-  28%). Las cuerdas llevan un marcador más fino para no volverse una mancha.
+  28%). Las cuerdas y los ojales llevan un marcador más fino para no volverse
+  una mancha.
 - **Estilo `inflada`**: solo para la anatomía (ver abajo).
 
 ## Excepción: Anatomía de una raqueta
@@ -434,15 +444,19 @@ ilustraciones de esa referencia, ni su arcoíris de colores.
   azul, garganta y grip negros, encordado modelado). Sale de
   `modelos-fuente/raqueta.glb` (fuera de git) con `npm run modelo:raqueta`:
   gltf-transform con meshopt y texturas WebP de 2048px como máximo, de 19 MB a
-  364 KB. Trae tres mallas: el marco entero (con garganta, mango, grip y tapa)
-  y el encordado en dos mallas. Viene acostado y se endereza en el código.
+  364 KB. Trae tres mallas: la raqueta (marco con sus ojales, garganta,
+  empuñadura con el grip y tapón) y el encordado en dos mallas. Viene acostado
+  y se endereza en el código.
 - **Resaltar**: lo que es una malla aparte se pone lima con un emissive suave
-  (el encordado). Lo que no lo es (contorno, garganta, mango y grip, overgrip,
-  tapa) se marca solo con el sticker anclado a su posición 3D y la línea guía.
-  El punto dulce es un disco lima semitransparente que late sobre el encordado.
+  (el encordado). Lo que no lo es (marco, protector, ojales, garganta,
+  empuñadura, grip, overgrip y tapón) se marca solo con el sticker anclado a su
+  posición 3D y la línea guía. El punto dulce es un disco lima semitransparente
+  que late sobre el encordado. El antivibrador no viene en el modelo: es una
+  pastilla blanca agregada en el código, entre las principales y debajo de la
+  última cruzada, que pasa a lima en su paso.
 - **Luz de estudio suave**: un entorno chico armado con `Lightformer` de drei
   (no baja ningún HDR), una luz principal arriba a la derecha y una sombra de
-  contacto debajo de la tapa.
+  contacto debajo del tapón.
 - **La pelota**: una pelota de tenis inflada (SVG), lima con contorno y
   costuras negras, flota arriba a la izquierda.
 
@@ -467,7 +481,9 @@ mueve el layout.
   de píldora o de esquinas redondeadas (14px), apenas rotado (±2 a 4°), en
   mayúsculas, Inter Tight 800. Con el 3D se ve solo el del paso activo, en
   lima; en la versión SVG se ven todos, en blanco. Lo une a su parte una línea guía negra de
-  3px que sale de un punto blanco con borde negro. Nunca va sobre una zona lima.
+  3px que sale de un punto blanco con borde negro. Nunca va sobre una zona lima
+  y nunca se sale del escenario: con el 3D, si no entra, se acerca a la
+  raqueta.
 - **Nombre gigante**: el nombre de la parte activa, enorme y apretado (Inter
   Tight 800, interlineado 0.8, tracking −0,045em), en blanco, detrás de la
   raqueta.
@@ -482,12 +498,13 @@ mueve el layout.
   del alto de la pantalla, y los pasos van pasando a la derecha, uno por
   pantalla. **Mobile**: la raqueta fija arriba (46% del alto, de borde a
   borde) y los pasos abajo.
-- **Un paso por parte, de arriba hacia abajo**: contorno, encordado, punto
-  dulce, garganta, mango y grip, overgrip y tapa. Cada paso tiene el número,
-  el nombre de la parte (`h3`), un dato técnico concreto en mono (patrón 16×19
-  contra 18×20, tamaños de grip, largo de 27″) y una frase corta que dice qué
-  cambia en el juego. El antivibrador se resalta con el encordado. Los pasos
-  están en `lib/anatomia.js`.
+- **Un paso por parte, de arriba hacia abajo**, con la terminología técnica
+  en castellano: marco, protector, ojales, encordado, punto dulce,
+  antivibrador, garganta, empuñadura, grip, overgrip y tapón. Cada paso tiene
+  el número, el nombre de la parte (`h3`), un dato técnico concreto en mono
+  (tamaño de la cabeza en pulgadas², patrón 16×19 contra 18×20, grips del 0 al
+  5, largo de 27″) y una frase corta que dice qué cambia en el juego. Los
+  pasos están en `lib/anatomia.js`.
 - **Todo el texto es HTML** (títulos y párrafos), nunca texto dentro del SVG.
   Los stickers y el nombre gigante también son HTML y repiten el título del
   paso, por eso van ocultos para lectores de pantalla.
@@ -502,8 +519,8 @@ mueve el layout.
   primer paso y después del último se ve la raqueta entera. Mira de frente, un
   poco desde la derecha y desde arriba. Los focos y las anclas de cada paso
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
-- **Al activarse un paso**: el encordado brilla en lima o aparece el disco del
-  punto dulce, el sticker entra flotando (sube, se endereza y crece, con un
+- **Al activarse un paso**: el encordado brilla en lima, aparece el disco del
+  punto dulce o el antivibrador pasa a lima, el sticker entra flotando (sube, se endereza y crece, con un
   rebote corto) pegado a su parte, y el nombre gigante aparece detrás. El paso
   activo se lee entero y los demás bajan al 35%.
 - **Flotación y parallax**: la raqueta sube y baja medio centímetro y gira
@@ -512,7 +529,7 @@ mueve el layout.
 
 ### El final
 
-Después de la última parte (la tapa) viene un tramo de scroll propio, el
+Después de la última parte (el tapón) viene un tramo de scroll propio, el
 bloque de cierre (`data-cierre`, de 170 a 180svh). A lo largo de ese tramo:
 
 1. **La cámara se aleja** hasta mostrar la raqueta entera, centrada, un poco

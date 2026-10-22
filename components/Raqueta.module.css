@@ -49,16 +49,18 @@
   opacity: 1;
 }
 
-/* En las cuerdas el marcador es más fino: si no, 35 líneas juntas se vuelven
-   una mancha lima */
-.linea [data-capa="resalte"] [data-parte="encordado"] {
+/* En las cuerdas y los ojales el marcador es más fino: si no, 35 líneas o 70
+   agujeros juntos se vuelven una mancha lima */
+.linea [data-capa="resalte"] [data-parte="encordado"],
+.linea [data-capa="resalte"] [data-parte="ojales"] {
   stroke-width: var(--resalte-fino);
 }
 
 /* Las zonas cerradas se rellenan de lima */
 .linea [data-capa="resalte"] [data-parte="punto-dulce"],
+.linea [data-capa="resalte"] [data-parte="ojales"],
 .linea [data-capa="resalte"] [data-parte="antivibrador"],
-.linea [data-capa="resalte"] [data-parte="tapa"] {
+.linea [data-capa="resalte"] [data-parte="tapon"] {
   fill: var(--lima);
 }
 
@@ -78,8 +80,8 @@
   opacity: 0.35;
 }
 
-/* Las cuerdas crecen desde arriba (verticales) o desde la izquierda
-   (horizontales); el overgrip se enrolla desde la izquierda */
+/* Las principales crecen desde arriba y las cruzadas desde la izquierda; el
+   overgrip se enrolla desde la izquierda */
 .inflada [data-cuerda],
 .inflada [data-vuelta] {
   transform-box: fill-box;

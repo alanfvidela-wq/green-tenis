@@ -1,10 +1,10 @@
 import styles from "./Raqueta.module.css";
 
 // Raqueta dibujada en SVG con código, de frente y vertical. Cada parte es un
-// grupo con data-parte, para resaltarla o animarla desde afuera: aro,
-// encordado, punto-dulce, antivibrador, garganta, mango, grip, overgrip y
-// tapa. Es un componente de servidor: el que lo usa decide qué partes
-// resaltar (`resaltadas`).
+// grupo con data-parte, para resaltarla o animarla desde afuera: marco,
+// protector, ojales, encordado, punto-dulce, antivibrador, garganta,
+// empunadura, grip, overgrip y tapon. Es un componente de servidor: el que lo
+// usa decide qué partes resaltar (`resaltadas`).
 //
 // Dos estilos (ver DESIGN.md):
 // - «linea» (el del sitio): línea negra de 1,5px sobre blanco. Resaltar es
@@ -24,48 +24,95 @@ const AJUSTADO = "96 8 208 540";
 const CX = 200;
 const CY = 145;
 
-// Patrón de encordado: cuerdas verticales × horizontales
-export const PATRON = { verticales: 16, horizontales: 19 };
+// Patrón de encordado: cuerdas principales (verticales) × cruzadas
+// (horizontales)
+export const PATRON = { principales: 16, cruzadas: 19 };
 
 const redondear = (n) => Math.round(n * 10) / 10;
 
-// Cuerdas de lado a lado de un óvalo: primero las verticales, después las
-// horizontales (es el orden en que se dibujan)
+// Dónde va cada cuerda, igual en los dos estilos: las principales de lado a
+// lado y las cruzadas desde arriba, con lugar abajo para el antivibrador (va
+// fuera de la zona donde se cruzan las cuerdas). Los pasos están elegidos para
+// que ningún ojal se pise con otro.
+const PRINCIPALES = Array.from(
+  { length: PATRON.principales },
+  (_, i) => CX + (i - (PATRON.principales - 1) / 2) * 10.83,
+);
+const CRUZADAS = Array.from({ length: PATRON.cruzadas }, (_, j) => 37.75 + j * 11.29);
+
+// La línea media del marco: ahí están los ojales, en los dos estilos
+const MEDIA = { rx: 92, ry: 121 };
+
+// Medio ancho de un óvalo a una altura (o medio alto a un ancho)
+const mitad = (radio, otroRadio, desplazamiento) =>
+  radio * Math.sqrt(1 - (desplazamiento / otroRadio) ** 2);
+
+// Cuerdas de lado a lado de un óvalo: primero las principales, después las
+// cruzadas (es el orden en que se dibujan)
 function trazarCuerdas(rx, ry) {
-  const cuerdas = [];
-  const pasoX = (2 * rx) / (PATRON.verticales + 1);
-  for (let i = 0; i < PATRON.verticales; i++) {
-    const x = CX + (i - (PATRON.verticales - 1) / 2) * pasoX;
-    const alto = ry * Math.sqrt(1 - ((x - CX) / rx) ** 2);
-    cuerdas.push({
-      d: `M${redondear(x)} ${redondear(CY - alto)}V${redondear(CY + alto)}`,
-      vertical: true,
-    });
-  }
-  const pasoY = (2 * ry) / (PATRON.horizontales + 1);
-  for (let j = 0; j < PATRON.horizontales; j++) {
-    const y = CY + (j - (PATRON.horizontales - 1) / 2) * pasoY;
-    const ancho = rx * Math.sqrt(1 - ((y - CY) / ry) ** 2);
-    cuerdas.push({
-      d: `M${redondear(CX - ancho)} ${redondear(y)}H${redondear(CX + ancho)}`,
-      vertical: false,
-    });
-  }
-  return cuerdas;
+  const principales = PRINCIPALES.map((x) => {
+    const alto = mitad(ry, rx, x - CX);
+    return { d: `M${redondear(x)} ${redondear(CY - alto)}V${redondear(CY + alto)}`, vertical: true };
+  });
+  const cruzadas = CRUZADAS.map((y) => {
+    const ancho = mitad(rx, ry, y - CY);
+    return { d: `M${redondear(CX - ancho)} ${redondear(y)}H${redondear(CX + ancho)}`, vertical: false };
+  });
+  return [...principales, ...cruzadas];
 }
+
+// Un ojal en cada punta de cada cuerda, sobre la línea media del marco: uno
+// arriba y otro abajo por principal, y uno a cada lado por cruzada
+const OJALES = [
+  ...PRINCIPALES.flatMap((x) => {
+    const alto = mitad(MEDIA.ry, MEDIA.rx, x - CX);
+    return [
+      [x, CY - alto],
+      [x, CY + alto],
+    ];
+  }),
+  ...CRUZADAS.flatMap((y) => {
+    const ancho = mitad(MEDIA.rx, MEDIA.ry, y - CY);
+    return [
+      [CX - ancho, y],
+      [CX + ancho, y],
+    ];
+  }),
+].map(([x, y]) => [redondear(x), redondear(y)]);
+
+// Un punto de un óvalo centrado en la cabeza, a un ángulo (en grados, 0 a la
+// derecha, sentido horario)
+function puntoOvalo(rx, ry, grados) {
+  const a = (grados * Math.PI) / 180;
+  return [redondear(CX + rx * Math.cos(a)), redondear(CY + ry * Math.sin(a))];
+}
+
+// Arco de un óvalo centrado en la cabeza, entre dos ángulos
+function arco(rx, ry, desde, hasta) {
+  const [x1, y1] = puntoOvalo(rx, ry, desde);
+  const [x2, y2] = puntoOvalo(rx, ry, hasta);
+  const grande = hasta - desde > 180 ? 1 : 0;
+  return `M${x1} ${y1}A${rx} ${ry} 0 ${grande} 1 ${x2} ${y2}`;
+}
+
+// El protector cubre la punta del marco, de las 10 a las 2 si la cabeza fuera
+// un reloj
+const PROTECTOR = { desde: 222, hasta: 318 };
 
 // Punto de referencia de cada parte, en coordenadas del lienzo: de ahí sale
 // la línea guía de su etiqueta
 export const ANCLAS = {
-  aro: [253, 46],
-  encordado: [154.5, 110],
+  marco: [105, 145],
+  protector: [233, 26],
+  ojales: [283.5, 94.2],
+  encordado: [151.3, 222],
   "punto-dulce": [200, 160],
-  antivibrador: [200, 253],
-  garganta: [154, 303],
-  mango: [213, 365],
-  grip: [215, 450],
-  overgrip: [184, 470],
-  tapa: [217, 530],
+  antivibrador: [200, 250],
+  garganta: [245.6, 302.7],
+  empunadura: [191, 363],
+  grip: [213, 383],
+  overgrip: [186, 455],
+  tapon: [217, 530],
 };
 
 /* ---------- Estilo «linea» ---------- */
@@ -79,15 +126,28 @@ const OVERGRIP_LINEA = (() => {
   return vueltas;
 })();
 
+// El protector, por fuera del marco: el arco de afuera y sus dos puntas
+const PROTECTOR_LINEA = (() => {
+  const { desde, hasta } = PROTECTOR;
+  const punta = (grados) =>
+    `M${puntoOvalo(96, 125, grados).join(" ")}L${puntoOvalo(100, 129, grados).join(" ")}`;
+  return [arco(100, 129, desde, hasta), punta(desde), punta(hasta)];
+})();
+
 const PARTES_LINEA = [
   {
-    id: "aro",
+    id: "marco",
     forma: (
       <>
         <ellipse cx={CX} cy={CY} rx={96} ry={125} />
         <ellipse cx={CX} cy={CY} rx={88} ry={117} />
       </>
     ),
+  },
+  { id: "protector", forma: PROTECTOR_LINEA.map((d) => <path key={d} d={d} />) },
+  {
+    id: "ojales",
+    forma: OJALES.map(([x, y]) => <circle key={`${x} ${y}`} cx={x} cy={y} r={1.6} />),
   },
   {
     id: "encordado",
@@ -96,7 +156,7 @@ const PARTES_LINEA = [
     )),
   },
   { id: "punto-dulce", forma: <ellipse cx={CX} cy={160} rx={30} ry={38} /> },
-  { id: "antivibrador", forma: <rect x={191} y={252.5} width={18} height={7} rx={3.5} /> },
+  { id: "antivibrador", forma: <rect x={191} y={245} width={18} height={7} rx={3.5} /> },
   {
     id: "garganta",
     forma: (
@@ -108,22 +168,24 @@ const PARTES_LINEA = [
     ),
   },
   {
-    id: "mango",
+    // Octogonal: de frente se ven tres de sus ocho biseles
+    id: "empunadura",
     forma: (
       <>
         <path d="M188 364V522M212 364V522" />
+        <path d="M195 364V522M205 364V522" />
         <path d="M188 378H212" />
       </>
     ),
   },
-  { id: "grip", forma: <path d="M194 380V520M200 380V520M206 380V520" /> },
+  { id: "grip", forma: <rect x={186} y={380} width={28} height={140} rx={2} /> },
   {
     id: "overgrip",
     forma: OVERGRIP_LINEA.map((d, i) => (
       <path key={d} d={d} pathLength="1" data-vuelta={i} />
     )),
   },
-  { id: "tapa", forma: <path d="M186 522H214V530Q214 538 206 538H194Q186 538 186 530Z" /> },
+  { id: "tapon", forma: <path d="M186 522H214V530Q214 538 206 538H194Q186 538 186 530Z" /> },
 ];
 
 function RaquetaLinea({ resaltadas }) {
@@ -149,9 +211,11 @@ function RaquetaLinea({ resaltadas }) {
 // Grosor del contorno negro, a cada lado del cuerpo
 const BORDE = 2.6;
 
-// El aro es un tubo: su línea central y su grosor
-const ARO_TUBO = { rx: 92, ry: 121, ancho: 13 };
-const CUERDAS_INFLADA = trazarCuerdas(ARO_TUBO.rx, ARO_TUBO.ry);
+// El marco es un tubo sobre la línea media, y el protector, un tubo más ancho
+// que lo cubre arriba y asoma un poco por fuera
+const MARCO_TUBO = { ...MEDIA, ancho: 13 };
+const PROTECTOR_TUBO = { rx: MEDIA.rx + 2, ry: MEDIA.ry + 2, ancho: 15 };
+const CUERDAS_INFLADA = trazarCuerdas(MARCO_TUBO.rx, MARCO_TUBO.ry);
 
 const OVERGRIP_INFLADA = (() => {
   const vueltas = [];
@@ -159,19 +223,7 @@ const OVERGRIP_INFLADA = (() => {
   return vueltas;
 })();
 
-// Arco del aro entre dos ángulos (en grados, 0 a la derecha, sentido horario)
-function arco(rx, ry, desde, hasta) {
-  const punto = (grados) => {
-    const a = (grados * Math.PI) / 180;
-    return [redondear(CX + rx * Math.cos(a)), redondear(CY + ry * Math.sin(a))];
-  };
-  const [x1, y1] = punto(desde);
-  const [x2, y2] = punto(hasta);
-  const grande = hasta - desde > 180 ? 1 : 0;
-  return `M${x1} ${y1}A${rx} ${ry} 0 ${grande} 1 ${x2} ${y2}`;
-}
-
-const ARO_D = `M${CX - ARO_TUBO.rx} ${CY}a${ARO_TUBO.rx} ${ARO_TUBO.ry} 0 1 0 ${2 * ARO_TUBO.rx} 0a${ARO_TUBO.rx} ${ARO_TUBO.ry} 0 1 0 ${-2 * ARO_TUBO.rx} 0Z`;
+const MARCO_D = `M${CX - MARCO_TUBO.rx} ${CY}a${MARCO_TUBO.rx} ${MARCO_TUBO.ry} 0 1 0 ${2 * MARCO_TUBO.rx} 0a${MARCO_TUBO.rx} ${MARCO_TUBO.ry} 0 1 0 ${-2 * MARCO_TUBO.rx} 0Z`;
 
 function RaquetaInflada({ resaltadas, prefijo }) {
   const url = (nombre) => `url(#${prefijo}-${nombre})`;
@@ -224,10 +276,29 @@ function RaquetaInflada({ resaltadas, prefijo }) {
       ),
     },
     {
-      id: "aro",
-      forma: tubo(ARO_D, ARO_TUBO.ancho, {
-        brillo: arco(ARO_TUBO.rx + 1.5, ARO_TUBO.ry + 1.5, 195, 285),
+      id: "marco",
+      forma: tubo(MARCO_D, MARCO_TUBO.ancho, {
+        brillo: arco(MARCO_TUBO.rx + 1.5, MARCO_TUBO.ry + 1.5, 195, 285),
       }),
+    },
+    {
+      id: "protector",
+      forma: tubo(
+        arco(PROTECTOR_TUBO.rx, PROTECTOR_TUBO.ry, PROTECTOR.desde, PROTECTOR.hasta),
+        PROTECTOR_TUBO.ancho,
+        { brillo: arco(PROTECTOR_TUBO.rx + 3, PROTECTOR_TUBO.ry + 3, 229, 262) },
+      ),
+    },
+    {
+      // Los agujeros, por encima del marco y del protector: negros, con el
+      // centro lima al resaltarlos
+      id: "ojales",
+      forma: OJALES.map(([x, y]) => (
+        <g key={`${x} ${y}`}>
+          <circle cx={x} cy={y} r={2.1} fill="#000" />
+          <circle cx={x} cy={y} r={1.1} fill={url("lima")} data-lima="" />
+        </g>
+      )),
     },
     {
       id: "punto-dulce",
@@ -249,14 +320,20 @@ function RaquetaInflada({ resaltadas, prefijo }) {
     },
     {
       id: "antivibrador",
-      forma: solido((p) => <rect x={189} y={248} width={22} height={10} rx={5} {...p} />, {
+      forma: solido((p) => <rect x={188} y={245} width={24} height={10} rx={5} {...p} />, {
         cuerpo: "burbuja",
       }),
     },
     {
-      id: "mango",
+      // Octogonal: arriba del grip se ven dos aristas de sus biseles
+      id: "empunadura",
       forma: solido((p) => <rect x={188} y={346} width={24} height={182} rx={8} {...p} />, {
-        brillo: <path d="M194 354V376" stroke="#fff" strokeWidth={3} strokeOpacity="0.9" />,
+        brillo: (
+          <>
+            <path d="M192 354V376" stroke="#fff" strokeWidth={3} strokeOpacity="0.9" />
+            <path d="M196 352V378M204 352V378" stroke="#000" strokeWidth={1.2} strokeOpacity="0.35" />
+          </>
+        ),
       }),
     },
     {
@@ -290,7 +367,7 @@ function RaquetaInflada({ resaltadas, prefijo }) {
       ),
     },
     {
-      id: "tapa",
+      id: "tapon",
       forma: solido(
         (p) => <path d="M182 518H218V528Q218 541 205 541H195Q182 541 182 528Z" {...p} />,
       ),

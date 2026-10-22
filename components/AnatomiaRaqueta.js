@@ -44,6 +44,8 @@ const PROPORCION = LIENZO.alto / LIENZO.ancho;
 // pantallas angostas, menos: si no, se salen por el borde.
 const LIMITES = { derecha: [60, 80], izquierda: [20, 40] };
 const LIMITES_ANGOSTOS = { derecha: [56, 72], izquierda: [28, 44] };
+// Aire entre el sticker y el borde del escenario, en px
+const AIRE = 8;
 
 const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
 const corto = (n) => Math.round(n * 100) / 100;
@@ -129,19 +131,35 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   // Lo que comparte con la escena 3D sin volver a renderizar: el progreso del
   // scroll y dónde está la escena dentro del lienzo
   const estado = useRef({ p: -1, fin: 0 });
-  const medidas = useRef({ escena: { x: 0, y: 0, ancho: 1, alto: 1 }, fraccion: 1 });
+  const medidas = useRef({
+    escena: { x: 0, y: 0, ancho: 1, alto: 1 },
+    fraccion: 1,
+    anchoEscenario: 1,
+    stickers: [],
+  });
   const angosta = useRef(false);
 
   const cargar3d = useSyncExternalStore(sinSuscripcion, puede3d, () => false);
   const [modo3d, setModo3d] = useState(false);
   const alListo = useCallback(() => setModo3d(true), []);
 
-  // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo
+  // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo.
+  // Los límites se achican para que el sticker entero quede dentro del
+  // escenario: si no, lo corta el borde.
   const colocarMarca = useCallback(
     (indice, x, y) => {
       const marca = refMarcas.current[indice];
       if (!marca) return;
-      const lugar = posicionMarca(pasos[indice], x, y, angosta.current ? LIMITES_ANGOSTOS : LIMITES);
+      const { escena, anchoEscenario, stickers } = medidas.current;
+      const base = angosta.current ? LIMITES_ANGOSTOS : LIMITES;
+      const sticker = (((stickers[indice] ?? 0) + AIRE) / escena.ancho) * 100;
+      const izquierda = (-escena.x / escena.ancho) * 100 + sticker;
+      const derecha = ((anchoEscenario - escena.x) / escena.ancho) * 100 - sticker;
+      const limites = {
+        derecha: [Math.min(base.derecha[0], derecha), Math.min(base.derecha[1], derecha)],
+        izquierda: [Math.max(base.izquierda[0], izquierda), Math.max(base.izquierda[1], izquierda)],
+      };
+      const lugar = posicionMarca(pasos[indice], x, y, limites);
       for (const [variable, valor] of Object.entries(lugar)) {
         marca.style.setProperty(variable, valor);
       }
@@ -150,10 +168,12 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   );
 
   // Dónde está la escena dentro del escenario (el lienzo 3D lo ocupa entero)
+  // y cuánto mide cada sticker
   useEffect(() => {
     if (!cargar3d) return;
     const escenario = refEscenario.current;
     const escena = refEscena.current;
+    const etiquetas = refMarcas.current.map((marca) => marca?.querySelector(`.${styles.etiqueta}`));
     const consulta = window.matchMedia("(max-width: 859px)");
     function medir() {
       const s = escenario.getBoundingClientRect();
@@ -161,6 +181,8 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
       medidas.current = {
         escena: { x: e.left - s.left, y: e.top - s.top, ancho: e.width, alto: e.height },
         fraccion: e.height / s.height,
+        anchoEscenario: s.width,
+        stickers: etiquetas.map((etiqueta) => etiqueta?.offsetWidth ?? 0),
       };
       angosta.current = consulta.matches;
     }
@@ -168,6 +190,8 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     const observador = new ResizeObserver(medir);
     observador.observe(escenario);
     observador.observe(escena);
+    // Los stickers cambian de ancho cuando carga la fuente
+    etiquetas.forEach((etiqueta) => etiqueta && observador.observe(etiqueta));
     return () => observador.disconnect();
   }, [cargar3d]);
 
