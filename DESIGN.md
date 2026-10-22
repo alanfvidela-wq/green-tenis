@@ -352,6 +352,10 @@ venden como un producto más, con las mismas piezas.
   va al pedido, que dice que no se pudo abrir y tiene «Pagar con Mercado
   Pago». Debajo del botón: «Al confirmar, te llevamos a Mercado Pago para
   pagar…».
+- **Sin pago online** (falta configurar Mercado Pago, ver docs/API.md): el
+  botón dice «Confirmar pedido» y, debajo, «El pago online todavía no está
+  disponible: el pedido queda pendiente de pago…». El pedido se crea igual y
+  se va a su página.
 
 ## Mis pedidos
 
@@ -368,12 +372,15 @@ venden como un producto más, con las mismas piezas.
   revisando. Debajo, «Qué compraste»: cada combo con sus productos sangrados y
   lo que se ahorró, y los productos sueltos con marca y nombre, variante,
   cantidad por precio y subtotal, todo con los precios congelados del pedido.
-  Al costado, los totales (con «Envío») y los datos de envío.
+  Al costado, los totales (con «Envío») y los datos de envío. Sin pago online,
+  un pendiente lleva arriba el aviso «El pago online todavía no está
+  disponible.» (con «Listo: tu pedido quedó registrado.» si recién se
+  confirmó), dice hasta qué hora queda pendiente y no tiene botón de pago.
 - **La vuelta de Mercado Pago** (`/mis-pedidos/[id]/pago/aprobado`,
   `/pendiente` y `/rechazado`): un encabezado de estado centrado, como el 404,
   con «Pago aprobado», «Pago en proceso» o «Pago rechazado», qué significa y
   «Ver el pedido». El rechazado suma «Probar de nuevo» (lima) mientras el
-  pedido se pueda pagar. Solo muestran el mensaje: el pedido lo cambia el
+  pedido se pueda pagar y haya pago online. Solo muestran el mensaje: el pedido lo cambia el
   webhook (ver docs/API.md).
 
 ## Componente `Raqueta`

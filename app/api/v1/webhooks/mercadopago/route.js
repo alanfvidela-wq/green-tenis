@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ErrorApi, conErrores, validar } from "@/lib/api";
-import { conciliarPago } from "@/lib/cobros";
+import { conciliarPago, pagoOnlineDisponible } from "@/lib/cobros";
 import { ErrorMercadoPago, firmaValida } from "@/lib/mercadopago";
 
 // POST /api/v1/webhooks/mercadopago: los avisos de Mercado Pago (Webhooks).
@@ -10,7 +10,8 @@ import { ErrorMercadoPago, firmaValida } from "@/lib/mercadopago";
 //
 // Responde 200 enseguida a lo que no es un pago. Un pago se procesa antes de
 // responder (tarda menos de un segundo): si algo falla, el 5xx hace que
-// Mercado Pago reintente.
+// Mercado Pago reintente. Sin la configuración de Mercado Pago responde 503:
+// el aviso no se pierde y llega de nuevo cuando estén las variables.
 
 // ?data.id=123456&type=payment. data.id es el valor firmado.
 const Consulta = z.object({
@@ -32,13 +33,14 @@ export const POST = conErrores(async (request) => {
   const { searchParams } = new URL(request.url);
   const consulta = validar(Consulta, Object.fromEntries(searchParams));
 
-  const secreto = process.env.MP_WEBHOOK_SECRET;
-  if (!secreto) throw new Error("Falta la variable MP_WEBHOOK_SECRET");
+  if (!pagoOnlineDisponible()) {
+    throw new ErrorApi(503, "pago_online_no_disponible", "El pago online todavía no está configurado.");
+  }
   const firmado = firmaValida({
     firma: request.headers.get("x-signature"),
     requestId: request.headers.get("x-request-id"),
     dataId: consulta["data.id"],
-    secreto,
+    secreto: process.env.MP_WEBHOOK_SECRET,
   });
   if (!firmado) throw new ErrorApi(401, "firma_invalida", "La firma del aviso no coincide.");
 

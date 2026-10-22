@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
+import { pagoOnlineDisponible } from "@/lib/cobros";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
 import styles from "../../../../estados.module.css";
@@ -46,7 +47,8 @@ export default async function PaginaResultadoPago({ params }) {
   const pedido = await getPedido(id);
   if (!pedido) notFound();
   // Reintentar solo si el pedido todavía se puede pagar
-  const reintentar = resultado === "rechazado" && pedido.estado.clave === "pendiente_pago";
+  const reintentar =
+    resultado === "rechazado" && pedido.estado.clave === "pendiente_pago" && pagoOnlineDisponible();
 
   return (
     <main className={styles.estado}>

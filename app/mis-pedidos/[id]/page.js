@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
 import Totales from "@/components/Totales";
+import { SIN_PAGO_ONLINE, pagoOnlineDisponible } from "@/lib/cobros";
 import { formatearFecha, formatearHora, formatearPrecio } from "@/lib/formato";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
@@ -10,11 +11,15 @@ import styles from "../pedidos.module.css";
 
 export const metadata = { title: "Pedido" };
 
-// Lo que significa el estado, debajo del título
-function notaDe(pedido) {
+// Lo que significa el estado, debajo del título. Sin pago online, un
+// pendiente solo dice cuándo vence.
+function notaDe(pedido, pagoOnline) {
   const hora = formatearHora(pedido.venceEn);
   switch (pedido.estado.clave) {
     case "pendiente_pago":
+      if (!pagoOnline) {
+        return `El pedido quedó pendiente de pago. Si no se paga antes de las ${hora}, se cancela y el stock vuelve a estar disponible.`;
+      }
       return pedido.ultimoPago === "rejected" || pedido.ultimoPago === "cancelled"
         ? `Mercado Pago no aprobó el último intento de pago. Podés probar de nuevo, con otro medio si querés, hasta las ${hora}.`
         : `Tenés hasta las ${hora} para pagarlo con Mercado Pago. Si no, el pedido se cancela y el stock vuelve a estar disponible.`;
@@ -61,7 +66,18 @@ export default async function PaginaPedido({ params, searchParams }) {
   if (!pedido) notFound();
   const { nuevo } = await searchParams;
   const envio = pedido.envioDatos ?? {};
-  const nota = notaDe(pedido);
+  const pagoOnline = pagoOnlineDisponible();
+  const nota = notaDe(pedido, pagoOnline);
+  const pendiente = pedido.estado.clave === "pendiente_pago";
+
+  // Arriba: recién confirmado, o un pendiente que no se puede pagar online
+  let aviso = null;
+  if (pendiente && !pagoOnline) {
+    aviso = nuevo ? `Listo: tu pedido quedó registrado. ${SIN_PAGO_ONLINE}` : SIN_PAGO_ONLINE;
+  } else if (nuevo && pendiente) {
+    // Mercado Pago no respondió a tiempo al confirmar
+    aviso = "Tu pedido quedó registrado, pero no pudimos abrir Mercado Pago. Pagalo desde acá.";
+  }
 
   return (
     <main>
@@ -73,17 +89,16 @@ export default async function PaginaPedido({ params, searchParams }) {
           <span aria-hidden="true">/</span>
           <span aria-current="page">Pedido #{pedido.numero}</span>
         </nav>
-        {/* Recién confirmado, cuando Mercado Pago no respondió a tiempo */}
-        {nuevo && (
+        {aviso && (
           <p className={styles.aviso} role="status">
-            Tu pedido quedó registrado, pero no pudimos abrir Mercado Pago. Pagalo desde acá.
+            {aviso}
           </p>
         )}
         <h1 className={listado.titulo}>Pedido #{pedido.numero}</h1>
         <p className={styles.fecha}>{formatearFecha(pedido.creadoEn)}</p>
         <p className={styles.estado}>{pedido.estado.texto}</p>
         {nota && <p className={listado.descripcion}>{nota}</p>}
-        {pedido.estado.clave === "pendiente_pago" && <BotonPagar pedidoId={pedido.id} />}
+        {pendiente && pagoOnline && <BotonPagar pedidoId={pedido.id} />}
       </header>
 
       <div className={styles.detalle}>

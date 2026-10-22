@@ -33,6 +33,7 @@ afuera. Hoy hay uno: el webhook de Mercado Pago.
 | `firma_invalida`          | 401    | Falta `x-signature` o no coincide                        |
 | `error_interno`           | 500    | Un error nuestro (falta una variable, falló la base…)    |
 | `mercadopago_no_responde` | 502    | Mercado Pago no respondió o respondió con error          |
+| `pago_online_no_disponible` | 503  | Falta configurar Mercado Pago (ver «Sin configurar»)     |
 
 ## `POST /api/v1/webhooks/mercadopago`
 
@@ -97,6 +98,7 @@ procesar después perdería el aviso si algo falla.
 | 401    | `firma_invalida`                                  | La firma no coincide                           |
 | 500    | `error_interno`                                   | Falta una variable o falló la base             |
 | 502    | `mercadopago_no_responde`                         | No se pudo consultar el pago                   |
+| 503    | `pago_online_no_disponible`                       | Falta alguna de las tres variables             |
 
 Resultados (`resultado`): `pagado`, `en_curso`, `rechazado`, `cancelado`,
 `revision`, `registrado` (se guardó el estado, sin cambios en el pedido),
@@ -290,6 +292,30 @@ al navegador. `lib/mercadopago.js`, `lib/supabaseServicio.js` y
 
 Las de Supabase que ya estaban (`NEXT_PUBLIC_SUPABASE_URL` y
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) siguen igual.
+
+### Sin configurar
+
+El pago online se prende solo cuando están **las tres** variables
+(`pagoOnlineDisponible()` en `lib/cobros.js`). Con una sola faltante no
+alcanza: sin el Access Token no hay preferencia, y sin el secret o la clave de
+Supabase se cobraría sin poder marcar el pedido como pagado. Mientras falte
+alguna:
+
+- **El checkout** dice «Confirmar pedido» (no «Confirmar y pagar») y, debajo,
+  que el pago online todavía no está disponible. El pedido se crea igual con
+  `crear_pedido`, en `pendiente_pago` y con el stock reservado, y se va a
+  `/mis-pedidos/[id]`.
+- **El pedido** muestra arriba «El pago online todavía no está disponible.» y
+  hasta qué hora está pendiente, sin botón de pago. Vence igual a los 30
+  minutos.
+- **Las vueltas** (`/pago/rechazado`) no ofrecen «Probar de nuevo», y
+  `pagarPedido` responde con el mismo aviso si alguien la llama igual.
+- **El webhook** responde `503 pago_online_no_disponible` sin consultar nada.
+  Si llega un aviso con la configuración a medias, Mercado Pago lo reintenta y
+  se concilia cuando estén las variables.
+
+Las variables se leen en cada request: para prenderlo alcanza con cargarlas
+en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
 
 ## Puesta en marcha
 

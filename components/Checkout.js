@@ -101,8 +101,10 @@ function CampoEnvio({ campo, valor }) {
 // El checkout: quién compra, los datos de envío y el resumen del pedido. Al
 // confirmar, el servidor crea el pedido (crear_pedido) y su preferencia de
 // Checkout Pro; si sale bien, se vacía el carrito y se va a Mercado Pago. Si
-// Mercado Pago no respondió, se va al pedido, que tiene «Pagar».
-export default function Checkout({ email }) {
+// Mercado Pago no respondió, se va al pedido, que tiene «Pagar». Sin pago
+// online (`pagoOnline` en false: falta configurar Mercado Pago), el pedido se
+// crea igual y se va a su página.
+export default function Checkout({ email, pagoOnline }) {
   const router = useRouter();
   const { lineas, cargado, vaciar } = useCarrito();
   const { cotizacion, alDia, error } = useCotizacion();
@@ -170,11 +172,13 @@ export default function Checkout({ email }) {
           )}
 
           <button type="submit" className={`boton ${formulario.enviar}`} disabled={!puedeConfirmar}>
-            {confirmando ? "Confirmando…" : "Confirmar y pagar"}
+            {confirmando ? "Confirmando…" : pagoOnline ? "Confirmar y pagar" : "Confirmar pedido"}
           </button>
           <p className={base.nota}>
             {nota ??
-              "Al confirmar, te llevamos a Mercado Pago para pagar. Si el pago no llega en 30 minutos, el pedido se cancela."}
+              (pagoOnline
+                ? "Al confirmar, te llevamos a Mercado Pago para pagar. Si el pago no llega en 30 minutos, el pedido se cancela."
+                : "El pago online todavía no está disponible: el pedido queda pendiente de pago. Si no se paga en 30 minutos, se cancela.")}
           </p>
         </form>
       </section>

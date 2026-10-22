@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Checkout from "@/components/Checkout";
+import { pagoOnlineDisponible } from "@/lib/cobros";
 import { getUsuario } from "@/lib/sesion";
 import styles from "../listado.module.css";
 
@@ -24,7 +25,7 @@ export default async function PaginaCheckout() {
         <h1 className={styles.titulo}>Finalizar compra</h1>
       </header>
 
-      <Checkout email={usuario.email} />
+      <Checkout email={usuario.email} pagoOnline={pagoOnlineDisponible()} />
     </main>
   );
 }
