@@ -13,6 +13,8 @@ grotesca suiza en un solo peso y la vitrina de productos sobre fondo de estudio.
 - Estilos: CSS Modules + variables CSS en app/globals.css.
 - Datos en Supabase (Postgres): lib/ los lee con funciones async. El esquema está en
   supabase/migrations/ y se aplica a mano en el SQL Editor.
+- Pagos con Mercado Pago Checkout Pro, por su API REST (sin SDK). El webhook y el flujo de
+  pago están en docs/API.md; la API va en /api/v1, con Zod y el helper de lib/api.js.
 
 ## Cómo trabajar
 - Trabajá de forma autónoma, sin pedir confirmación en cada paso. Respuestas breves.

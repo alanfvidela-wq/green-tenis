@@ -1,0 +1,7 @@
+/* «Pagar con Mercado Pago» y, si no se pudo, por qué */
+.pagar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-3);
+}

@@ -99,8 +99,9 @@ function CampoEnvio({ campo, valor }) {
 }
 
 // El checkout: quién compra, los datos de envío y el resumen del pedido. Al
-// confirmar, el servidor crea el pedido (crear_pedido); si sale bien, se vacía
-// el carrito y se va al pedido.
+// confirmar, el servidor crea el pedido (crear_pedido) y su preferencia de
+// Checkout Pro; si sale bien, se vacía el carrito y se va a Mercado Pago. Si
+// Mercado Pago no respondió, se va al pedido, que tiene «Pagar».
 export default function Checkout({ email }) {
   const router = useRouter();
   const { lineas, cargado, vaciar } = useCarrito();
@@ -111,13 +112,22 @@ export default function Checkout({ email }) {
     const resultado = await confirmarPedido(lineas, datos);
     if (resultado.pedidoId) {
       vaciar();
-      router.push(`/mis-pedidos/${resultado.pedidoId}?nuevo=1`);
-      return { listo: true };
+      if (resultado.pagoUrl) window.location.assign(resultado.pagoUrl);
+      else router.push(`/mis-pedidos/${resultado.pedidoId}?nuevo=1`);
+      return { listo: true, aMercadoPago: Boolean(resultado.pagoUrl) };
     }
     return { error: resultado.error, datos };
   }, null);
 
-  if (estado?.listo) return <p className={base.estado}>Pedido confirmado. Te llevamos a verlo…</p>;
+  if (estado?.listo) {
+    return (
+      <p className={base.estado}>
+        {estado.aMercadoPago
+          ? "Pedido confirmado. Te llevamos a Mercado Pago para pagarlo…"
+          : "Pedido confirmado. Te llevamos a verlo…"}
+      </p>
+    );
+  }
   if (!cargado) return <p className={base.estado}>Cargando…</p>;
 
   if (lineas.length === 0) {
@@ -160,11 +170,11 @@ export default function Checkout({ email }) {
           )}
 
           <button type="submit" className={`boton ${formulario.enviar}`} disabled={!puedeConfirmar}>
-            {confirmando ? "Confirmando…" : "Confirmar pedido"}
+            {confirmando ? "Confirmando…" : "Confirmar y pagar"}
           </button>
           <p className={base.nota}>
             {nota ??
-              "El pedido queda pendiente de pago. El pago con Mercado Pago llega más adelante."}
+              "Al confirmar, te llevamos a Mercado Pago para pagar. Si el pago no llega en 30 minutos, el pedido se cancela."}
           </p>
         </form>
       </section>

@@ -343,25 +343,38 @@ venden como un producto más, con las mismas piezas.
   por línea con la cantidad, **marca y nombre** («Babolat Pure Drive»; los
   combos, por su nombre), la variante o lo que trae el combo en grafito y el
   subtotal en mono; después los totales y «Cambiar el carrito».
-- **Confirmar pedido** (la píldora lima): el servidor vuelve a cotizar el
+- **Confirmar y pagar** (la píldora lima): el servidor vuelve a cotizar el
   carrito, valida el envío y crea el pedido con `crear_pedido`, que recalcula
   todo, reserva el stock y lo deja pendiente de pago. Si la base lo rechaza
   («No hay stock suficiente de …»), el mensaje aparece arriba del botón. Si
-  sale bien, se vacía el carrito y se va al pedido.
+  sale bien, se vacía el carrito y se va a Mercado Pago (Checkout Pro), con la
+  preferencia armada desde el pedido guardado. Si Mercado Pago no responde, se
+  va al pedido, que dice que no se pudo abrir y tiene «Pagar con Mercado
+  Pago». Debajo del botón: «Al confirmar, te llevamos a Mercado Pago para
+  pagar…».
 
 ## Mis pedidos
 
 - **El listado** (`/mis-pedidos`): el encabezado de un listado con la cuenta y
   «Cerrar sesión», y una fila de 1px por pedido: «Pedido #1001» (lleva al
   detalle), la fecha y hora en mono, el estado en mayúsculas y el total.
-- **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado y qué significa
-  (un pendiente explica que el pago con Mercado Pago llega más adelante y que,
-  sin pago en 30 minutos, se cancela; pasado ese tiempo se ve «Vencido»).
-  Debajo, «Qué compraste»: cada combo con sus productos sangrados y lo que se
-  ahorró, y los productos sueltos con marca y nombre, variante, cantidad por
-  precio y subtotal, todo con los precios congelados del pedido. Al costado,
-  los totales (con «Envío») y los datos de envío. Recién confirmado, arriba
-  dice «Listo: tu pedido quedó registrado».
+- **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado y qué significa.
+  Un pendiente dice hasta qué hora se puede pagar («Tenés hasta las 14:32…»)
+  y lleva la píldora lima «Pagar con Mercado Pago», que reusa la preferencia
+  del pedido; si el último intento se rechazó, lo dice y ofrece probar de
+  nuevo. Con un pago en proceso se ve «Pago en proceso» y no vence; pasados
+  los 30 minutos sin pago, «Vencido». Un cancelado dice si fue por vencido o
+  porque se devolvió el pago, y si llegó un pago aprobado tarde, que se está
+  revisando. Debajo, «Qué compraste»: cada combo con sus productos sangrados y
+  lo que se ahorró, y los productos sueltos con marca y nombre, variante,
+  cantidad por precio y subtotal, todo con los precios congelados del pedido.
+  Al costado, los totales (con «Envío») y los datos de envío.
+- **La vuelta de Mercado Pago** (`/mis-pedidos/[id]/pago/aprobado`,
+  `/pendiente` y `/rechazado`): un encabezado de estado centrado, como el 404,
+  con «Pago aprobado», «Pago en proceso» o «Pago rechazado», qué significa y
+  «Ver el pedido». El rechazado suma «Probar de nuevo» (lima) mientras el
+  pedido se pueda pagar. Solo muestran el mensaje: el pedido lo cambia el
+  webhook (ver docs/API.md).
 
 ## Componente `Raqueta`
 

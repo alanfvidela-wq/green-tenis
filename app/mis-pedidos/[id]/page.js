@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import BotonPagar from "@/components/BotonPagar";
 import Totales from "@/components/Totales";
-import { formatearFecha, formatearPrecio } from "@/lib/formato";
+import { formatearFecha, formatearHora, formatearPrecio } from "@/lib/formato";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
 import listado from "../../listado.module.css";
@@ -9,14 +10,31 @@ import styles from "../pedidos.module.css";
 
 export const metadata = { title: "Pedido" };
 
-// Lo que dice cada estado debajo del título
-const NOTAS = {
-  pendiente_pago:
-    "El pago con Mercado Pago llega más adelante. Si el pedido no se paga en 30 minutos, se cancela y el stock vuelve a estar disponible.",
-  vencido:
-    "Pasaron 30 minutos sin el pago: el pedido se cancela y el stock vuelve a estar disponible.",
-  cancelado: "El pedido se canceló y el stock volvió a estar disponible.",
-};
+// Lo que significa el estado, debajo del título
+function notaDe(pedido) {
+  const hora = formatearHora(pedido.venceEn);
+  switch (pedido.estado.clave) {
+    case "pendiente_pago":
+      return pedido.ultimoPago === "rejected" || pedido.ultimoPago === "cancelled"
+        ? `Mercado Pago no aprobó el último intento de pago. Podés probar de nuevo, con otro medio si querés, hasta las ${hora}.`
+        : `Tenés hasta las ${hora} para pagarlo con Mercado Pago. Si no, el pedido se cancela y el stock vuelve a estar disponible.`;
+    case "procesando":
+      return "Mercado Pago está procesando el pago. Mientras tanto, el pedido no vence y el stock sigue reservado.";
+    case "vencido":
+      return "Pasaron 30 minutos sin el pago: el pedido se cancela y el stock vuelve a estar disponible.";
+    case "pagado":
+      return "Mercado Pago acreditó el pago.";
+    case "cancelado":
+      if (pedido.pagoTrasCancelar) {
+        return "Mercado Pago aprobó un pago cuando el pedido ya se había cancelado. Lo estamos revisando para seguir con el pedido o devolverte el dinero.";
+      }
+      return pedido.canceladoPor === "devolucion"
+        ? "Se devolvió el pago por Mercado Pago y el pedido se canceló."
+        : "El pedido se canceló y el stock volvió a estar disponible.";
+    default:
+      return null;
+  }
+}
 
 function Linea({ linea }) {
   return (
@@ -43,6 +61,7 @@ export default async function PaginaPedido({ params, searchParams }) {
   if (!pedido) notFound();
   const { nuevo } = await searchParams;
   const envio = pedido.envioDatos ?? {};
+  const nota = notaDe(pedido);
 
   return (
     <main>
@@ -54,17 +73,17 @@ export default async function PaginaPedido({ params, searchParams }) {
           <span aria-hidden="true">/</span>
           <span aria-current="page">Pedido #{pedido.numero}</span>
         </nav>
+        {/* Recién confirmado, cuando Mercado Pago no respondió a tiempo */}
         {nuevo && (
           <p className={styles.aviso} role="status">
-            Listo: tu pedido quedó registrado.
+            Tu pedido quedó registrado, pero no pudimos abrir Mercado Pago. Pagalo desde acá.
           </p>
         )}
         <h1 className={listado.titulo}>Pedido #{pedido.numero}</h1>
         <p className={styles.fecha}>{formatearFecha(pedido.creadoEn)}</p>
         <p className={styles.estado}>{pedido.estado.texto}</p>
-        {NOTAS[pedido.estado.clave] && (
-          <p className={listado.descripcion}>{NOTAS[pedido.estado.clave]}</p>
-        )}
+        {nota && <p className={listado.descripcion}>{nota}</p>}
+        {pedido.estado.clave === "pendiente_pago" && <BotonPagar pedidoId={pedido.id} />}
       </header>
 
       <div className={styles.detalle}>
