@@ -6,22 +6,34 @@
   list-style: none;
 }
 
+/* Cada fila es una grilla con las mismas columnas fijas, así el número, la
+   fecha, el estado y el total quedan alineados en todas, sea cual sea el
+   largo de cada dato. La fecha es la única columna flexible. En mobile: el
+   número y el total arriba, y la fecha y el estado debajo, uno por renglón. */
 .pedido {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: var(--espacio-2) var(--espacio-4);
+  grid-template-areas:
+    "numero monto"
+    "fecha fecha"
+    "estado estado";
+  align-items: baseline;
+  gap: var(--espacio-1) var(--espacio-4);
   padding: var(--espacio-4) 0;
   border-bottom: 1px solid var(--negro);
 }
 
-@media (min-width: 700px) {
+@media (min-width: 900px) {
   .pedido {
-    grid-template-columns: 10rem minmax(0, 1fr) 12rem auto;
-    align-items: baseline;
+    grid-template-columns: 11rem minmax(0, 1fr) 11rem 9rem;
+    grid-template-areas: "numero fecha estado monto";
+    column-gap: var(--espacio-6);
   }
 }
 
 .numero {
+  grid-area: numero;
+  min-width: 0;
   font-size: var(--t-titulo-3);
   text-underline-offset: 4px;
 }
@@ -36,16 +48,28 @@
   font-size: var(--t-dato);
 }
 
+.pedido .fecha {
+  grid-area: fecha;
+}
+
 .estado {
   font-size: var(--t-dato);
   letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
 }
 
+.pedido .estado {
+  grid-area: estado;
+}
+
 .monto {
   font-family: var(--fuente-datos);
   text-align: right;
   white-space: nowrap;
+}
+
+.pedido .monto {
+  grid-area: monto;
 }
 
 /* ---------- El detalle ---------- */
