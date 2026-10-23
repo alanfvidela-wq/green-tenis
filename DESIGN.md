@@ -363,6 +363,8 @@ venden como un producto más, con las mismas piezas.
   «Cerrar sesión», y una fila de 1px por pedido: «Pedido #1001» (lleva al
   detalle), la fecha y hora en mono, el estado en mayúsculas y el total.
 - **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado y qué significa.
+  Si está pendiente, antes de mostrarlo el servidor busca sus pagos en Mercado
+  Pago y los concilia, por si el aviso del webhook no llegó.
   Un pendiente dice hasta qué hora se puede pagar («Tenés hasta las 14:32…»)
   y lleva la píldora lima «Pagar con Mercado Pago», que reusa la preferencia
   del pedido; si el último intento se rechazó, lo dice y ofrece probar de
@@ -380,8 +382,11 @@ venden como un producto más, con las mismas piezas.
   `/pendiente` y `/rechazado`): un encabezado de estado centrado, como el 404,
   con «Pago aprobado», «Pago en proceso» o «Pago rechazado», qué significa y
   «Ver el pedido». El rechazado suma «Probar de nuevo» (lima) mientras el
-  pedido se pueda pagar y haya pago online. Solo muestran el mensaje: el pedido lo cambia el
-  webhook (ver docs/API.md).
+  pedido se pueda pagar y haya pago online. Antes de mostrarse, si el pedido
+  está pendiente, el servidor busca sus pagos en Mercado Pago y los concilia
+  (lo mismo que el detalle del pedido): «Pago aprobado» dice si ya está
+  acreditado. Los parámetros de la URL de vuelta nunca cambian el pedido (ver
+  docs/API.md).
 
 ## Componente `Raqueta`
 

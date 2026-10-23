@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
 import Totales from "@/components/Totales";
-import { SIN_PAGO_ONLINE, pagoOnlineDisponible } from "@/lib/cobros";
+import { SIN_PAGO_ONLINE, conciliarPedido, pagoOnlineDisponible } from "@/lib/cobros";
 import { formatearFecha, formatearHora, formatearPrecio } from "@/lib/formato";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
@@ -62,8 +62,11 @@ export default async function PaginaPedido({ params, searchParams }) {
   const usuario = await getUsuario();
   if (!usuario) redirect(`/ingresar?siguiente=/mis-pedidos/${encodeURIComponent(id)}`);
 
-  const pedido = await getPedido(id);
+  let pedido = await getPedido(id);
   if (!pedido) notFound();
+  // Si está pendiente, sus pagos se buscan en Mercado Pago antes de mostrarlo:
+  // por si el aviso del webhook no llegó o no pasó la firma
+  if (await conciliarPedido(pedido)) pedido = await getPedido(id);
   const { nuevo } = await searchParams;
   const envio = pedido.envioDatos ?? {};
   const pagoOnline = pagoOnlineDisponible();

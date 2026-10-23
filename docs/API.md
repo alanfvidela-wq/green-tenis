@@ -613,9 +613,10 @@ aunque el código se equivoque:
 ## `POST /api/v1/webhooks/mercadopago`
 
 Recibe los avisos de Mercado Pago (Webhooks, evento **Pagos**) y concilia cada
-pago con su pedido. Es la **única** vía por la que un pedido pasa a pagado o
-se cancela por una devolución: las páginas a las que vuelve el comprador
-(`back_urls`) solo muestran un mensaje.
+pago con su pedido. Es uno de los dos caminos de conciliación; el otro es la
+conciliación activa de las páginas del pedido (ver «Dos caminos de
+conciliación»). Los dos terminan en la misma función, `conciliar_pago`, con el
+pago tal como lo devuelve la API de Mercado Pago.
 
 Código: `app/api/v1/webhooks/mercadopago/route.js`, `lib/mercadopago.js`,
 `lib/cobros.js` y la función `conciliar_pago` de
@@ -720,10 +721,54 @@ firma.
   Mercado Pago) o en segundos, y cuánto hace. No se rechaza por antigüedad:
   el SDK oficial, con su tolerancia prendida, lo multiplica por 1000 como si
   fueran segundos y rechazaría todo aviso en milisegundos.
-- **Prueba o productivo**: el panel tiene una pestaña de modo de prueba y otra
-  de modo productivo, y la clave de cada una puede ser distinta. `live_mode`
-  dice de qué modo es el aviso (`false` en las compras con credenciales de
-  prueba).
+- **Con credenciales de prueba**: las credenciales de prueba son las de la
+  cuenta de prueba vendedora, que para Mercado Pago es una cuenta más: sus
+  pagos llegan con `live_mode=true` y se firman con la clave del webhook de
+  **esa cuenta**, no con la de tu panel. Mercado Pago lo indica en la guía de
+  notificaciones de QR: con credenciales de prueba, ingresar a Mercado Pago
+  Developers con el usuario y la contraseña de la cuenta de prueba vendedora y
+  configurar los Webhooks en su modo productivo. Por eso «Simular» (firmado
+  con la clave de tu panel) pasa y los avisos de las compras de prueba dan
+  `hash distinto`. Ver «Puesta en marcha › Mercado Pago».
+
+### Dos caminos de conciliación
+
+Un pedido se entera de sus pagos por dos caminos, que terminan igual:
+
+1. **El webhook** (Mercado Pago avisa): con la firma válida, consulta el pago
+   avisado con `GET /v1/payments/:id` y lo concilia. Es estricto: con la firma
+   inválida responde 401 y no consulta ni concilia nada.
+2. **La conciliación activa** (la tienda pregunta): cuando el comprador vuelve
+   por las `back_urls` (`/mis-pedidos/[id]/pago/…`) y cuando abre
+   `/mis-pedidos/[id]`, si el pedido está en `pendiente_pago` (también «Pago
+   en proceso» y «Vencido», que en la base siguen pendientes), el servidor
+   busca sus pagos con
+   `GET /v1/payments/search?external_reference=<id del pedido>&sort=date_created&criteria=asc`
+   y concilia cada uno, del más viejo al más nuevo (`conciliarPedido` en
+   `lib/cobros.js`). Si Mercado Pago no responde, la página se muestra con lo
+   que hay y queda en el log. No depende del webhook ni de su firma: un pago
+   se acredita aunque el aviso no llegue o no valide.
+
+En los dos, `conciliar_pago` aplica las mismas validaciones (que el pedido
+exista, que el estado pueda pasar, que el monto sea el total en ARS) y es
+idempotente, así que no importa cuál llegue primero ni si los dos concilian el
+mismo pago: el segundo da `sin_cambios`.
+
+**Por qué la API es la fuente de verdad.** Lo que llega de afuera puede estar
+falsificado, repetido o viejo: el cuerpo del aviso y, sobre todo, los
+parámetros con los que vuelve el comprador (`?status=approved&payment_id=…`),
+que cualquiera puede escribir en la barra del navegador. La API, en cambio,
+responde con el Access Token de la tienda, así que solo devuelve pagos
+cobrados por la tienda, y con su estado de ahora. Por eso ningún camino usa el
+cuerpo del aviso más que como señal ni los parámetros de la URL de vuelta para
+nada: el pedido sale de la ruta (`/mis-pedidos/[id]`, que con RLS solo
+encuentra los del usuario) y los pagos, de Mercado Pago. Un resultado de la
+búsqueda con otro `external_reference` se descarta.
+
+La búsqueda puede tardar unos segundos en mostrar un pago recién hecho: si el
+comprador vuelve antes, «Pago aprobado» dice que en unos segundos se ve
+acreditado, y la próxima vez que abra el pedido se concilia. Cada página de un
+pedido pendiente hace una consulta a Mercado Pago; un pedido pagado, ninguna.
 
 ### La conciliación
 
@@ -829,11 +874,14 @@ sequenceDiagram
   Note over C: Se vacía el carrito
   C->>MP: Paga en Checkout Pro
 
-  par El comprador vuelve
+  par El comprador vuelve (conciliación activa)
     MP-->>C: Redirige a la back_url
     C->>G: /mis-pedidos/[id]/pago/aprobado · pendiente · rechazado
-    G-->>C: Solo un mensaje («Probar de nuevo» si se rechazó)
-  and Mercado Pago avisa
+    G->>MP: GET /v1/payments/search?external_reference=id del pedido
+    MP-->>G: Los pagos del pedido
+    G->>S: conciliar_pago por cada uno (service_role)
+    G-->>C: El mensaje y el estado del pedido («Probar de nuevo» si se rechazó)
+  and Mercado Pago avisa (webhook)
     MP->>G: POST a la URL del panel (x-signature, data.id)
     G->>G: Valida la firma (401 si no coincide)
     G->>MP: GET /v1/payments/:id (Access Token)
@@ -962,6 +1010,16 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
    preferencias no mandan `notification_url`. Guardar genera la clave secreta:
    «Revelar» en cada pestaña. Si son distintas, cargar las dos en
    `MP_WEBHOOK_SECRET`, separadas por una coma (`clave_prueba,clave_productiva`).
+   **Mientras se use credenciales de prueba**, hace falta además el webhook de
+   la cuenta de prueba vendedora: en una ventana de incógnito, ingresar a
+   [Mercado Pago Developers](https://www.mercadopago.com.ar/developers) con el
+   usuario y la contraseña de la vendedora (la aplicación › Cuentas de prueba;
+   si pide un código, son los 6 dígitos que figuran ahí), ir a Tus
+   integraciones (crear una aplicación de Checkout Pro si no tiene), Webhooks ›
+   Configurar notificaciones › **Modo productivo**, la misma URL y el evento
+   Pagos. Guardar, revelar esa clave y sumarla a `MP_WEBHOOK_SECRET`
+   (`clave_de_tu_panel,clave_de_la_vendedora`). Al pasar a producción con tus
+   credenciales, alcanza la de tu panel.
 4. **Probarlo**: «Simular» en esa misma pantalla, con cualquier Data ID, tiene
    que responder 200 con `"resultado": "pago_inexistente"`. Con el id de un
    pago real, lo concilia de verdad: el webhook nunca usa el cuerpo del aviso,

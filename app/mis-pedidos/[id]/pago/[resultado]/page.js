@@ -1,21 +1,25 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
-import { pagoOnlineDisponible } from "@/lib/cobros";
+import { conciliarPedido, pagoOnlineDisponible } from "@/lib/cobros";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
 import styles from "../../../../estados.module.css";
 
-// Adonde vuelve Checkout Pro (las back_urls de la preferencia). Solo dice qué
-// contestó Mercado Pago: nunca cambia el pedido. Eso lo hace el webhook, con
-// el pago consultado a Mercado Pago, porque esta URL la puede abrir cualquiera
-// con cualquier parámetro.
+// Adonde vuelve Checkout Pro (las back_urls de la preferencia). El título dice
+// qué contestó Mercado Pago, pero los parámetros de la URL nunca cambian el
+// pedido: esta URL la puede abrir cualquiera con cualquier parámetro. Antes de
+// mostrarla, si el pedido está pendiente, sus pagos se buscan en la API de
+// Mercado Pago por external_reference y se concilian (conciliarPedido), igual
+// que con el webhook.
 
 const RESULTADOS = {
   aprobado: {
     titulo: "Pago aprobado",
-    texto: (numero) =>
-      `Mercado Pago aprobó el pago del pedido #${numero}. En unos segundos lo vas a ver acreditado en el pedido.`,
+    texto: (numero, acreditado) =>
+      acreditado
+        ? `Mercado Pago aprobó el pago del pedido #${numero} y ya está acreditado.`
+        : `Mercado Pago aprobó el pago del pedido #${numero}. En unos segundos lo vas a ver acreditado en el pedido.`,
   },
   pendiente: {
     titulo: "Pago en proceso",
@@ -44,8 +48,9 @@ export default async function PaginaResultadoPago({ params }) {
     redirect(`/ingresar?siguiente=/mis-pedidos/${encodeURIComponent(id)}/pago/${resultado}`);
   }
 
-  const pedido = await getPedido(id);
+  let pedido = await getPedido(id);
   if (!pedido) notFound();
+  if (await conciliarPedido(pedido)) pedido = await getPedido(id);
   // Reintentar solo si el pedido todavía se puede pagar
   const reintentar =
     resultado === "rechazado" && pedido.estado.clave === "pendiente_pago" && pagoOnlineDisponible();
@@ -53,7 +58,7 @@ export default async function PaginaResultadoPago({ params }) {
   return (
     <main className={styles.estado}>
       <h1 className={styles.titulo}>{mensaje.titulo}</h1>
-      <p className={styles.texto}>{mensaje.texto(pedido.numero)}</p>
+      <p className={styles.texto}>{mensaje.texto(pedido.numero, pedido.estado.clave === "pagado")}</p>
       {resultado === "rechazado" && pedido.estado.clave === "vencido" && (
         <p className={styles.texto}>El pedido ya venció: para comprar, armalo de nuevo.</p>
       )}
