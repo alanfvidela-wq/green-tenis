@@ -64,8 +64,9 @@ export default async function PaginaPedido({ params, searchParams }) {
 
   let pedido = await getPedido(id);
   if (!pedido) notFound();
-  // Si está pendiente, sus pagos se buscan en Mercado Pago antes de mostrarlo:
-  // por si el aviso del webhook no llegó o no pasó la firma
+  // Si está pendiente (o se canceló por vencido), sus pagos se buscan en
+  // Mercado Pago antes de mostrarlo: por si el aviso del webhook no llegó o no
+  // pasó la firma
   if (await conciliarPedido(pedido)) pedido = await getPedido(id);
   const { nuevo } = await searchParams;
   const envio = pedido.envioDatos ?? {};

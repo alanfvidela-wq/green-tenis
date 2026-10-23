@@ -685,8 +685,9 @@ procesar después perdería el aviso si algo falla.
 | 502    | `mercadopago_no_responde`                         | No se pudo consultar el pago                   |
 | 503    | `pago_online_no_disponible`                       | Falta alguna de las tres variables             |
 
-Resultados (`resultado`): `pagado`, `en_curso`, `rechazado`, `cancelado`,
-`revision`, `registrado` (se guardó el estado, sin cambios en el pedido),
+Resultados (`resultado`): `pagado`, `reactivado` (un pedido vencido que vuelve
+a pagado, ver «Un pago aprobado a tiempo de un pedido vencido»), `en_curso`,
+`rechazado`, `cancelado`, `revision`, `registrado` (se guardó el estado, sin cambios en el pedido),
 `sin_cambios` (el mismo aviso otra vez), `ajeno` (el pago no es de un pedido de
 la tienda: un cobro con QR, un link de pago) y `pago_inexistente`.
 
@@ -741,8 +742,8 @@ Un pedido se entera de sus pagos por dos caminos, que terminan igual:
 2. **La conciliación activa** (la tienda pregunta): cuando el comprador vuelve
    por las `back_urls` (`/mis-pedidos/[id]/pago/…`) y cuando abre
    `/mis-pedidos/[id]`, si el pedido está en `pendiente_pago` (también «Pago
-   en proceso» y «Vencido», que en la base siguen pendientes), el servidor
-   busca sus pagos con
+   en proceso» y «Vencido», que en la base siguen pendientes) o se canceló por
+   vencido (puede reactivarse, ver abajo), el servidor busca sus pagos con
    `GET /v1/payments/search?external_reference=<id del pedido>&sort=date_created&criteria=asc`
    y concilia cada uno, del más viejo al más nuevo (`conciliarPedido` en
    `lib/cobros.js`). Si Mercado Pago no responde, la página se muestra con lo
@@ -768,7 +769,8 @@ búsqueda con otro `external_reference` se descarta.
 La búsqueda puede tardar unos segundos en mostrar un pago recién hecho: si el
 comprador vuelve antes, «Pago aprobado» dice que en unos segundos se ve
 acreditado, y la próxima vez que abra el pedido se concilia. Cada página de un
-pedido pendiente hace una consulta a Mercado Pago; un pedido pagado, ninguna.
+pedido pendiente o cancelado por vencido hace una consulta a Mercado Pago; un
+pedido pagado, ninguna.
 
 ### La conciliación
 
@@ -778,7 +780,7 @@ estado del pago:
 
 | Estado en Mercado Pago            | El pedido                                                                                  |
 | --------------------------------- | ------------------------------------------------------------------------------------------ |
-| `approved`                        | Pendiente y el monto es el total en ARS → **pagado**. Si no, revisión (ver abajo)           |
+| `approved`                        | Pendiente y el monto es el total en ARS → **pagado**. Cancelado por vencido, aprobado a tiempo y con stock → **reactivado** (pagado). Si no, revisión (ver abajo) |
 | `pending`, `in_process`, `authorized` | Sigue pendiente y **no vence** mientras tanto (`pago_en_curso`)                        |
 | `rejected`, `cancelled`           | Sigue pendiente: se puede **reintentar** hasta que venza                                    |
 | `refunded`                        | Si es el pago que lo pagó: **cancelado** y el stock vuelve. Si ya se envió: revisión         |
@@ -794,6 +796,46 @@ estado del pago:
   reservado, así que no hay problema.
 - Al final, `conciliar_pago` llama a `liberar_pedidos_vencidos`: un aviso
   también sirve para devolver el stock de los pedidos vencidos.
+
+### Un pago aprobado a tiempo de un pedido vencido
+
+Puede pasar que Mercado Pago apruebe el pago dentro de los 30 minutos, pero
+que se concilie más tarde (el aviso se demoró, no pasó la firma o el
+comprador no volvió), y que mientras tanto `liberar_pedidos_vencidos` cancele
+el pedido y devuelva su stock. Pasó con el pedido #5. El comprador pagó a
+tiempo, así que `conciliar_pago` (desde `0003_reactivar_pagados_a_tiempo.sql`)
+**reactiva** el pedido si se cumple todo esto:
+
+- se canceló por vencido (`cancelado_por = 'vencimiento'`), no por una
+  devolución;
+- el pago es por el total del pedido, en ARS;
+- Mercado Pago lo aprobó (`date_approved`, que queda en `pagos.aprobado_en`)
+  **antes** del vencimiento: `creado_en` más 30 minutos, el mismo plazo que
+  usa `liberar_pedidos_vencidos`;
+- hay stock para **todas** sus líneas (las variantes se bloquean en el mismo
+  orden que en `crear_pedido` antes de mirarlo).
+
+Entonces el pedido vuelve a `pagado` (con `pago_id` y `pagado_en`, y sin
+`cancelado_por` ni `cancelado_en`) y el stock se descuenta otra vez, todo en
+la misma transacción: o pasa todo, o nada. Resultado: `reactivado`.
+
+Si algo de eso no se cumple, va a revisión como antes, y `detalle` dice por
+qué:
+
+| Caso                                   | Motivo              | `detalle`                                                        |
+| -------------------------------------- | ------------------- | ---------------------------------------------------------------- |
+| Aprobado en el minuto 30 o después     | `pago_en_cancelado` | «Aprobado el 23/10 17:22:38, después del vencimiento (23/10 17:17:38)» |
+| Aprobado a tiempo, sin stock de algo   | `pago_en_cancelado` | «Aprobado a tiempo, pero sin stock de Wilson US Open Extra Duty (Tubo x3)» (solo lo que falta) |
+| Sin `date_approved` (o ilegible)       | `pago_en_cancelado` | «Mercado Pago no informó cuándo se aprobó el pago»                |
+| Cancelado por una devolución           | `pago_en_cancelado` | «El pedido no se canceló por vencido»                             |
+| No es el total en ARS                  | `monto_distinto`    | —                                                                |
+
+Las horas van en hora de Argentina. La regla se evalúa **una vez**, cuando el
+pago pasa a `approved`, como el resto de la conciliación: un pago que quedó en
+revisión no se reactiva solo después (por ejemplo, si vuelve el stock), porque
+la tienda puede estar devolviéndolo. Eso lo decide la tienda. Si dos pagos
+aprobados a tiempo llegan para el mismo pedido vencido, el primero lo
+reactiva y el segundo va a revisión como `pago_duplicado`.
 
 ### Idempotencia y orden
 
@@ -820,24 +862,26 @@ pedido no se toca: la tienda decide. Motivos:
 
 | Motivo                  | Qué pasó                                                       | Qué hacer                                                                   |
 | ----------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `pago_en_cancelado`     | Llegó un `approved` de un pedido ya cancelado (casi siempre, por vencido) | Si hay stock, reactivar el pedido y descontarlo; si no, devolver el pago desde Mercado Pago |
+| `pago_en_cancelado`     | Llegó un `approved` de un pedido ya cancelado que no se pudo reactivar: aprobado después del vencimiento, sin stock, sin fecha o cancelado por una devolución (lo dice `detalle`) | Si hay stock, reactivar el pedido y descontarlo a mano; si no, devolver el pago desde Mercado Pago |
 | `pago_duplicado`        | Un segundo `approved` de un pedido ya pagado                    | Devolver uno de los dos                                                      |
 | `monto_distinto`        | El `approved` no es el total en ARS                             | Revisar y devolver                                                           |
 | `devolucion_tras_envio` | Se devolvió el pago de un pedido ya enviado                     | El stock no vuelve solo: la mercadería no está en el depósito                 |
 | `contracargo`           | El comprador desconoció el pago con la tarjeta                  | Responder la disputa en Mercado Pago                                         |
 
 Con `pago_en_cancelado`, el pedido queda cancelado y el stock no se vuelve a
-descontar solo, porque ya pudo venderse. El cliente, en su pedido, lee que
-Mercado Pago aprobó un pago cuando el pedido ya estaba cancelado y que se está
-revisando. Es poco probable: la preferencia vence junto con el pedido, así que
-Mercado Pago no acepta pagos después; queda la carrera de un pago aprobado
-justo al límite, o uno que estuvo en proceso y se aprobó tarde.
+descontar solo. El cliente, en su pedido, lee que Mercado Pago aprobó un pago
+cuando el pedido ya estaba cancelado y que se está revisando. Es poco
+probable: un pago aprobado a tiempo con stock se reactiva solo, y la
+preferencia vence junto con el pedido, así que Mercado Pago no acepta pagos
+nuevos después; queda uno que estuvo en proceso y se aprobó tarde, o uno
+aprobado a tiempo cuyo stock se vendió mientras tanto.
 
 Hasta que haya panel de admin, se miran en el SQL Editor:
 
 ```sql
 -- Las pendientes
-select r.id, r.motivo, r.creada_en, p.numero, p.estado, p.email, g.id as pago, g.monto
+select r.id, r.motivo, r.detalle, r.creada_en, p.numero, p.estado, p.email,
+       g.id as pago, g.monto, g.aprobado_en
 from pedido_revisiones r
 join pedidos p on p.id = r.pedido_id
 join pagos g on g.id = r.pago_id
@@ -914,7 +958,8 @@ stateDiagram-v2
   pagado --> preparando: admin
   preparando --> enviado: admin
   enviado --> entregado: admin
-  cancelado --> cancelado: approved tarde (revisión)
+  cancelado --> pagado: approved a tiempo y con stock (reactivado)
+  cancelado --> cancelado: approved tarde o sin stock (revisión)
 ```
 
 ## Por qué el stock se reserva al crear el pedido y no al pagar
@@ -989,9 +1034,10 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
 
 ### Supabase
 
-1. Correr `supabase/migrations/0002_pagos.sql` entero en el SQL Editor,
-   **antes** de publicar el código que la usa (la migración es compatible con
-   el código anterior).
+1. Correr `supabase/migrations/0002_pagos.sql` y después
+   `0003_reactivar_pagados_a_tiempo.sql`, cada una entera, en el SQL Editor,
+   **antes** de publicar el código que las usa (son compatibles con el código
+   anterior).
 2. Copiar una Secret key a `SUPABASE_SECRET_KEY`.
 
 ### Mercado Pago

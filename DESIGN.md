@@ -363,8 +363,9 @@ venden como un producto más, con las mismas piezas.
   «Cerrar sesión», y una fila de 1px por pedido: «Pedido #1001» (lleva al
   detalle), la fecha y hora en mono, el estado en mayúsculas y el total.
 - **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado y qué significa.
-  Si está pendiente, antes de mostrarlo el servidor busca sus pagos en Mercado
-  Pago y los concilia, por si el aviso del webhook no llegó.
+  Si está pendiente o se canceló por vencido, antes de mostrarlo el servidor
+  busca sus pagos en Mercado Pago y los concilia, por si el aviso del webhook
+  no llegó: un vencido pagado a tiempo vuelve a «Pagado».
   Un pendiente dice hasta qué hora se puede pagar («Tenés hasta las 14:32…»)
   y lleva la píldora lima «Pagar con Mercado Pago», que reusa la preferencia
   del pedido; si el último intento se rechazó, lo dice y ofrece probar de
