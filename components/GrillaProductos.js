@@ -1,26 +1,36 @@
+import generadas from "@/lib/fotosGeneradas.json";
+import Aparecer from "./Aparecer";
+import FotoLugar from "./FotoLugar";
 import TarjetaCombo from "./TarjetaCombo";
 import TarjetaProducto from "./TarjetaProducto";
 import styles from "./GrillaProductos.module.css";
 
-// La vitrina: un marco de 1px con radio y, adentro, celdas pegadas separadas
-// por líneas de 1px. 2 columnas en mobile, 3 desde 700px y `columnas` (3 o 4)
-// desde 1000px. Muestra productos, combos o los dos (los combos primero).
-export default function GrillaProductos({ productos = [], combos = [], columnas = 4 }) {
-  const sizes =
-    columnas === 4
-      ? "(max-width: 699px) 50vw, (max-width: 999px) 33vw, 320px"
-      : "(max-width: 699px) 50vw, 430px";
+// Dónde va la celda de foto entre los productos (la cuarta)
+const POSICION_FOTO = 3;
+const SIZES = "(max-width: 999px) 50vw, 400px";
 
-  return (
-    <div className={styles.marco}>
-      <ul className={`${styles.vitrina} ${columnas === 4 ? styles.cuatro : ""}`}>
-        {combos.map((combo) => (
-          <TarjetaCombo key={`combo-${combo.id}`} combo={combo} sizes={sizes} />
-        ))}
-        {productos.map((producto) => (
-          <TarjetaProducto key={producto.id} producto={producto} sizes={sizes} />
-        ))}
-      </ul>
-    </div>
-  );
+// La vitrina (ver «Vitrina de productos» en DESIGN.md): celdas grandes, tres
+// por fila desde 1000px y dos abajo. Muestra productos, combos o los dos (los
+// combos primero) y, con `foto` (un lugar de lib/fotos.js), una celda con una
+// foto de gente jugando, del mismo tamaño y sin texto encima.
+export default function GrillaProductos({ productos = [], combos = [], foto }) {
+  const celdas = [
+    ...combos.map((combo) => <TarjetaCombo key={`combo-${combo.id}`} combo={combo} sizes={SIZES} />),
+    ...productos.map((producto) => (
+      <TarjetaProducto key={producto.id} producto={producto} sizes={SIZES} />
+    )),
+  ];
+  if (foto) {
+    celdas.splice(
+      Math.min(POSICION_FOTO, celdas.length),
+      0,
+      <li key={`foto-${foto.archivo}`} className={styles.celdaFoto} aria-hidden="true">
+        <Aparecer className={styles.llenar}>
+          <FotoLugar lugar={foto} foto={generadas.fotos[foto.archivo]} sizes={SIZES} llenar />
+        </Aparecer>
+      </li>,
+    );
+  }
+
+  return <ul className={styles.vitrina}>{celdas}</ul>;
 }

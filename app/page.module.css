@@ -13,63 +13,98 @@
 .seccion {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-8);
-  padding-top: var(--espacio-16);
-  padding-bottom: var(--espacio-16);
+  gap: var(--espacio-12);
+  padding-top: var(--seccion);
+  padding-bottom: var(--seccion);
 }
 
 .subtitulo {
-  font-size: var(--t-titulo-2);
+  font-size: var(--t-display-2);
 }
 
-/* ---------- Categorías ---------- */
+/* Bloque de foto entre dos secciones */
+.bloque {
+  padding-bottom: var(--seccion);
+}
 
-/* Una fila por categoría, separadas por líneas de 1px */
+.hormigon {
+  background: var(--hormigon);
+}
+
+/* ---------- Categorías: tarjetas blancas sobre hormigón ---------- */
+
 .categorias {
-  border-top: 1px solid var(--negro);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-4);
   list-style: none;
 }
 
-.categorias li {
-  border-bottom: 1px solid var(--negro);
-}
-
+/* Toda la tarjeta es el link; con el mouse se pinta del acento */
 .categoria {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--espacio-1);
-  padding: var(--espacio-5) var(--espacio-4);
-  transition: background-color var(--transicion);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  height: 100%;
+  padding: var(--espacio-8) var(--espacio-6) var(--espacio-6);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--negro);
+  transition:
+    background-color var(--transicion),
+    color var(--transicion);
 }
 
-/* Al pasar el mouse, la fila se pinta lima */
 .categoria:hover,
 .categoria:focus-visible {
-  background: var(--lima);
-}
-
-.categoria:focus-visible {
-  outline-offset: -3px;
+  background: var(--acento);
+  color: var(--blanco);
 }
 
 .categoriaNombre {
-  font-size: var(--t-titulo-3);
-  line-height: 1.2;
-  letter-spacing: var(--tracking-titulos);
+  font-size: var(--t-display-4);
 }
 
 .categoriaDescripcion {
-  color: var(--grafito);
+  max-width: 44ch;
+  line-height: 1.5;
 }
 
-.categoriaCantidad {
-  color: var(--grafito);
+.categoriaPie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
 }
 
-@media (min-width: 860px) {
+.flecha {
+  width: 32px;
+  height: 32px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .flecha {
+    transition: transform 200ms var(--suave);
+  }
+
+  .categoria:hover .flecha,
+  .categoria:focus-visible .flecha {
+    transform: translateX(6px);
+  }
+}
+
+@media (min-width: 760px) {
+  .categorias {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--espacio-5);
+  }
+
   .categoria {
-    grid-template-columns: minmax(12rem, 0.8fr) minmax(0, 1.6fr) auto;
-    align-items: baseline;
-    gap: var(--espacio-8);
+    min-height: 15rem;
   }
 }

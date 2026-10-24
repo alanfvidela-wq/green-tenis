@@ -35,9 +35,9 @@
   stroke: var(--gris-raqueta);
 }
 
-/* El resalte: un marcador lima debajo de la línea, solo en la parte resaltada */
+/* El resalte: un marcador del acento debajo de la línea, solo en la parte resaltada */
 .linea [data-capa="resalte"] {
-  stroke: var(--lima);
+  stroke: var(--acento);
   stroke-width: var(--resalte);
 }
 
@@ -50,34 +50,30 @@
 }
 
 /* En las cuerdas y los ojales el marcador es más fino: si no, 35 líneas o 70
-   agujeros juntos se vuelven una mancha lima */
+   agujeros juntos se vuelven una mancha */
 .linea [data-capa="resalte"] [data-parte="encordado"],
 .linea [data-capa="resalte"] [data-parte="ojales"] {
   stroke-width: var(--resalte-fino);
 }
 
-/* Las zonas cerradas se rellenan de lima */
+/* Las zonas cerradas se rellenan del acento */
 .linea [data-capa="resalte"] [data-parte="punto-dulce"],
 .linea [data-capa="resalte"] [data-parte="ojales"],
 .linea [data-capa="resalte"] [data-parte="antivibrador"],
 .linea [data-capa="resalte"] [data-parte="tapon"] {
-  fill: var(--lima);
+  fill: var(--acento);
 }
 
-/* ---------- Estilo «inflada»: plástico inflado con contorno negro ---------- */
+/* ---------- Estilo «inflada»: relleno blanco plano con contorno negro ---------- */
 
-/* La versión lima de cada parte aparece al resaltarla */
+/* La versión del acento de cada parte (currentColor) aparece al resaltarla */
 .inflada [data-lima] {
+  color: var(--acento);
   opacity: 0;
 }
 
 .inflada [data-resaltada] [data-lima] {
   opacity: 1;
-}
-
-/* Con una parte resaltada, el resto se desvanece */
-.inflada[data-resaltando] [data-parte]:not([data-resaltada]) {
-  opacity: 0.35;
 }
 
 /* Las principales crecen desde arriba y las cruzadas desde la izquierda; el

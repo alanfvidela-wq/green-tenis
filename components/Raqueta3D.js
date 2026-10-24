@@ -12,10 +12,10 @@ import { Color, MathUtils, Vector3 } from "three";
 //
 // El modelo (public/models/raqueta.glb, optimizado con meshopt y texturas
 // WebP) trae tres mallas: la raqueta (marco, garganta, empuñadura y tapón) y
-// el encordado en dos mallas. Por eso el encordado se resalta en lima y el
-// resto de las partes se marca con el sticker anclado a su posición 3D. El
-// antivibrador no viene en el modelo: es una pieza aparte, que también se
-// pone lima.
+// el encordado en dos mallas. Por eso el encordado se resalta en el acento y
+// el resto de las partes se marca con su nombre anclado a su posición 3D. El
+// antivibrador no viene en el modelo: es una pieza aparte, que también pasa
+// al acento. La raqueta va en blanco, para que se lea contra la banda negra.
 
 export const URL_RAQUETA = "/models/raqueta.glb";
 
@@ -34,10 +34,11 @@ const FOV = 30;
 // La cámara mira de frente, un poco desde la derecha y desde arriba
 const AZIMUT = 0.32;
 const ELEVACION = 0.1;
-const LIMA = "#dcf900";
+// El acento (--acento en globals.css): la parte activa
+const ACENTO = "#b3471c";
 // El antivibrador: entre las dos principales del medio, debajo de la última
 // cruzada (el reglamento no lo deja donde se cruzan las cuerdas)
-const ANTIVIBRADOR = { y: 34.8, blanco: new Color("#ffffff"), lima: new Color(LIMA) };
+const ANTIVIBRADOR = { y: 34.8, blanco: new Color("#ffffff"), acento: new Color(ACENTO) };
 
 const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
 const suavizar = (t) => t * t * (3 - 2 * t);
@@ -52,7 +53,8 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
 
   // El export viene acostado (una rotación en la raíz): se endereza para que
   // quede vertical, con la cara del encordado hacia la cámara. Las cuerdas
-  // llevan su propio material para poder brillar en lima.
+  // llevan su propio material para poder brillar en el acento; el resto de la
+  // raqueta pasa a blanco, sin su textura.
   useMemo(() => {
     const raiz = scene.children[0];
     raiz.position.set(0, 0, 0);
@@ -61,9 +63,14 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     scene.traverse((objeto) => {
       if (objeto.isMesh && objeto.parent?.name?.startsWith("Tails_PowerShoot_l")) {
         objeto.material = objeto.material.clone();
-        objeto.material.emissive = new Color(LIMA);
+        objeto.material.emissive = new Color(ACENTO);
         objeto.material.emissiveIntensity = 0;
         objeto.userData.cuerda = true;
+      } else if (objeto.isMesh) {
+        objeto.material = objeto.material.clone();
+        objeto.material.map = null;
+        objeto.material.color = new Color("#f2f2f2");
+        objeto.material.needsUpdate = true;
       }
     });
   }, [scene]);
@@ -131,7 +138,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     const indice = p > -0.5 && p < pasos.length - 0.5 ? Math.round(p) : -1;
     const paso = indice >= 0 ? pasos[indice] : null;
 
-    // El encordado es una malla aparte: brilla en lima con un emissive suave
+    // El encordado es una malla aparte: brilla en el acento con un emissive suave
     const brillo = paso?.partes.includes("encordado") ? 0.55 : 0;
     if (!refCuerdas.current) {
       refCuerdas.current = [];
@@ -143,7 +150,8 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       material.emissiveIntensity = MathUtils.damp(material.emissiveIntensity, brillo, 6, delta);
     }
 
-    // El punto dulce: un disco lima semitransparente que late sobre el encordado
+    // El punto dulce: un disco del acento semitransparente que late sobre el
+    // encordado
     const materialDisco = disco.current.material;
     const opacidad = paso?.partes.includes("punto-dulce") ? 0.5 : 0;
     materialDisco.opacity = MathUtils.damp(materialDisco.opacity, opacidad, 6, delta);
@@ -151,7 +159,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     const latido = 1 + Math.sin(tiempo * 3.4) * 0.07;
     disco.current.scale.set(4.2 * latido, 5.4 * latido, 1);
 
-    // El antivibrador pasa de blanco a lima cuando es la parte del paso
+    // El antivibrador pasa de blanco al acento cuando es la parte del paso
     const mezcla = (mezclaAntivibrador.current = MathUtils.damp(
       mezclaAntivibrador.current,
       paso?.partes.includes("antivibrador") ? 1 : 0,
@@ -159,11 +167,11 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       delta,
     ));
     const materialAntivibrador = antivibrador.current.material;
-    materialAntivibrador.color.lerpColors(ANTIVIBRADOR.blanco, ANTIVIBRADOR.lima, mezcla);
+    materialAntivibrador.color.lerpColors(ANTIVIBRADOR.blanco, ANTIVIBRADOR.acento, mezcla);
     materialAntivibrador.emissiveIntensity = mezcla * 0.35;
 
-    // El sticker del paso activo, anclado a la posición 3D de su parte. En el
-    // final, todos juntos alrededor de la raqueta entera.
+    // El nombre de la parte del paso activo, anclado a la posición 3D de su
+    // parte. En el final, todos juntos alrededor de la raqueta entera.
     const escena = medidas.current.escena;
     const colocar = (i) => {
       ancla.set(...pasos[i].ancla3d);
@@ -187,7 +195,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
         <mesh ref={disco} position={[0, 47.5, 0.35]} renderOrder={2} visible={false}>
           <circleGeometry args={[1, 48]} />
           <meshBasicMaterial
-            color={LIMA}
+            color={ACENTO}
             transparent
             opacity={0}
             depthWrite={false}
@@ -202,7 +210,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
           scale={[1, 1, 0.7]}
         >
           <capsuleGeometry args={[0.5, 1.1, 6, 16]} />
-          <meshStandardMaterial color="#ffffff" roughness={0.45} emissive={LIMA} emissiveIntensity={0} />
+          <meshStandardMaterial color="#ffffff" roughness={0.45} emissive={ACENTO} emissiveIntensity={0} />
         </mesh>
       </group>
 
@@ -214,7 +222,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
         far={30}
         blur={2.6}
         opacity={0.35}
-        color="#1d3a63"
+        color="#000000"
         resolution={mobile ? 256 : 512}
         frames={mobile ? 1 : Infinity}
       />
@@ -233,7 +241,7 @@ function Estudio() {
         <Lightformer form="rect" intensity={2.4} position={[0, 60, 40]} scale={[60, 24, 1]} />
         <Lightformer form="rect" intensity={1.2} position={[-60, 30, 20]} scale={[30, 70, 1]} />
         <Lightformer form="rect" intensity={0.8} position={[60, 30, -20]} scale={[30, 70, 1]} />
-        <Lightformer form="rect" intensity={0.5} color="#a3c4e8" position={[0, 20, -70]} scale={[90, 90, 1]} />
+        <Lightformer form="rect" intensity={0.5} position={[0, 20, -70]} scale={[90, 90, 1]} />
       </Environment>
     </>
   );

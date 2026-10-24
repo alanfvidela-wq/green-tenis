@@ -1,18 +1,23 @@
-/* Pantalla completa: sube por debajo del header, que flota transparente encima */
+/* El hero: el video en un contenedor con radio de 16px y margen alrededor.
+   Sube por debajo del header, que flota en blanco adentro del contenedor. */
 .hero {
-  --foco: var(--lima);
+  margin-top: calc(-1 * var(--alto-header));
+  padding: var(--gutter);
+}
+
+.caja {
+  --foco: var(--blanco);
   position: relative;
   display: grid;
   place-items: center;
-  margin-top: calc(-1 * var(--alto-header));
-  height: 100svh;
-  min-height: 560px;
+  min-height: max(560px, calc(100svh - 2 * var(--gutter)));
   overflow: hidden;
+  border-radius: var(--radio);
   background: var(--negro);
   color: var(--blanco);
 }
 
-/* Poster y video ocupan todo el hero, uno encima del otro */
+/* Poster y video ocupan todo el contenedor, uno encima del otro */
 .medio,
 .poster,
 .video {
@@ -27,13 +32,13 @@
   object-fit: cover;
 }
 
-/* Capa negra plana y pareja (no es un degradado): la cancha es clara y el
-   titular lima tiene que leerse */
+/* Capa negra plana al 55%: con eso el titular blanco pasa AA aun en el cuadro
+   más claro del video (5,58:1) */
 .capa {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: rgb(0 0 0 / 0.4);
+  background: rgb(0 0 0 / 0.55);
 }
 
 .texto {
@@ -41,17 +46,18 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--espacio-5);
+  gap: var(--espacio-6);
   max-width: var(--ancho-max);
-  padding: var(--alto-header) var(--gutter) 0;
+  padding: var(--alto-header) var(--gutter) var(--espacio-8);
   text-align: center;
 }
 
+/* Tres líneas: «Todo para / jugar al / tenis» mide 4,2em. En blanco: el
+   acento no se lee sobre el video. */
 .titulo {
-  max-width: 12ch;
-  color: var(--lima);
-  font-size: var(--t-titulo-1);
-  line-height: 1.02;
+  max-width: 5.5em;
+  color: var(--blanco);
+  font-size: var(--t-display-1);
 }
 
 .frase {
@@ -60,19 +66,24 @@
   line-height: 1.5;
 }
 
-/* La acción principal, más grande para que resalte */
+/* La acción principal, grande. Sobre el video, el hover va en blanco. */
 .cta {
-  min-height: 56px;
-  margin-top: var(--espacio-2);
-  padding-inline: var(--espacio-10);
+  min-height: 60px;
+  padding-inline: var(--espacio-12);
+  font-size: var(--t-entrada);
 }
 
-/* Pausa/play: círculo blanco sin borde, en la esquina de abajo a la derecha */
+.caja .cta:hover:not(:disabled) {
+  background: var(--blanco);
+  color: var(--negro);
+}
+
+/* Pausa/play: círculo blanco, abajo a la derecha del contenedor */
 .pausa {
   position: absolute;
   z-index: 1;
-  right: var(--gutter);
-  bottom: var(--espacio-8);
+  right: var(--espacio-5);
+  bottom: var(--espacio-5);
   display: grid;
   place-items: center;
   width: 44px;
@@ -86,20 +97,10 @@
 }
 
 .pausa:hover {
-  background: var(--lima);
+  background: var(--hormigon);
 }
 
 .icono {
   width: 18px;
   height: 18px;
-}
-
-@media (max-width: 760px) {
-  .texto {
-    gap: var(--espacio-4);
-  }
-
-  .titulo {
-    max-width: 9ch;
-  }
 }

@@ -248,7 +248,6 @@ export default async function PaginaMuestra() {
             <Raqueta
               estilo="inflada"
               encuadre="lienzo"
-              prefijo="muestra"
               resaltadas={[ACTIVA]}
               className={styles.raqueta}
             />

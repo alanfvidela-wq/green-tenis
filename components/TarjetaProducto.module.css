@@ -1,118 +1,109 @@
-/* Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md). Dibuja su
-   línea derecha y la de abajo; el marco de GrillaProductos esconde las del
-   borde. */
+/* Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md) */
 .celda {
   min-width: 0;
   container-type: inline-size;
-  border-right: 1px solid var(--negro);
-  border-bottom: 1px solid var(--negro);
+}
+
+.enlace {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  height: 100%;
+  color: var(--negro);
+}
+
+/* Foco alrededor de toda la celda */
+.enlace:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 6px;
+  border-radius: var(--radio);
+}
+
+/* La foto: 4:5, sobre estudio, sin borde y con radio de 16px */
+.marco {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radio);
   background: var(--estudio);
 }
 
-.producto {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--espacio-2);
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  padding: var(--espacio-3);
-  color: var(--negro);
-  font-size: var(--t-dato);
-  line-height: 1.35;
-}
-
-/* Foco por dentro de la celda: no lo tapa la vecina */
-.producto:focus-visible {
-  outline: 3px solid var(--negro);
-  outline-offset: -3px;
-}
-
-/* El texto va sobre la foto */
-.rotulo,
-.pie {
-  position: relative;
-}
-
-.nombre {
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  font-size: var(--t-dato);
-  line-height: 1.35;
-  letter-spacing: normal;
-  text-wrap: pretty;
-}
-
-.variante {
-  overflow: hidden;
-  color: var(--grafito);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.pie {
+/* Debajo, el nombre subrayado a la izquierda y el precio a la derecha */
+.fila {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: var(--espacio-2);
+  gap: var(--espacio-3);
 }
 
-/* En celdas angostas, precio y «Comprar» uno abajo del otro en todas las
-   celdas, para que no salte de línea solo en algunas */
-@container (max-width: 240px) {
-  .pie {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-  }
+.nombre {
+  min-width: 0;
+  font-size: var(--t-texto);
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
+}
+
+.precios {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .precio {
+  flex-shrink: 0;
   font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
   white-space: nowrap;
 }
 
-/* Link discreto: negro, en mayúsculas; se subraya con el mouse o el foco */
-.comprar {
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
-  text-underline-offset: 3px;
-}
+/* En celdas angostas, el precio baja debajo del nombre */
+@container (max-width: 260px) {
+  .fila {
+    flex-direction: column;
+    gap: var(--espacio-1);
+  }
 
-.producto:hover .comprar,
-.producto:focus-visible .comprar {
-  text-decoration: underline;
-}
-
-/* Sin stock: el producto pierde su color, que es lo único con color */
-.agotado .foto {
-  filter: grayscale(1);
-  opacity: 0.5;
-}
-
-.agotado:hover .comprar,
-.agotado:focus-visible .comprar {
-  text-decoration: none;
-}
-
-@media (min-width: 1000px) {
-  .producto {
-    padding: var(--espacio-4);
+  .precios {
+    align-items: flex-start;
   }
 }
 
-/* Al pasar el mouse o con el foco, el producto se acerca apenas */
+/* La barra de ancho completo: el acento con «Ver producto»; negra sin stock */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: auto;
+  padding: 0 var(--espacio-4);
+  border-radius: var(--radio-pildora);
+  background: var(--acento);
+  color: var(--blanco);
+  font-size: var(--t-chico);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  transition: background-color var(--transicion);
+}
+
+.enlace:hover .barra,
+.enlace:focus-visible .barra {
+  background: var(--negro);
+}
+
+.agotado {
+  background: var(--negro);
+}
+
+/* Con el mouse o el foco, el producto se acerca apenas. Sin giros. */
 @media (prefers-reduced-motion: no-preference) {
   .foto {
     transition: transform 400ms var(--suave);
   }
 
-  .producto:hover .foto,
-  .producto:focus-visible .foto {
-    transform: scale(1.04);
+  .enlace:hover .foto,
+  .enlace:focus-visible .foto {
+    transform: scale(1.03);
   }
 }

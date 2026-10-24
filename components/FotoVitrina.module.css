@@ -1,23 +1,25 @@
-/* Llena la celda de la vitrina. Sin sombra, sin radio, sin degradado. */
+/* Llena la celda de la vitrina (que pone el radio). Sin sombra, sin
+   degradado. */
 .foto {
   position: absolute;
   inset: 0;
   background: var(--estudio);
 }
 
-/* Caja de producto: del 14% al 86% del ancho y del 26% al 86% del alto.
-   Arriba queda el nombre; abajo, el precio. Ahí va la silueta. */
+/* El producto grande y centrado, con margen parejo: ahí va la silueta */
 .caja {
   position: absolute;
-  top: 26%;
-  left: 14%;
-  width: 72%;
-  height: 60%;
+  top: 6%;
+  left: 6%;
+  width: 88%;
+  height: 88%;
 }
 
-/* Foto de estudio: trae su fondo y ocupa la celda entera */
+/* La foto: un recorte sin fondo (npm run fotos:productos), entero y centrado
+   con el mismo margen */
 .estudio {
-  object-fit: cover;
+  padding: 5%;
+  object-fit: contain;
 }
 
 /* Placeholder: la silueta de la categoría, plana y apenas más oscura que el

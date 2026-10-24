@@ -6,27 +6,26 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import Raqueta, { ANCLAS, LIENZO } from "./Raqueta";
 import styles from "./AnatomiaRaqueta.module.css";
 
-// Sección «Anatomía de una raqueta» (ver DESIGN.md: es una excepción con su
-// propio estilo, sobre azul de cancha). La raqueta queda fija y los pasos
-// pasan al lado (abajo en mobile).
+// Sección «Anatomía de una raqueta» (ver DESIGN.md), sobre una banda negra.
+// La raqueta queda fija y los pasos pasan al lado (abajo en mobile).
 //
 // - Con WebGL y movimiento permitido: la raqueta 3D (Raqueta3D, cargada sin
 //   SSR). Con el scroll, la cámara la recorre de arriba hacia abajo y se
-//   acerca a la parte de cada paso; entra su sticker, anclado a la posición 3D
-//   de la parte, y el nombre gigante aparece detrás.
+//   acerca a la parte de cada paso; aparece el nombre de la parte, anclado a
+//   la posición 3D de la parte, y el nombre gigante aparece detrás.
 // - Con prefers-reduced-motion, sin WebGL o mientras carga el modelo: la
-//   raqueta inflada en SVG, quieta, con todos los stickers. Ocupa la misma
-//   caja que el 3D, así que el cambio no mueve nada.
+//   raqueta dibujada en SVG, quieta, con los nombres de todas las partes.
+//   Ocupa la misma caja que el 3D, así que el cambio no mueve nada.
 //
 // Al final, después de la última parte, la cámara se aleja hasta la raqueta
 // entera, que da una vuelta con el scroll y después gira muy lento; los
-// stickers aparecen todos juntos un instante, la frase de cierre aparece al
+// nombres de las partes aparecen todos juntos un instante, la frase de cierre aparece al
 // lado (debajo en mobile) y queda mientras gira, y aparece el botón. Sin
 // movimiento, el cierre es texto y botón al lado de la
 // raqueta quieta.
 //
-// Lo que se mueve en la página (stickers, nombre, parallax) es transform u
-// opacity.
+// Lo que se mueve en la página (nombres de las partes, nombre gigante,
+// parallax) es transform u opacity.
 
 // Tramos del final (fin va de 0 a 1 a lo largo del bloque de cierre): los
 // stickers juntos, y desde dónde se ven la frase (junto con los stickers, y
@@ -92,41 +91,11 @@ function puede3d() {
 }
 const sinSuscripcion = () => () => {};
 
-// La pelota de la marca, inflada: lima con contorno negro y sus costuras
-function PelotaInflada() {
-  return (
-    <svg viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-      <defs>
-        <radialGradient id="anatomia-pelota" cx="0.35" cy="0.3" r="0.8">
-          <stop offset="0" stopColor="#f7ffb8" />
-          <stop offset="0.55" stopColor="#dcf900" />
-          <stop offset="1" stopColor="#a9c400" />
-        </radialGradient>
-        <pattern id="anatomia-pelota-ruido" patternUnits="userSpaceOnUse" width="40" height="40">
-          <image href="/texturas/ruido.png" width="40" height="40" />
-        </pattern>
-      </defs>
-      <circle cx="50" cy="50" r="44" fill="url(#anatomia-pelota)" />
-      <circle cx="50" cy="50" r="44" fill="url(#anatomia-pelota-ruido)" />
-      <path
-        d="M18 20c15 14 15 46 0 60M82 20c-15 14-15 46 0 60"
-        fill="none"
-        stroke="#000"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      <ellipse cx="33" cy="28" rx="11" ry="6" fill="#fff" fillOpacity="0.75" transform="rotate(-35 33 28)" />
-      <circle cx="50" cy="50" r="44" fill="none" stroke="#000" strokeWidth="4.5" />
-    </svg>
-  );
-}
-
 export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   const refRaiz = useRef(null);
   const refEscenario = useRef(null);
   const refEscena = useRef(null);
   const refNombres = useRef(null);
-  const refPelota = useRef(null);
   const refMarcas = useRef([]);
   // Lo que comparte con la escena 3D sin volver a renderizar: el progreso del
   // scroll y dónde está la escena dentro del lienzo
@@ -202,7 +171,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     const raiz = refRaiz.current;
     const escena = refEscena.current;
     const nombresCapa = refNombres.current;
-    const pelota = refPelota.current;
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
     const nombres = pasos.map((paso) => raiz.querySelector(`[data-nombre="${paso.id}"]`));
@@ -271,11 +239,9 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
         marcar(indice, todos, final);
       }
 
-      // Parallax: el nombre gigante se queda atrás de la raqueta y la pelota
-      // sube, baja y gira con el scroll
+      // Parallax: el nombre gigante se queda atrás de la raqueta
       const resto = p - Math.round(p);
       nombresCapa.style.transform = `translateY(${corto(resto * -36)}px)`;
-      pelota.style.transform = `translateY(${corto(Math.sin(p * 1.3) * -12)}px) rotate(${corto(p * 24)}deg)`;
     }
 
     function pedir() {
@@ -332,14 +298,15 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
             )}
 
             <div className={styles.escena} ref={refEscena}>
-              {/* La raqueta en SVG: mientras carga el 3D, sin WebGL o sin
+              {/* La raqueta dibujada: mientras carga el 3D, sin WebGL o sin
                   movimiento */}
               <div className={styles.dibujo}>
-                <Raqueta estilo="inflada" encuadre="lienzo" prefijo="anatomia" className={styles.raqueta} />
+                <Raqueta estilo="inflada" encuadre="lienzo" className={styles.raqueta} />
               </div>
 
-              {/* Stickers: texto HTML; repiten el título del paso, por eso van
-                  ocultos para lectores de pantalla */}
+              {/* Los nombres de las partes, con su línea guía: texto HTML;
+                  repiten el título del paso, por eso van ocultos para
+                  lectores de pantalla */}
               {pasos.map((paso, i) => (
                 <span
                   key={paso.id}
@@ -368,11 +335,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
               ))}
             </div>
 
-            <div className={styles.pelota} ref={refPelota} aria-hidden="true">
-              <div className={styles.pelotaFlota}>
-                <PelotaInflada />
-              </div>
-            </div>
           </div>
 
           <ol className={styles.pasos}>
@@ -390,8 +352,9 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
 
           {/* El cierre: el tramo de scroll del final. La frase y el botón
               quedan fijos al lado de la raqueta (debajo en mobile). Con 3D la
-              frase aparece junto con los stickers y se queda mientras la
-              raqueta gira, y el botón entra al final; sin 3D están siempre. */}
+              frase aparece junto con los nombres de las partes y se queda
+              mientras la raqueta gira, y el botón entra al final; sin 3D
+              están siempre. */}
           <div className={styles.cierre} data-cierre>
             <div className={styles.cierreContenido}>
               <p className={styles.cierreTexto}>{cierre.texto}</p>

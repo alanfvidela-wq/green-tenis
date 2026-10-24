@@ -40,11 +40,10 @@ const SILUETAS = {
   ),
 };
 
-// La foto de un producto en la vitrina (ver «Vitrina de productos» en
-// DESIGN.md). Llena una celda 4:5 con fondo de estudio y position: relative.
-// Con foto de estudio, la foto entera (ya trae el fondo). Sin ella, el
-// placeholder neutro con la silueta de la categoría: los recortes no entran
-// en la vitrina porque no tienen la misma luz.
+// La foto de un producto en la vitrina (ver «Fotos de producto» en DESIGN.md).
+// Llena una celda con fondo de estudio y position: relative. Con foto, el
+// recorte sin fondo, entero y centrado con margen parejo. Sin ella, el
+// placeholder neutro con la silueta de la categoría, centrada igual.
 export default function FotoVitrina({
   foto,
   categoria,

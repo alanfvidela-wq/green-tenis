@@ -3,12 +3,13 @@ import { CORTE_MOBILE, VIDEOS_HERO } from "@/lib/heroVideo";
 import VideoFondo from "./VideoFondo";
 import styles from "./Hero.module.css";
 
-// Hero de la home: el video de la cancha a pantalla completa, con el header
-// flotando encima, una capa negra plana y el titular lima centrado.
+// Hero de la home: el video de la cancha en un contenedor con radio, con el
+// header flotando encima, una capa negra plana y el titular blanco centrado.
 // El poster va en un <picture> del servidor, así se ve desde el primer pintado.
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-titulo" data-hero>
+      <div className={styles.caja}>
       <picture className={styles.medio}>
         <source media={CORTE_MOBILE} srcSet={VIDEOS_HERO.mobile.poster} />
         <img
@@ -28,7 +29,7 @@ export default function Hero() {
       <div className={styles.capa} aria-hidden="true" />
 
       <div className={styles.texto}>
-        <h1 id="hero-titulo" className={styles.titulo}>
+        <h1 id="hero-titulo" className={`display ${styles.titulo}`}>
           Todo para jugar al tenis
         </h1>
         <p className={styles.frase}>
@@ -38,6 +39,7 @@ export default function Hero() {
         <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>
           Ver raquetas
         </Link>
+      </div>
       </div>
     </section>
   );

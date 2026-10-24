@@ -1,28 +1,26 @@
-/* Marco de la vitrina: 1px negro y 16px de radio, el único radio de la grilla */
-.marco {
-  overflow: hidden;
-  border: 1px solid var(--negro);
-  border-radius: var(--radio);
-  background: var(--blanco);
-}
-
-/* Celdas pegadas. Cada una dibuja su línea derecha y la de abajo; la lista se
-   corre 1px hacia afuera para que las del borde queden debajo del marco. */
+/* La vitrina: celdas grandes, tres por fila desde 1000px y dos abajo */
 .vitrina {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 0 -1px -1px 0;
+  gap: var(--espacio-10) var(--espacio-3);
   list-style: none;
 }
 
 @media (min-width: 700px) {
   .vitrina {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--espacio-12) var(--espacio-5);
   }
 }
 
 @media (min-width: 1000px) {
-  .cuatro {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .vitrina {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+/* La celda de foto ocupa todo el alto de la fila */
+.celdaFoto,
+.llenar {
+  min-width: 0;
+  height: 100%;
 }
