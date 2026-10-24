@@ -48,6 +48,43 @@
   --alto-header: 72px;
 }
 
+/* Sistema nuevo (rediseño, ver DESIGN.md). Por ahora solo lo usa /muestra:
+   son tokens nuevos y no cambian ninguno de los de arriba. */
+:root {
+  /* Las superficies del tenis. Sobre polvo, cancha y césped todo el texto es
+     tinta. */
+  --polvo: #d46c3f;
+  --cancha: #5a8fe6;
+  --cesped: #5a9e4a;
+  /* Neutros: cal (el fondo cálido de las páginas de trámite) y tinta (el
+     negro cálido del texto, los bordes y el footer) */
+  --cal: #fbf6ee;
+  --tinta: #1a1411;
+  --grafito-calido: #4a403a;
+
+  /* Display: el valor lo pone el layout con la fuente elegida */
+  /* La más grande depende también del alto: el hero entra en una pantalla */
+  --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
+  --t-display-2: clamp(3.5rem, 10vw, 9rem);
+  --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
+  --t-display-4: clamp(2rem, 4vw, 3.25rem);
+  --t-titulo: clamp(1.25rem, 2vw, 1.625rem);
+  --t-entrada-fluida: clamp(1.0625rem, 1.3vw, 1.25rem);
+  --t-chico: 0.875rem;
+
+  /* Escala única de radios y bordes */
+  --radio-foto: 6px;
+  --radio-sticker: 12px;
+  --radio-bloque: 20px;
+  --radio-redondo: 999px;
+  --borde-fino: 1px;
+  --borde: 2px;
+  --borde-grueso: 3px;
+
+  --espacio-12: 3rem;
+  --espacio-32: 8rem;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

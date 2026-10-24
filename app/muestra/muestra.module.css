@@ -1,0 +1,1182 @@
+/* Muestra del sistema nuevo (ver DESIGN.md). Los estilos de botones,
+   píldoras, campos, tarjeta y vitrina viven acá hasta la fase 2, que los
+   pasa a globals.css y a los módulos reales. */
+
+.muestra {
+  --fuente-texto: var(--font-texto-nuevo), "Helvetica Neue", Arial, sans-serif;
+  max-width: none;
+  padding: 0;
+  background: var(--cal);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+}
+
+.oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.contenido {
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding-inline: var(--gutter);
+}
+
+.bloque {
+  padding-block: var(--espacio-12);
+}
+
+/* ---------- Las tres displays ---------- */
+
+/* Cada opción pone su fuente y cómo se usa. El interlineado es el mínimo con
+   el que las mayúsculas acentuadas no tocan la línea de arriba: el alto de la
+   tilde (Archivo 0,89em, Anton 1,11em, Big Shoulders 0,98em) más un poco. */
+.archivo {
+  --fuente-display: var(--font-archivo);
+  --display-peso: 900;
+  --display-ancho: 62%;
+  --display-interlineado: 0.92;
+  --display-tracking: 0;
+}
+
+.anton {
+  --fuente-display: var(--font-anton);
+  --display-peso: 400;
+  --display-ancho: 100%;
+  --display-interlineado: 1.14;
+  --display-tracking: 0;
+}
+
+.bigShoulders {
+  --fuente-display: var(--font-big-shoulders);
+  --display-peso: 900;
+  --display-ancho: 100%;
+  --display-interlineado: 1;
+  --display-tracking: 0;
+}
+
+.display {
+  font-family: var(--fuente-display), "Arial Narrow", sans-serif;
+  font-weight: var(--display-peso);
+  font-stretch: var(--display-ancho);
+  line-height: var(--display-interlineado);
+  letter-spacing: var(--display-tracking);
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.tituloSeccion {
+  margin-block: var(--espacio-8) var(--espacio-5);
+  font-size: var(--t-display-3);
+}
+
+.subtitulo {
+  margin-block: var(--espacio-10) var(--espacio-4);
+  font-size: var(--t-titulo);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+.entrada {
+  max-width: 46ch;
+  font-size: var(--t-entrada-fluida);
+  line-height: 1.5;
+}
+
+.texto {
+  max-width: 60ch;
+  margin-top: var(--espacio-4);
+  line-height: 1.6;
+}
+
+.dato {
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+  line-height: 1.4;
+}
+
+/* ---------- Botones ---------- */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-2);
+  min-height: 48px;
+  padding: var(--espacio-3) var(--espacio-6);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--lima);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-chico);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--transicion),
+    color var(--transicion),
+    border-color var(--transicion),
+    transform 200ms var(--suave);
+}
+
+.boton:hover:not(:disabled),
+.comoHover {
+  background: var(--tinta);
+  color: var(--lima);
+  transform: translateY(-2px);
+}
+
+.boton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.boton:disabled {
+  border-color: var(--grafito-calido);
+  background: var(--hormigon);
+  color: var(--grafito-calido);
+  cursor: not-allowed;
+}
+
+.comoFoco {
+  outline: var(--borde-grueso) solid var(--foco);
+  outline-offset: 3px;
+}
+
+.secundario {
+  background: transparent;
+}
+
+.secundario:hover:not(:disabled) {
+  background: var(--blanco);
+  color: var(--tinta);
+}
+
+/* Secundario sobre tinta o video */
+.claro {
+  border-color: var(--blanco);
+  background: transparent;
+  color: var(--blanco);
+}
+
+.claro:hover:not(:disabled) {
+  border-color: var(--blanco);
+  background: var(--blanco);
+  color: var(--tinta);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+/* ---------- Navegación en píldoras ---------- */
+
+.pildora {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--blanco);
+  color: var(--tinta);
+  font-size: var(--t-dato);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition:
+    background-color var(--transicion),
+    color var(--transicion);
+}
+
+.pildora:hover,
+.activa {
+  background: var(--lima);
+}
+
+.pildoraLima {
+  background: var(--lima);
+}
+
+.pildoraLima:hover {
+  background: var(--tinta);
+  color: var(--lima);
+}
+
+.nav {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-4);
+}
+
+.navMarca {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  border-radius: var(--radio-sticker);
+}
+
+.navMarca .wordmark {
+  font-size: 2.5rem;
+}
+
+.navLinks {
+  display: flex;
+  justify-content: center;
+  gap: var(--espacio-2);
+}
+
+.navAcciones {
+  display: flex;
+  gap: var(--espacio-2);
+}
+
+.navMuestra {
+  padding: var(--espacio-4);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-bloque);
+  background: var(--cal);
+}
+
+/* Sin lugar para todo en una fila: las secciones bajan a una segunda fila
+   con scroll horizontal (como el header de hoy) */
+@media (max-width: 1099px) {
+  .nav {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .navLinks {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    /* Lugar para el anillo de foco dentro del scroll */
+    padding: 6px;
+    margin: -6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+
+@media (max-width: 519px) {
+  .pildora {
+    padding: 0 var(--espacio-3);
+    font-size: 0.75rem;
+  }
+
+  .navAcciones,
+  .navLinks {
+    gap: 6px;
+  }
+
+  .navMarca .wordmark {
+    font-size: 2rem;
+  }
+}
+
+/* ---------- Wordmark ---------- */
+
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  font-family: var(--fuente-display), "Arial Narrow", sans-serif;
+  font-weight: var(--display-peso);
+  font-stretch: var(--display-ancho);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* La pelota: del tamaño de un punto grande, sobre la línea de base */
+.punto {
+  flex-shrink: 0;
+  width: 0.34em;
+  height: 0.34em;
+  margin-left: 0.05em;
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  --foco: var(--lima);
+  position: relative;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: max(600px, calc(100svh - var(--alto-header)));
+  overflow: hidden;
+  background: var(--tinta);
+  color: var(--blanco);
+}
+
+.heroMedio,
+.heroPoster,
+.heroVideo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.heroPoster,
+.heroVideo {
+  object-fit: cover;
+}
+
+/* Capa plana de tinta al 55%: con eso el titular lima y la bajada blanca
+   pasan AA aun en la parte más clara de la cancha */
+.heroCapa {
+  position: absolute;
+  inset: 0;
+  background: rgb(26 20 17 / 0.55);
+  pointer-events: none;
+}
+
+.heroNav,
+.heroTexto,
+.selector {
+  position: relative;
+  z-index: 1;
+}
+
+.heroNav {
+  padding: var(--espacio-4) var(--gutter);
+}
+
+.heroNav .wordmark {
+  color: var(--blanco);
+}
+
+.heroTexto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-5);
+  padding: var(--espacio-6) var(--gutter);
+  text-align: center;
+}
+
+/* Tres líneas: «Todo para / jugar al / tenis» mide 4,2em en las tres
+   displays */
+.heroTitulo {
+  max-width: 5.5em;
+  color: var(--lima);
+  /* Con Anton y Big Shoulders el interlineado seguro es mayor: se achican
+     para que el bloque mida lo mismo y el hero siga entrando en la pantalla */
+  font-size: calc(var(--t-display-1) * var(--hero-escala, 1));
+}
+
+.heroFrase {
+  max-width: 40ch;
+  font-size: var(--t-entrada-fluida);
+  line-height: 1.5;
+}
+
+.botonHero {
+  min-height: 56px;
+  margin-top: var(--espacio-2);
+  padding-inline: var(--espacio-10);
+}
+
+/* El selector de display del titular: radios en píldora, solo CSS */
+.selector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2);
+  /* Deja lugar a la pausa, abajo a la derecha */
+  padding: 0 calc(var(--gutter) + 60px) var(--espacio-6) var(--gutter);
+}
+
+.selectorTitulo {
+  margin-right: var(--espacio-2);
+  font-size: var(--t-dato);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--espacio-4);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--blanco);
+  color: var(--tinta);
+  font-size: var(--t-dato);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.opcion:has(input:checked) {
+  background: var(--lima);
+}
+
+.opcion:has(input:focus-visible) {
+  outline: var(--borde-grueso) solid var(--foco);
+  outline-offset: 3px;
+}
+
+.hero:has(input[value="anton"]:checked) {
+  --hero-escala: 0.81;
+  --fuente-display: var(--font-anton);
+  --display-peso: 400;
+  --display-ancho: 100%;
+  --display-interlineado: 1.14;
+}
+
+.hero:has(input[value="big-shoulders"]:checked) {
+  --hero-escala: 0.92;
+  --fuente-display: var(--font-big-shoulders);
+  --display-peso: 900;
+  --display-ancho: 100%;
+  --display-interlineado: 1;
+}
+
+/* Pausa/play: círculo blanco, abajo a la derecha */
+.pausa {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter);
+  bottom: var(--espacio-6);
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: var(--borde) solid var(--tinta);
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--tinta);
+  cursor: pointer;
+  transition: background-color var(--transicion);
+}
+
+.pausa:hover {
+  background: var(--lima);
+}
+
+.icono {
+  width: 18px;
+  height: 18px;
+}
+
+/* ---------- Índice ---------- */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.intro .tituloSeccion {
+  margin: 0;
+}
+
+.indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+/* ---------- Tipografía ---------- */
+
+.tipo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-6);
+  padding-block: var(--espacio-10);
+}
+
+.tipo > hr {
+  margin-bottom: var(--espacio-4);
+}
+
+.tipoCabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-4);
+}
+
+.tipoNombre {
+  font-size: var(--t-titulo);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.tipoTitular {
+  font-size: var(--t-display-2);
+}
+
+.tipoAcentos {
+  max-width: 6.5em;
+  font-size: var(--t-display-3);
+}
+
+.tipoPie {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: var(--espacio-6);
+}
+
+.tipoChica {
+  font-size: var(--t-display-4);
+}
+
+.tipoWordmark {
+  font-size: clamp(3rem, 7vw, 5.5rem);
+}
+
+.tipoNota {
+  max-width: 44ch;
+  line-height: 1.5;
+}
+
+@media (min-width: 860px) {
+  .tipoPie {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1.2fr);
+  }
+}
+
+.wordmarks {
+  padding-block: var(--espacio-6);
+}
+
+.wordmarksFila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-10);
+}
+
+.wordmarksFila figure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.wordmarkTexto {
+  display: inline-flex;
+  align-items: baseline;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.wordmarkActual {
+  font-family: var(--font-texto), Arial, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.wordmark600 {
+  font-weight: 600;
+  letter-spacing: -0.05em;
+}
+
+/* ---------- Paleta ---------- */
+
+.colores {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-6) var(--espacio-4);
+  margin-top: var(--espacio-8);
+  list-style: none;
+}
+
+/* Dos filas de cuatro: superficies, neutros y el lima */
+@media (min-width: 700px) {
+  .colores {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.color {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+}
+
+.colorMuestra {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  margin-bottom: var(--espacio-2);
+  overflow: hidden;
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-bloque);
+}
+
+.conGrano::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/texturas/ruido.png") 0 0 / 128px repeat;
+  opacity: 0.5;
+}
+
+.colorNombre {
+  font-weight: 600;
+}
+
+.colorUso {
+  color: var(--grafito-calido);
+  font-size: var(--t-chico);
+  line-height: 1.45;
+}
+
+.tablaMarco {
+  margin-top: var(--espacio-5);
+  overflow-x: auto;
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-bloque);
+  background: var(--blanco);
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.tabla th,
+.tabla td {
+  padding: var(--espacio-3) var(--espacio-4);
+  border-bottom: var(--borde-fino) solid var(--tinta);
+  text-align: left;
+  vertical-align: top;
+}
+
+/* El peor píxel con grano, debajo */
+.peor {
+  display: block;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+@media (max-width: 599px) {
+  .tabla th,
+  .tabla td {
+    padding: var(--espacio-3) var(--espacio-2);
+  }
+
+  .tabla {
+    font-size: 0.75rem;
+  }
+}
+
+.tabla tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.tabla th {
+  font-family: var(--fuente-texto);
+  font-weight: 600;
+}
+
+.permitida {
+  font-weight: 700;
+}
+
+.noPermitida {
+  color: var(--grafito-calido);
+}
+
+/* ---------- Componentes ---------- */
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--espacio-6) var(--espacio-4);
+}
+
+.ejemplo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+}
+
+.oscuro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  margin-top: var(--espacio-6);
+  padding: var(--espacio-8) var(--espacio-6);
+  border-radius: var(--radio-bloque);
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-5);
+  max-width: 44rem;
+}
+
+@media (min-width: 700px) {
+  .campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.etiquetaCampo {
+  font-size: var(--t-dato);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.entradaCampo {
+  min-height: 48px;
+  padding: 0 var(--espacio-5);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--blanco);
+  color: var(--tinta);
+  font: inherit;
+}
+
+.entradaCampo:focus-visible {
+  outline: var(--borde-grueso) solid var(--foco);
+  outline-offset: 3px;
+}
+
+.error {
+  padding: var(--espacio-3) var(--espacio-4);
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-sticker);
+  background: var(--blanco);
+  font-size: var(--t-chico);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ---------- Polvo, con y sin marca de agua ---------- */
+
+.comparacion {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--espacio-6);
+  padding: var(--espacio-12) var(--gutter) var(--espacio-16);
+}
+
+.panel + .panel {
+  border-top: var(--borde) solid var(--tinta);
+}
+
+@media (min-width: 1000px) {
+  .comparacion {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panel {
+    min-height: 100svh;
+    padding-inline: max(var(--gutter), 3vw);
+  }
+
+  .panel + .panel {
+    border-top: 0;
+    border-left: var(--borde) solid var(--tinta);
+  }
+}
+
+.panelCabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-4);
+}
+
+.panelTitulo {
+  /* Dos líneas: «Lo que / más sale» */
+  max-width: 4.6em;
+  font-size: min(var(--t-display-2), 15vw);
+}
+
+.panelSticker {
+  margin-bottom: 0.5em;
+}
+
+/* ---------- Tarjeta de producto y vitrina ---------- */
+
+.vitrina {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--espacio-3);
+  width: 100%;
+  margin-top: var(--espacio-2);
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .vitrina {
+    gap: var(--espacio-4);
+  }
+}
+
+.tarjeta {
+  min-width: 0;
+  container-type: inline-size;
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-bloque);
+  background: var(--estudio);
+}
+
+.producto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  padding: var(--espacio-3);
+  border-radius: calc(var(--radio-bloque) - var(--borde));
+  color: var(--tinta);
+  font-size: var(--t-dato);
+  line-height: 1.35;
+}
+
+.producto:focus-visible {
+  outline: var(--borde-grueso) solid var(--foco);
+  outline-offset: 5px;
+}
+
+.rotulo,
+.pie {
+  position: relative;
+}
+
+.nombre {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  font-size: var(--t-chico);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-wrap: pretty;
+}
+
+.variante {
+  overflow: hidden;
+  color: var(--grafito-calido);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+}
+
+/* En tarjetas angostas no entra «Comprar» al lado del precio: queda solo el
+   precio (toda la tarjeta es el link). El sticker de sin stock se queda. */
+@container (max-width: 240px) {
+  .comprar {
+    display: none;
+  }
+}
+
+.precio {
+  font-family: var(--fuente-datos);
+  white-space: nowrap;
+}
+
+/* «Comprar»: una píldora chica dentro de la tarjeta (toda la tarjeta es el
+   link) */
+.comprar {
+  padding: 0.35em 0.85em;
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--blanco);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background-color var(--transicion);
+}
+
+.producto:hover .comprar,
+.producto:focus-visible .comprar {
+  background: var(--lima);
+}
+
+.agotado .tarjetaFoto {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+@media (min-width: 1000px) {
+  .producto {
+    padding: var(--espacio-4);
+  }
+}
+
+/* Tacto: la tarjeta sube y se inclina apenas; el producto se acerca */
+@media (prefers-reduced-motion: no-preference) {
+  .tarjeta {
+    transition: transform 300ms var(--suave);
+  }
+
+  .tarjeta:hover,
+  .tarjeta:focus-within {
+    transform: translateY(-4px) rotate(-1deg);
+  }
+
+  .tarjetaFoto {
+    transition: transform 400ms var(--suave);
+  }
+
+  .producto:hover .tarjetaFoto,
+  .producto:focus-visible .tarjetaFoto {
+    transform: scale(1.04);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boton:hover:not(:disabled),
+  .boton:active:not(:disabled),
+  .comoHover {
+    transform: none;
+  }
+}
+
+/* ---------- Fotos ---------- */
+
+.fotos {
+  padding-block: var(--espacio-12) var(--espacio-16);
+}
+
+.lugares {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: var(--espacio-8);
+  list-style: none;
+}
+
+@media (min-width: 900px) {
+  .lugares {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lugar {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr);
+  gap: var(--espacio-1) var(--espacio-3);
+  padding-block: var(--espacio-4);
+  border-top: var(--borde-fino) solid var(--tinta);
+}
+
+.lugar > :nth-child(n + 2) {
+  grid-column: 2;
+}
+
+.lugar > :first-child {
+  grid-row: 1 / span 3;
+}
+
+.lugarArchivo {
+  font-family: var(--fuente-datos);
+  font-weight: 700;
+}
+
+.lugarDescripcion {
+  font-size: var(--t-chico);
+  line-height: 1.45;
+}
+
+.creditos {
+  margin-top: var(--espacio-6);
+  font-size: var(--t-dato);
+}
+
+.creditos a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Cancha: la anatomía ---------- */
+
+.cancha {
+  display: flex;
+  align-items: center;
+  min-height: 100svh;
+  padding-block: var(--espacio-12);
+}
+
+.anatomia {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: var(--espacio-10);
+  width: 100%;
+}
+
+@media (min-width: 860px) {
+  .anatomia {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.escena {
+  position: relative;
+  width: min(100%, 70svh * 5 / 7);
+  aspect-ratio: 5 / 7;
+  margin-inline: auto;
+  container-type: inline-size;
+}
+
+/* El nombre de la parte activa, gigante y blanco, detrás de la raqueta.
+   Decorativo: repite el título del paso. */
+.nombreGigante {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--blanco);
+  font-size: 17cqi;
+  text-align: center;
+}
+
+.raqueta {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* Sticker anclado a su parte: el punto, la línea guía de 3px y el sticker */
+.parte {
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  transform: translate(-6px, -50%);
+}
+
+.parte::before {
+  content: "";
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border: var(--borde-grueso) solid var(--tinta);
+  border-radius: 50%;
+  background: var(--blanco);
+}
+
+.parteGuia {
+  flex-shrink: 0;
+  width: clamp(1rem, 8cqi, 3rem);
+  height: var(--borde-grueso);
+  background: var(--tinta);
+}
+
+.anatomiaTexto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.tituloAnatomia {
+  font-size: min(var(--t-display-2), 11vw);
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.pasoTitulo {
+  font-size: var(--t-display-4);
+}
+
+.pasoDato {
+  padding-top: var(--espacio-3);
+  border-top: var(--borde) solid var(--tinta);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-chico);
+  line-height: 1.6;
+}
+
+/* ---------- Césped: las categorías ---------- */
+
+.cesped {
+  min-height: 100svh;
+  padding-block: var(--espacio-12) var(--espacio-16);
+}
+
+.categorias {
+  margin-top: var(--espacio-8);
+  list-style: none;
+}
+
+.categoria {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-2);
+  margin-block: var(--espacio-2);
+  padding: var(--espacio-5) var(--espacio-4);
+  border-radius: var(--radio-bloque);
+  transition: background-color var(--transicion);
+}
+
+.categoria:hover,
+.categoria:focus-visible {
+  background: var(--lima);
+}
+
+.categoria:focus-visible {
+  outline-offset: 0;
+}
+
+.categoriaNombre {
+  font-size: var(--t-display-4);
+}
+
+.categoriaDescripcion {
+  max-width: 48ch;
+}
+
+@media (min-width: 860px) {
+  .categoria {
+    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.5fr) auto;
+    align-items: baseline;
+    gap: var(--espacio-8);
+  }
+}

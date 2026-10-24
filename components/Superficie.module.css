@@ -1,0 +1,91 @@
+/* Superficies (ver «Paleta» en DESIGN.md). Sobre polvo, cancha y césped todo
+   el texto es tinta. El grano y la marca de agua van detrás del contenido
+   (z-index −1 dentro de la sección, que aísla su propio apilado). */
+.superficie {
+  --foco: var(--tinta);
+  position: relative;
+  isolation: isolate;
+  /* clip y no hidden: hidden la volvería contenedor de scroll */
+  overflow: clip;
+  color: var(--tinta);
+}
+
+.polvo {
+  background: var(--polvo);
+}
+
+.cancha {
+  background: var(--cancha);
+}
+
+.cesped {
+  background: var(--cesped);
+}
+
+.cal {
+  background: var(--cal);
+}
+
+.tinta {
+  --foco: var(--lima);
+  background: var(--tinta);
+  color: var(--blanco);
+}
+
+/* Grano: la textura de ruido, quieta, al 50%. Solo en las superficies de
+   color. Con el grano, el peor píxel sigue en AA para el texto en tinta. */
+.polvo::before,
+.cancha::before,
+.cesped::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: url("/texturas/ruido.png") 0 0 / 128px repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* Marca de agua: línea blanca al 28%, de grosor fijo, recortada por la
+   sección */
+.marca {
+  position: absolute;
+  z-index: -1;
+  color: var(--blanco);
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.marca svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  fill: none;
+  stroke: currentColor;
+}
+
+.marca svg * {
+  stroke-width: 5px;
+  vector-effect: non-scaling-stroke;
+}
+
+/* La cancha, enorme y apenas girada, cortada por los bordes */
+.lineas {
+  top: 50%;
+  left: 50%;
+  width: max(150%, 960px);
+  transform: translate(-50%, -50%) rotate(-8deg);
+}
+
+/* La pelota, gigante, asomando por la derecha */
+.costuras {
+  top: 50%;
+  right: 0;
+  width: max(110vmin, 560px);
+  transform: translate(38%, -50%) rotate(24deg);
+}
+
+.costuras svg * {
+  stroke-width: 6px;
+}

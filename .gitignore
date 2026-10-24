@@ -49,3 +49,9 @@ next-env.d.ts
 
 # Modelos 3D originales (pesados); en public/models va la versión optimizada
 /modelos-fuente/
+
+# Capturas de sitios de terceros (referencias); no van al repo
+/docs/referencias/capturas/
+
+# Fotos originales; en public/fotos va la versión optimizada (npm run fotos)
+/public/fotos/fuente/

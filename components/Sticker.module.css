@@ -1,0 +1,33 @@
+/* Sticker: borde de 2px en tinta, Inter Tight 600 en mayúsculas, girado
+   entre −3° y 3°. Sin sombra. */
+.sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.42em 0.9em 0.38em;
+  border: var(--borde) solid var(--tinta);
+  border-radius: var(--radio-redondo);
+  background: var(--blanco);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-dato);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(var(--giro, 0deg));
+}
+
+.esquinas {
+  border-radius: var(--radio-sticker);
+}
+
+.lima {
+  background: var(--lima);
+}
+
+.tinta {
+  background: var(--tinta);
+  color: var(--blanco);
+}

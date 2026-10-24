@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "video:hero": "node scripts/video-hero.mjs",
-    "modelo:raqueta": "npx -y @gltf-transform/cli@4 optimize modelos-fuente/raqueta.glb public/models/raqueta.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify false --join false --flatten false"
+    "modelo:raqueta": "npx -y @gltf-transform/cli@4 optimize modelos-fuente/raqueta.glb public/models/raqueta.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify false --join false --flatten false",
+    "fotos": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fotos.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",
