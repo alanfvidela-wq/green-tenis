@@ -1,9 +1,12 @@
-# Fotos al scrollear: qué conseguir y cómo agregarlas
+# Fotos del sitio: qué conseguir y cómo agregarlas
 
-Las fotos que aparecen inclinadas entre las secciones de la home (ver «Fotos al
-scrollear» en DESIGN.md). Son 10 lugares, mitad gente jugando y mitad objetos.
-Mientras falta una foto, en su lugar se ve un placeholder del mismo tamaño, con
-el color de su superficie y la descripción de abajo.
+Las fotos de juego y de objetos (ver «Fotos» en DESIGN.md). Son 10 lugares:
+cinco **celdas de la vitrina** (gente jugando, del mismo tamaño que las celdas
+de producto) y cinco **bloques grandes entre secciones** (objetos). Mientras
+falta una foto, en su lugar se ve un placeholder gris claro del mismo tamaño,
+con la descripción de abajo.
+
+Las fotos de producto son otra cosa: ver «Fotos de producto» al final.
 
 La lista de verdad está en `lib/fotos.js`: si cambia algo ahí (un nombre, una
 proporción), esta tabla se actualiza a mano.
@@ -13,24 +16,21 @@ proporción), esta tabla se actualiza a mano.
 Todas: **mínimo 1600px en el lado largo** (mejor 2400px o más), en color, sin
 textos ni logos grandes encima, sin marcas de agua de terceros. La proporción
 no tiene que ser exacta: el script recorta a la del lugar buscando el centro de
-interés, así que conviene dejar aire alrededor del motivo.
+interés, así que conviene dejar aire alrededor del motivo. Las celdas se ven
+recortadas al alto de la fila de la vitrina: lo importante, en el centro.
 
-| N.º | Nombre del archivo | Tipo | Orientación | Banda | Qué foto buscar |
-| --- | --- | --- | --- | --- | --- |
-| 01 | `partido-polvo-01` | Gente | vertical, 4:5 | 1 (Polvo), también en mobile | Un jugador o una jugadora en plena derecha sobre polvo de ladrillo, de cuerpo entero, con la cancha de fondo y algo de polvo levantado. Luz de día. |
-| 02 | `pelota-polvo-01` | Objeto | cuadrada, 1:1 | 1 (Polvo) | Una pelota apoyada sobre la línea blanca de una cancha de polvo de ladrillo, de cerca, con la marca del pique en el polvo. |
-| 03 | `partido-polvo-02` | Gente | horizontal, 3:2 | 1 (Polvo) | Un jugador que se desliza en el polvo de ladrillo para llegar a una pelota, tomado de costado, con la estela de polvo. |
-| 04 | `saque-cancha-01` | Gente | vertical, 4:5 | 2 (Cancha rápida), también en mobile | Un saque en cancha rápida azul en el momento del impacto, tomado desde abajo o de costado, con el cielo o el techo de fondo. |
-| 05 | `pelota-linea-01` | Objeto | horizontal, 3:2 | 2 (Cancha rápida) | Una pelota sobre la línea de fondo de una cancha rápida azul, a ras del piso, con la textura de la superficie a la vista. |
-| 06 | `raqueta-cancha-01` | Objeto | vertical, 4:5 | 2 (Cancha rápida) | Una raqueta apoyada en la cancha azul junto a un tubo de pelotas abierto, vista desde arriba, con la sombra natural. |
-| 07 | `partido-cancha-01` | Gente | horizontal, 3:2 | 2 (Cancha rápida) | Un punto de dobles en cancha rápida, con dos jugadores en la red, en plano general y con las líneas de la cancha a la vista. |
-| 08 | `volea-cesped-01` | Gente | horizontal, 3:2 | 3 (Césped), también en mobile | Una volea cerca de la red en una cancha de césped, con el pasto gastado en el fondo y las líneas blancas. |
-| 09 | `pelota-linea-02` | Objeto | cuadrada, 1:1 | 3 (Césped) | Una pelota nueva sobre la línea blanca de una cancha de césped, muy de cerca, con el pasto cortado al ras. |
-| 10 | `bolso-cesped-01` | Objeto | vertical, 4:5 | 3 (Césped) | Un bolso raquetero en el banco al costado de una cancha de césped, con una raqueta asomando y la cancha de fondo. |
-
-Las bandas: 1 entre «Lo que más sale» y «Anatomía de una raqueta», 2 entre la
-anatomía y las categorías, 3 antes del footer. En mobile se ve una foto por
-banda.
+| N.º | Nombre del archivo | Tipo | Uso | Orientación | Dónde va | Qué foto buscar |
+| --- | --- | --- | --- | --- | --- | --- |
+| 01 | `partido-polvo-01` | Gente | Celda de la vitrina | vertical, 4:5 | Home | Un jugador o una jugadora en plena derecha sobre polvo de ladrillo, de cuerpo entero, con la cancha de fondo y algo de polvo levantado. Luz de día. |
+| 02 | `saque-cancha-01` | Gente | Celda de la vitrina | vertical, 4:5 | Raquetas | Un saque en cancha rápida en el momento del impacto, tomado desde abajo o de costado, con el cielo o el techo de fondo. |
+| 03 | `volea-cesped-01` | Gente | Celda de la vitrina | vertical, 4:5 | Pelotas | Una volea cerca de la red en una cancha de césped, de cuerpo entero, con el pasto gastado en el fondo y las líneas blancas. |
+| 04 | `grip-banco-01` | Gente | Celda de la vitrina | vertical, 4:5 | Cuerdas y grips | Un jugador sentado en el banco entre dos puntos, poniéndole un overgrip nuevo a la raqueta, de medio cuerpo. |
+| 05 | `bolso-polvo-01` | Gente | Celda de la vitrina | vertical, 4:5 | Bolsos | Un jugador que llega a una cancha de polvo de ladrillo con el bolso raquetero al hombro, de cuerpo entero. |
+| 06 | `pelota-polvo-01` | Objeto | Bloque entre secciones | horizontal, 16:9 | Home | Una pelota apoyada sobre la línea blanca de una cancha de polvo de ladrillo, a ras del piso, con la marca del pique y mucho aire alrededor. |
+| 07 | `raqueta-cancha-01` | Objeto | Bloque entre secciones | horizontal, 16:9 | Home | Una raqueta apoyada en una cancha rápida junto a un tubo de pelotas abierto, vista desde arriba, con la sombra natural y las líneas de la cancha. |
+| 08 | `raquetas-red-01` | Objeto | Bloque entre secciones | horizontal, 16:9 | Raquetas | Varias raquetas apoyadas contra la red, de costado, con la luz de la tarde y la cancha fuera de foco. |
+| 09 | `pelota-linea-01` | Objeto | Bloque entre secciones | horizontal, 16:9 | Pelotas | Una pelota nueva sobre la línea blanca de una cancha de césped, muy de cerca, con el pasto cortado al ras. |
+| 10 | `bolso-banco-01` | Objeto | Bloque entre secciones | horizontal, 16:9 | Bolsos | Un bolso raquetero en el banco al costado de la cancha, con una raqueta asomando y la cancha de fondo. |
 
 ## Licencias
 
@@ -72,3 +72,21 @@ ropa o de raquetas pueden aparecer, pero que no sean el centro de la foto.
 
 Para sacar una foto: borrala de `fuente/` y volvé a correr `npm run fotos`;
 vuelve el placeholder.
+
+## Fotos de producto
+
+Las de la vitrina, del producto solo, sin fondo. Van en
+`public/productos/fuente/<slug>-<n>.(png|jpg|jpeg|webp)` (fuera de git), donde
+`<slug>` es el de un producto o un combo y `<n>` el orden (1 es la de la
+vitrina). Mejor fotos de frente, sobre un fondo liso y con buena luz.
+
+```bash
+npm run fotos:productos -- --sin-subir
+```
+
+Saca el fondo, recorta al producto y lo centra con el mismo margen en un
+cuadrado transparente, y deja AVIF y WebP en `public/productos/fuente/procesadas/`
+para revisarlas. Sin `--sin-subir`, además las sube al bucket `productos` de
+Supabase Storage (`recortes/<slug>-<n>.webp` y `.avif`) y escribe su fila en la
+tabla `fotos`; necesita `SUPABASE_SECRET_KEY` en `.env.local`. Con slugs
+(`npm run fotos:productos -- babolat-pure-drive`) procesa solo esos.

@@ -1,29 +1,28 @@
-/* Etiqueta de estado: fondo plano, sin borde y sin giro */
+/* Etiqueta de estado: fondo plano, en píldora y sin borde */
 .estado {
   display: inline-flex;
   align-items: center;
-  padding: 0.35em 0.6em 0.3em;
-  border-radius: var(--radio-chico);
+  padding: 0.4em 0.85em 0.35em;
+  border-radius: var(--radio-pildora);
   font-family: var(--fuente-texto);
   font-size: 0.75rem;
-  font-weight: 600;
   line-height: 1.1;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
 }
 
-.lima {
-  background: var(--lima);
-  color: var(--tinta);
+.acento {
+  background: var(--acento);
+  color: var(--blanco);
 }
 
 .neutro {
   background: var(--hormigon);
-  color: var(--tinta);
+  color: var(--negro);
 }
 
-.tinta {
-  background: var(--tinta);
+.negro {
+  background: var(--negro);
   color: var(--blanco);
 }

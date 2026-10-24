@@ -1,0 +1,12 @@
+@media (prefers-reduced-motion: no-preference) {
+  .aparecer {
+    transition:
+      opacity 600ms ease,
+      transform 800ms var(--suave);
+  }
+
+  .aparecer[data-oculto] {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}

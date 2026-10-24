@@ -1,15 +1,14 @@
 import { Archivo, Inter_Tight } from "next/font/google";
 import Link from "next/link";
-import AgregarDirecto from "@/components/AgregarDirecto";
-import BandaFotos from "@/components/BandaFotos";
+import Aparecer from "@/components/Aparecer";
 import Estado from "@/components/Estado";
+import FotoLugar from "@/components/FotoLugar";
 import FotoVitrina from "@/components/FotoVitrina";
 import Pelota from "@/components/Pelota";
 import Raqueta, { ANCLAS, LIENZO } from "@/components/Raqueta";
-import Superficie from "@/components/Superficie";
 import VideoFondo from "@/components/VideoFondo";
 import { BAJADA_ANATOMIA, PASOS_ANATOMIA, TITULO_ANATOMIA } from "@/lib/anatomia";
-import { LUGARES_FOTOS, numeroDeLugar, orientacion } from "@/lib/fotos";
+import { LUGARES_FOTOS, lugaresDe, numeroDeLugar, orientacion } from "@/lib/fotos";
 import generadas from "@/lib/fotosGeneradas.json";
 import { contar, formatearPrecio } from "@/lib/formato";
 import { CORTE_MOBILE, VIDEOS_HERO } from "@/lib/heroVideo";
@@ -17,60 +16,38 @@ import { CATEGORIAS, getProductos, tienePreciosDistintos, tieneStock } from "@/l
 import styles from "./muestra.module.css";
 
 // Muestra del sistema nuevo (fase 1 del rediseño, ver DESIGN.md). Es una
-// página de trabajo: se borra al terminar la fase 2. Archivo y el Inter Tight
-// 600 se cargan solo acá hasta entonces, así no pesan en el resto del sitio.
-// El header real se oculta en esta página: la cabecera del hero es la nueva.
+// página de trabajo: se borra al terminar la fase 2. Archivo se carga solo acá
+// hasta entonces, así no pesa en el resto del sitio. El header real se oculta
+// en esta página: la cabecera del hero es la nueva. Un selector prueba los tres
+// acentos en toda la página.
 
 const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo" });
-const texto = Inter_Tight({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-texto-nuevo",
-});
+const texto = Inter_Tight({ subsets: ["latin"], weight: "400", variable: "--font-texto-nuevo" });
 
 export const metadata = {
   title: "Muestra del sistema",
   robots: { index: false, follow: false },
 };
 
-// Los mismos valores que app/globals.css: la tabla se calcula con ellos
-const FONDOS = [
-  { token: "--polvo", nombre: "Polvo de ladrillo", hex: "#d46c3f", grano: true, textos: ["tinta"] },
-  { token: "--cancha", nombre: "Cancha rápida", hex: "#5a8fe6", grano: true, textos: ["tinta"] },
-  { token: "--cesped", nombre: "Césped", hex: "#5a9e4a", grano: true, textos: ["tinta"] },
-  { token: "--cal", nombre: "Cal", hex: "#fbf6ee", textos: ["tinta", "grafito"] },
-  { token: "--blanco", nombre: "Blanco", hex: "#ffffff", textos: ["tinta", "grafito"] },
-  { token: "--estudio", nombre: "Estudio", hex: "#f4f5f2", textos: ["tinta", "grafito"] },
-  { token: "--hormigon", nombre: "Hormigón", hex: "#e6e6e6", textos: ["tinta", "grafito"] },
-  { token: "--tinta", nombre: "Tinta", hex: "#1a1411", textos: ["blanco", "lima"] },
-  { token: "--lima", nombre: "Lima", hex: "#dcf900", textos: ["tinta"] },
+// Los tres acentos: los mismos valores que muestra.module.css. «video» es el
+// peor contraste del acento como texto sobre el video del hero, con la capa al
+// 55%, medido en un cuadro cada medio segundo (el blanco da 5,58).
+const ACENTOS = [
+  { id: "verde", nombre: "Verde Wimbledon", corto: "Verde", hex: "#0f6e3c", video: 1.12, recomendado: true },
+  { id: "naranja", nombre: "Naranja polvo", corto: "Naranja", hex: "#b3471c", video: 1.02 },
+  { id: "azul", nombre: "Azul cancha", corto: "Azul", hex: "#1f5bbf", video: 1.13 },
 ];
 
-const TEXTOS = [
-  { id: "tinta", nombre: "Tinta", hex: "#1a1411" },
-  { id: "grafito", nombre: "Grafito", hex: "#4a403a" },
-  { id: "blanco", nombre: "Blanco", hex: "#ffffff" },
-  { id: "lima", nombre: "Lima", hex: "#dcf900" },
-];
-
-// El grano al 50% mezcla cada píxel con hasta un 7,8% de negro o de blanco.
-// El peor caso es el que acerca el fondo al color del texto.
-const ALFA_GRANO = (0.5 * 40) / 255;
-
-// grano: -1 oscurece el fondo, 1 lo aclara, 0 lo deja como está
-function luminancia(hex, grano = 0) {
+function luminancia(hex) {
   const canal = (i) => {
-    let v = parseInt(hex.slice(i, i + 2), 16);
-    if (grano < 0) v *= 1 - ALFA_GRANO;
-    if (grano > 0) v = v * (1 - ALFA_GRANO) + 255 * ALFA_GRANO;
-    const c = v / 255;
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
     return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
   };
   return 0.2126 * canal(1) + 0.7152 * canal(3) + 0.0722 * canal(5);
 }
 
 function contraste(a, b) {
-  const [x, y] = [a, b].sort((m, n) => n - m);
+  const [x, y] = [luminancia(a), luminancia(b)].sort((m, n) => n - m);
   return (x + 0.05) / (y + 0.05);
 }
 
@@ -86,9 +63,8 @@ const PARTES_MUESTRA = [
   { id: "tapon", lado: "derecha" },
 ];
 
-// La grilla editorial: en cada tanda de seis, la primera y la última son
-// grandes (medio ancho) y las otras cuatro, chicas (un cuarto)
-const esGrande = (i) => i % 6 === 0 || i % 6 === 5;
+// Dónde va la celda de foto entre los productos de la vitrina
+const POSICION_FOTO = 3;
 
 function Wordmark({ className = "" }) {
   return (
@@ -100,8 +76,8 @@ function Wordmark({ className = "" }) {
 }
 
 // Maqueta de la cabecera (el header real es de la fase 2): el wordmark, links
-// de texto y solo el carrito en píldora. En la muestra ningún link está activo:
-// no hay una página de categoría abierta.
+// de texto y el carrito en píldora del acento. En la muestra ningún link está
+// activo: no hay una página de categoría abierta.
 function Cabecera({ sobreVideo = false, etiqueta }) {
   return (
     <div className={`${styles.cabecera} ${sobreVideo ? styles.sobreVideo : ""}`}>
@@ -130,114 +106,140 @@ function Cabecera({ sobreVideo = false, etiqueta }) {
   );
 }
 
-// La celda nueva de la vitrina: la foto sola sobre estudio y, debajo, el
-// nombre, el precio y el «+». Toda la celda es un link al producto; con una
-// sola variante, el «+» la agrega directo.
-function Celda({ producto, grande }) {
+// La celda de la vitrina: la foto del producto sobre estudio, debajo el nombre
+// y el precio, y la barra de ancho completo. Toda la celda es un link.
+function Celda({ producto }) {
   const disponible = tieneStock(producto);
-  const unica = producto.variantes.length === 1 ? producto.variantes[0] : null;
-  const directo = disponible && unica;
-
   return (
-    <li
-      className={`${styles.celda} ${grande ? styles.grande : ""} ${disponible ? "" : styles.agotado} ${directo ? styles.conDirecto : ""}`}
-    >
+    <li className={styles.celda}>
       <Link href={`/producto/${producto.slug}`} className={styles.enlace}>
         <div className={styles.foto}>
           <FotoVitrina
             foto={producto.fotos?.[0]}
             categoria={producto.categoria}
-            sizes={grande ? "(max-width: 959px) 50vw, 640px" : "(max-width: 959px) 50vw, 320px"}
+            sizes="(max-width: 999px) 50vw, 400px"
             className={styles.fotoVitrina}
           />
         </div>
-        <div className={styles.pie}>
-          <div className={styles.pieTexto}>
-            <h3 className={styles.nombre}>{producto.nombre}</h3>
-            <span className={styles.precio}>
-              {tienePreciosDistintos(producto) && "desde "}
-              {formatearPrecio(producto.precioBase)}
-            </span>
-          </div>
-          {!disponible && <Estado tono="tinta">Sin stock</Estado>}
-          {disponible && !directo && (
-            <span className={styles.mas} aria-hidden="true">
-              <svg viewBox="0 0 24 24" focusable="false">
-                <path d="M12 5v14M5 12h14" />
-              </svg>
-            </span>
-          )}
+        <div className={styles.filaNombre}>
+          <h3 className={styles.nombre}>{producto.nombre}</h3>
+          <span className={styles.precio}>
+            {tienePreciosDistintos(producto) && "desde "}
+            {formatearPrecio(producto.precioBase)}
+          </span>
         </div>
+        <span className={`${styles.barra} ${disponible ? "" : styles.barraAgotado}`}>
+          {disponible ? "Ver producto" : "Sin stock"}
+        </span>
       </Link>
-      {directo && (
-        <AgregarDirecto
-          varianteId={unica.id}
-          nombre={producto.nombre}
-          className={`${styles.mas} ${styles.masDirecto}`}
-        />
-      )}
     </li>
+  );
+}
+
+// Una celda con una foto de gente jugando, del mismo tamaño, sin texto encima
+function CeldaFoto({ lugar }) {
+  return (
+    <li className={`${styles.celda} ${styles.celdaFoto}`} aria-hidden="true">
+      <Aparecer className={styles.llenar}>
+        <FotoLugar
+          lugar={lugar}
+          foto={generadas.fotos[lugar.archivo]}
+          sizes="(max-width: 999px) 50vw, 400px"
+          llenar
+        />
+      </Aparecer>
+    </li>
+  );
+}
+
+// Un bloque grande de foto entre dos secciones
+function Bloque({ lugar }) {
+  return (
+    <div className={`${styles.contenido} ${styles.bloque}`} aria-hidden="true">
+      <Aparecer>
+        <FotoLugar lugar={lugar} foto={generadas.fotos[lugar.archivo]} sizes="(max-width: 1280px) 100vw, 1216px" />
+      </Aparecer>
+    </div>
   );
 }
 
 export default async function PaginaMuestra() {
   const productos = await getProductos();
   const destacados = productos.filter((p) => p.destacado);
-  const vitrina = (destacados.length >= 6 ? destacados : productos).slice(0, 6);
-  const lugaresBanda = LUGARES_FOTOS.filter((lugar) => lugar.banda === 1);
+  const vitrina = (destacados.length >= 5 ? destacados : productos).slice(0, 5);
+  const [celdaHome] = lugaresDe("home", "celda");
+  const [bloqueUno, bloqueDos] = lugaresDe("home", "bloque");
   const activa = PASOS_ANATOMIA.find((paso) => paso.id === ACTIVA);
   const numeroActiva = PASOS_ANATOMIA.indexOf(activa) + 1;
-  const demo = productos.find((p) => tieneStock(p));
+
+  const celdas = vitrina.map((producto) => <Celda key={producto.id} producto={producto} />);
+  celdas.splice(POSICION_FOTO, 0, <CeldaFoto key={celdaHome.archivo} lugar={celdaHome} />);
 
   return (
     <main className={`${archivo.variable} ${texto.variable} ${styles.muestra}`}>
       <h1 className="solo-lectores">Muestra del sistema de green.</h1>
 
-      {/* ---------- El hero real, con la cabecera nueva encima ---------- */}
+      {/* El selector de acento, flotante: cambia el acento en toda la página */}
+      <div className={styles.selector} role="radiogroup" aria-labelledby="selector-acento" data-selector>
+        <span id="selector-acento" className={styles.selectorTitulo}>
+          Acento
+        </span>
+        {ACENTOS.map((acento) => (
+          <label key={acento.id} className={styles.opcion}>
+            <input
+              type="radio"
+              name="acento"
+              value={acento.id}
+              defaultChecked={acento.recomendado}
+              className="solo-lectores"
+            />
+            <span className={styles.opcionColor} style={{ background: acento.hex }} aria-hidden="true" />
+            {acento.corto}
+            {acento.recomendado && <span className="solo-lectores"> (recomendado)</span>}
+          </label>
+        ))}
+      </div>
+
+      {/* ---------- El hero: el video en un contenedor, con la cabecera ---------- */}
       <section className={styles.hero} aria-labelledby="muestra-hero">
-        <picture className={styles.heroMedio}>
-          <source media={CORTE_MOBILE} srcSet={VIDEOS_HERO.mobile.poster} />
-          <img src={VIDEOS_HERO.desktop.poster} alt="" className={styles.heroPoster} />
-        </picture>
-        <VideoFondo className={styles.heroVideo} claseBoton={styles.pausa} claseIcono={styles.icono} />
-        <div className={styles.heroCapa} aria-hidden="true" />
+        <div className={styles.heroCaja}>
+          <picture className={styles.heroMedio}>
+            <source media={CORTE_MOBILE} srcSet={VIDEOS_HERO.mobile.poster} />
+            <img src={VIDEOS_HERO.desktop.poster} alt="" className={styles.heroPoster} />
+          </picture>
+          <VideoFondo className={styles.heroVideo} claseBoton={styles.pausa} claseIcono={styles.icono} />
+          <div className={styles.heroCapa} aria-hidden="true" />
 
-        <Cabecera sobreVideo etiqueta="Secciones (maqueta sobre el video)" />
+          <Cabecera sobreVideo etiqueta="Secciones (maqueta sobre el video)" />
 
-        <div className={styles.heroTexto}>
-          <h2 id="muestra-hero" className={`${styles.display} ${styles.heroTitulo}`}>
-            Todo para jugar al tenis
-          </h2>
-          <p className={styles.heroFrase}>
-            Raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya conocés.
-          </p>
-          <Link href="/categoria/raquetas" className={`${styles.boton} ${styles.botonHero}`}>
-            Ver raquetas
-          </Link>
+          <div className={styles.heroTexto}>
+            <h2 id="muestra-hero" className={`${styles.display} ${styles.heroTitulo}`}>
+              Todo para jugar al tenis
+            </h2>
+            <p className={styles.heroFrase}>
+              Raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya conocés.
+            </p>
+            <Link href="/categoria/raquetas" className={`${styles.boton} ${styles.botonHero}`}>
+              Ver raquetas
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* ---------- Lo que más sale: polvo, con la vitrina editorial ---------- */}
-      <Superficie tipo="polvo" marca="lineas" className={styles.seccion} aria-labelledby="titulo-destacados">
+      {/* ---------- Lo que más sale: la vitrina, con una celda de foto ---------- */}
+      <section className={styles.seccion} aria-labelledby="titulo-destacados">
         <div className={styles.contenido}>
           <h2 id="titulo-destacados" className={`${styles.display} ${styles.tituloSeccion}`}>
             Lo que más sale
           </h2>
-          <ul className={styles.vitrina}>
-            {vitrina.map((producto, i) => (
-              <Celda key={producto.id} producto={producto} grande={esGrande(i)} />
-            ))}
-          </ul>
+          <ul className={styles.vitrina}>{celdas}</ul>
         </div>
-      </Superficie>
+      </section>
 
-      {/* ---------- Banda de fotos 1: sobre polvo, sin marca de agua ---------- */}
-      <Superficie tipo="polvo" as="div">
-        <BandaFotos lugares={lugaresBanda} />
-      </Superficie>
+      {bloqueUno && <Bloque lugar={bloqueUno} />}
 
-      {/* ---------- Cancha rápida: la anatomía ---------- */}
-      <Superficie tipo="cancha" className={styles.cancha} aria-labelledby="titulo-cancha">
+      {/* ---------- Anatomía: banda negra ---------- */}
+      <section className={styles.anatomiaBanda} aria-labelledby="titulo-anatomia">
         <div className={`${styles.contenido} ${styles.anatomia}`}>
           <div className={styles.escena}>
             <span className={`${styles.display} ${styles.nombreGigante}`} aria-hidden="true">
@@ -268,7 +270,7 @@ export default async function PaginaMuestra() {
           </div>
 
           <div className={styles.anatomiaTexto}>
-            <h2 id="titulo-cancha" className={`${styles.display} ${styles.tituloAnatomia}`}>
+            <h2 id="titulo-anatomia" className={`${styles.display} ${styles.tituloAnatomia}`}>
               {TITULO_ANATOMIA}
             </h2>
             <p className={styles.entrada}>{BAJADA_ANATOMIA}</p>
@@ -280,49 +282,51 @@ export default async function PaginaMuestra() {
             </div>
           </div>
         </div>
-      </Superficie>
+      </section>
 
-      {/* ---------- Césped: las categorías ---------- */}
-      <Superficie tipo="cesped" marca="costuras" className={styles.seccion} aria-labelledby="titulo-cesped">
+      {bloqueDos && <Bloque lugar={bloqueDos} />}
+
+      {/* ---------- Categorías: sobre hormigón ---------- */}
+      <section className={`${styles.seccion} ${styles.seccionHormigon}`} aria-labelledby="titulo-categorias">
         <div className={styles.contenido}>
-          <h2 id="titulo-cesped" className={`${styles.display} ${styles.tituloSeccion}`}>
+          <h2 id="titulo-categorias" className={`${styles.display} ${styles.tituloSeccion}`}>
             Categorías
           </h2>
           <ul className={styles.categorias}>
             {CATEGORIAS.map((categoria) => (
               <li key={categoria.slug}>
                 <Link href={`/categoria/${categoria.slug}`} className={styles.categoria}>
-                  <span className={`${styles.display} ${styles.categoriaNombre}`}>
-                    {categoria.nombre}
-                  </span>
+                  <span className={`${styles.display} ${styles.categoriaNombre}`}>{categoria.nombre}</span>
                   <span className={styles.categoriaDescripcion}>{categoria.descripcion}</span>
-                  <span className={styles.dato}>
-                    {contar(
-                      productos.filter((p) => p.categoria === categoria.slug).length,
-                      "producto",
-                      "productos",
-                    )}
+                  <span className={styles.categoriaPie}>
+                    <span className={styles.dato}>
+                      {contar(
+                        productos.filter((p) => p.categoria === categoria.slug).length,
+                        "producto",
+                        "productos",
+                      )}
+                    </span>
+                    <svg className={styles.flecha} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                      <path d="M4 12h15M13 6l6 6-6 6" />
+                    </svg>
                   </span>
-                  <svg className={styles.flecha} viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                    <path d="M4 12h15M13 6l6 6-6 6" />
-                  </svg>
                 </Link>
               </li>
             ))}
           </ul>
         </div>
-      </Superficie>
+      </section>
 
       {/* ---------- Referencia: lo que no entra en las secciones ---------- */}
-      <Superficie tipo="cal" className={styles.seccion} aria-labelledby="titulo-referencia">
+      <section className={styles.seccion} aria-labelledby="titulo-referencia">
         <div className={styles.contenido}>
           <h2 id="titulo-referencia" className={`${styles.display} ${styles.tituloSeccion}`}>
             Referencia
           </h2>
 
-          <h3 className={styles.subtitulo}>Cabecera con scroll, sobre cal</h3>
-          <div className={styles.cabeceraCal}>
-            <Cabecera etiqueta="Secciones (maqueta sobre cal)" />
+          <h3 className={styles.subtitulo}>Cabecera con scroll, sobre blanco</h3>
+          <div className={styles.cabeceraBlanca}>
+            <Cabecera etiqueta="Secciones (maqueta sobre blanco)" />
           </div>
 
           <h3 className={styles.subtitulo}>Botones</h3>
@@ -340,12 +344,12 @@ export default async function PaginaMuestra() {
 
           <h3 className={styles.subtitulo}>Etiquetas de estado</h3>
           <div className={styles.fila}>
-            <Estado tono="lima">Pagado</Estado>
+            <Estado tono="acento">Pagado</Estado>
             <Estado>Pendiente</Estado>
             <Estado>Pago en proceso</Estado>
-            <Estado tono="tinta">Sin stock</Estado>
-            <Estado tono="tinta">Cancelado</Estado>
-            <Estado tono="tinta">Vencido</Estado>
+            <Estado tono="negro">Sin stock</Estado>
+            <Estado tono="negro">Cancelado</Estado>
+            <Estado tono="negro">Vencido</Estado>
           </div>
 
           <h3 className={styles.subtitulo}>Campos</h3>
@@ -375,62 +379,35 @@ export default async function PaginaMuestra() {
             </div>
           </div>
 
-          {demo && (
-            <>
-              <h3 className={styles.subtitulo}>El «+» que agrega directo</h3>
-              <div className={styles.demoMas}>
-                <AgregarDirecto
-                  varianteId={demo.variantes[0].id}
-                  nombre={demo.nombre}
-                  className={`${styles.mas} ${styles.masDirecto}`}
-                />
-                <p className={styles.texto}>
-                  En la vitrina va solo en productos de una variante (hoy no hay ninguno). Este ejemplo
-                  agrega de verdad la primera variante de {demo.nombre} al carrito.
-                </p>
-              </div>
-            </>
-          )}
-
-          <h3 className={styles.subtitulo}>Contrastes</h3>
+          <h3 className={styles.subtitulo}>Los tres acentos</h3>
           <p className={styles.texto}>
-            WCAG 2.1: 4,5 para texto, 3 para texto grande. Sobre las superficies con grano, el número
-            de abajo es el peor píxel. En negrita, las combinaciones permitidas.
+            WCAG 2.1: 4,5 para texto, 3 para texto grande y para el borde de un componente. «Con blanco»
+            vale en los dos sentidos: texto blanco sobre el acento, o el acento como texto sobre
+            blanco. El acento como texto sobre el video no llega ni a 3: por eso el titular del hero va en blanco y el
+            acento queda en el botón.
           </p>
-          <div className={styles.tablaMarco} tabIndex={0} role="region" aria-label="Tabla de contrastes">
+          <div className={styles.tablaMarco} tabIndex={0} role="region" aria-label="Contrastes de los acentos">
             <table className={styles.tabla}>
               <thead>
                 <tr>
-                  <th scope="col">Fondo</th>
-                  {TEXTOS.map((t) => (
-                    <th key={t.id} scope="col">
-                      {t.nombre}
-                    </th>
-                  ))}
+                  <th scope="col">Acento</th>
+                  <th scope="col">Con blanco</th>
+                  <th scope="col">Contra el negro</th>
+                  <th scope="col">Contra hormigón</th>
+                  <th scope="col">Sobre el video</th>
                 </tr>
               </thead>
               <tbody>
-                {FONDOS.map((fondo) => (
-                  <tr key={fondo.token}>
+                {ACENTOS.map((acento) => (
+                  <tr key={acento.id}>
                     <th scope="row">
-                      <span className={styles.muestraColor} style={{ background: fondo.hex }} />
-                      {fondo.nombre}
+                      <span className={styles.opcionColor} style={{ background: acento.hex }} aria-hidden="true" />
+                      {acento.nombre} <span className={styles.dato}>{acento.hex.toUpperCase()}</span>
                     </th>
-                    {TEXTOS.map((t) => {
-                      const base = contraste(luminancia(fondo.hex), luminancia(t.hex));
-                      const claro = luminancia(t.hex) > luminancia(fondo.hex);
-                      const peor = fondo.grano
-                        ? contraste(luminancia(fondo.hex, claro ? 1 : -1), luminancia(t.hex))
-                        : null;
-                      const permitida = fondo.textos.includes(t.id);
-                      return (
-                        <td key={t.id} className={permitida ? styles.permitida : styles.noPermitida}>
-                          {numero(base)}
-                          {peor !== null && <span className={styles.peor}>{numero(peor)}</span>}
-                          <span className="solo-lectores">{permitida ? ", permitida" : ", no se usa"}</span>
-                        </td>
-                      );
-                    })}
+                    <td>{numero(contraste(acento.hex, "#ffffff"))}</td>
+                    <td>{numero(contraste(acento.hex, "#000000"))}</td>
+                    <td>{numero(contraste(acento.hex, "#e6e6e6"))}</td>
+                    <td>{numero(acento.video)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -444,14 +421,11 @@ export default async function PaginaMuestra() {
                 <span className={styles.dato}>{numeroDeLugar(lugar.archivo)}</span>
                 <span className={styles.lugarArchivo}>{lugar.archivo}</span>
                 <span className={styles.dato}>
-                  {lugar.tipo === "gente" ? "Gente" : "Objeto"}, {orientacion(lugar.proporcion)}{" "}
-                  {lugar.proporcion.join(":")}, banda {lugar.banda}
-                  {lugar.mobile ? ", también en mobile" : ""}
+                  {lugar.tipo === "gente" ? "Gente" : "Objeto"}, {lugar.uso === "celda" ? "celda" : "bloque"},{" "}
+                  {orientacion(lugar.proporcion)} {lugar.proporcion.join(":")}, {lugar.pagina}
                   {generadas.fotos[lugar.archivo] ? ", con foto" : ""}
                 </span>
-                <span className={styles.lugarDescripcion}>
-                  «{lugar.pie}». {lugar.descripcion}
-                </span>
+                <span className={styles.lugarDescripcion}>{lugar.descripcion}</span>
               </li>
             ))}
           </ol>
@@ -469,7 +443,7 @@ export default async function PaginaMuestra() {
             </p>
           )}
         </div>
-      </Superficie>
+      </section>
     </main>
   );
 }

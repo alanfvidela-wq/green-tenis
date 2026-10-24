@@ -1,56 +1,16 @@
-/* Banda de fotos al scrollear (ver DESIGN.md). En desktop cada lugar mide
-   44svh y la foto, 40svh con su pie: alternadas a un lado y al otro, se ven dos
-   a la vez sin vacío entre ellas. */
-.banda {
-  padding-block: 6svh 10svh;
-  /* Recorta lo que el giro saca por los costados, sin scroll horizontal */
-  overflow-x: clip;
-}
-
-.lugar {
-  display: flex;
-  align-items: flex-start;
-  height: 44svh;
-  padding-inline: max(var(--gutter), 6vw);
-}
-
-.lugar[data-lado="derecha"] {
-  justify-content: flex-end;
-}
-
-/* La caja quieta: reserva el espacio de la foto y su pie */
-.caja {
-  width: var(--ancho);
-  pointer-events: none;
-}
-
-.vertical {
-  --ancho: min(28vw, 380px, calc(40svh * var(--relacion)));
-}
-
-.horizontal {
-  --ancho: min(40vw, 560px, calc(40svh * var(--relacion)));
-}
-
-.cuadrada {
-  --ancho: min(30vw, 400px, 40svh);
-}
-
-/* Lo que se mueve: la foto con su pie. En reposo (y sin JS o sin
-   movimiento), su giro. */
-.recuadro {
-  transform: rotate(var(--giro));
-}
-
-[data-animado] .recuadro {
-  will-change: transform;
-}
-
-.marco {
+/* Foto de un lugar: radio de 16px, sin borde y sin texto encima. El fondo es
+   hormigón, el gris claro del placeholder. */
+.foto {
   position: relative;
-  aspect-ratio: var(--proporcion);
   overflow: hidden;
-  border-radius: var(--radio-chico);
+  border-radius: var(--radio);
+  background: var(--hormigon);
+}
+
+/* En la vitrina, la celda de foto ocupa todo el alto de la fila */
+.llenar {
+  height: 100%;
+  min-height: 100%;
 }
 
 .imagen {
@@ -60,43 +20,16 @@
   object-fit: cover;
 }
 
-/* El pie: qué se ve en la foto, en texto chico */
-.pie {
-  margin-top: var(--espacio-2);
-  font-size: var(--t-dato);
-  line-height: 1.35;
-}
-
-/* Placeholder: el color de una superficie, con grano, y qué foto va */
+/* Placeholder: qué foto va, en texto chico */
 .placeholder {
-  isolation: isolate;
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: var(--espacio-4);
-  padding: var(--espacio-4);
-  color: var(--tinta);
-}
-
-.placeholder::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: url("/texturas/ruido.png") 0 0 / 128px repeat;
-  opacity: 0.5;
-}
-
-.polvo {
-  background: var(--polvo);
-}
-
-.cancha {
-  background: var(--cancha);
-}
-
-.cesped {
-  background: var(--cesped);
+  padding: var(--espacio-5);
+  color: var(--grafito);
 }
 
 .archivo {
@@ -105,33 +38,7 @@
 }
 
 .descripcion {
-  max-width: 34ch;
+  max-width: 36ch;
   font-size: var(--t-dato);
-  line-height: 1.45;
-}
-
-/* Mobile: una foto por banda, más grande y centrada */
-@media (max-width: 759px) {
-  .lugar:not([data-mobile]) {
-    display: none;
-  }
-
-  .lugar,
-  .lugar[data-lado] {
-    justify-content: center;
-    height: auto;
-    padding-block: var(--espacio-8);
-  }
-
-  .vertical {
-    --ancho: 76vw;
-  }
-
-  .horizontal {
-    --ancho: 88vw;
-  }
-
-  .cuadrada {
-    --ancho: 72vw;
-  }
+  line-height: 1.5;
 }

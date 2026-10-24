@@ -49,21 +49,17 @@
 }
 
 /* Sistema nuevo (rediseño, ver DESIGN.md). Por ahora solo lo usa /muestra:
-   son tokens nuevos y no cambian ninguno de los de arriba. */
+   son tokens nuevos y no cambian ninguno de los de arriba. Los colores
+   neutros, los dos radios y los espacios son los de arriba. */
 :root {
-  /* Las superficies del tenis. Sobre polvo, cancha y césped todo el texto es
-     tinta. */
-  --polvo: #d46c3f;
-  --cancha: #5a8fe6;
-  --cesped: #5a9e4a;
-  /* Neutros: cal (el fondo cálido de las páginas de trámite) y tinta (el
-     negro cálido del texto, los bordes y el footer) */
-  --cal: #fbf6ee;
-  --tinta: #1a1411;
-  --grafito-calido: #4a403a;
+  /* El acento: el único color de la interfaz, solo en acciones y estados
+     activos, siempre con texto blanco. Verde Wimbledon; la muestra prueba
+     también el naranja polvo y el azul cancha. El lima queda solo para la
+     pelota del wordmark. */
+  --acento: #0f6e3c;
 
-  /* Display: el valor lo pone el layout con la fuente elegida */
-  /* La más grande depende también del alto: el hero entra en una pantalla */
+  /* Display. La más grande depende también del alto: el hero entra en una
+     pantalla */
   --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
   --t-display-2: clamp(3.5rem, 10vw, 9rem);
   --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
@@ -71,15 +67,6 @@
   --t-titulo: clamp(1.25rem, 2vw, 1.625rem);
   --t-entrada-fluida: clamp(1.0625rem, 1.3vw, 1.25rem);
   --t-chico: 0.875rem;
-
-  /* Escala única de radios y bordes */
-  --radio-chico: 6px;
-  --radio-medio: 12px;
-  --radio-bloque: 20px;
-  --radio-redondo: 999px;
-  --borde-fino: 1px;
-  --borde: 2px;
-  --borde-grueso: 3px;
 
   --espacio-12: 3rem;
   --espacio-32: 8rem;

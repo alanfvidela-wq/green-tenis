@@ -1,15 +1,27 @@
-/* Muestra del sistema nuevo (ver DESIGN.md). Los estilos de la cabecera, los
-   botones, la vitrina y los campos viven acá hasta la fase 2, que los pasa a
-   globals.css y a los módulos reales. */
+/* Muestra del sistema nuevo (ver DESIGN.md): blanco, hormigón y negro, un
+   solo acento en las acciones, dos radios (16px y píldora) y mucho aire. Los
+   estilos de la cabecera, los botones, la vitrina y los campos viven acá hasta
+   la fase 2, que los pasa a globals.css y a los módulos reales. */
 
 .muestra {
   --fuente-texto: var(--font-texto-nuevo), "Helvetica Neue", Arial, sans-serif;
   --fuente-display: var(--font-archivo), "Arial Narrow", sans-serif;
+  --seccion: clamp(4rem, 10vw, 8rem);
   max-width: none;
   padding: 0;
-  background: var(--cal);
-  color: var(--tinta);
+  background: var(--blanco);
+  color: var(--negro);
   font-family: var(--fuente-texto);
+}
+
+/* El acento, a elección en la muestra: verde Wimbledon (el de globals.css),
+   naranja polvo o azul cancha */
+.muestra:has(input[name="acento"][value="naranja"]:checked) {
+  --acento: #b3471c;
+}
+
+.muestra:has(input[name="acento"][value="azul"]:checked) {
+  --acento: #1f5bbf;
 }
 
 /* En la muestra no va el header de hoy: la cabecera del hero es la nueva */
@@ -23,10 +35,10 @@
   padding-top: 0;
 }
 
-/* La carga ocupa lo mismo que el hero */
+/* La carga ocupa una pantalla: cuando llega la página no se mueve nada */
 .carga {
   min-height: max(600px, 100svh);
-  background: var(--tinta);
+  background: var(--blanco);
 }
 
 .contenido {
@@ -36,7 +48,11 @@
 }
 
 .seccion {
-  padding-block: var(--espacio-16);
+  padding-block: var(--seccion);
+}
+
+.seccionHormigon {
+  background: var(--hormigon);
 }
 
 /* ---------- La display: Archivo extra condensada ---------- */
@@ -51,14 +67,14 @@
 }
 
 .tituloSeccion {
-  margin-bottom: var(--espacio-10);
+  margin-bottom: var(--espacio-12);
   font-size: var(--t-display-2);
 }
 
 .subtitulo {
   margin-block: var(--espacio-12) var(--espacio-4);
   font-size: var(--t-titulo);
-  font-weight: 600;
+  font-weight: 400;
   line-height: 1.2;
   letter-spacing: -0.01em;
 }
@@ -93,12 +109,78 @@
   white-space: nowrap;
 }
 
-/* La pelota: del tamaño de un punto grande, sobre la línea de base */
+/* La pelota: amarilla, del tamaño de un punto grande, sobre la línea de base */
 .punto {
   flex-shrink: 0;
   width: 0.34em;
   height: 0.34em;
   margin-left: 0.05em;
+}
+
+/* ---------- Selector de acento (solo de la muestra) ---------- */
+
+.selector {
+  position: fixed;
+  z-index: 50;
+  bottom: var(--espacio-4);
+  left: var(--espacio-4);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-1);
+  padding: var(--espacio-1);
+  border-radius: var(--radio-pildora);
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+.selectorTitulo {
+  padding-inline: var(--espacio-3) var(--espacio-2);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: 44px;
+  padding: 0 var(--espacio-4) 0 var(--espacio-3);
+  border-radius: var(--radio-pildora);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.opcion:has(input:checked) {
+  background: var(--blanco);
+  color: var(--negro);
+}
+
+.opcion:has(input:focus-visible) {
+  outline: 3px solid var(--blanco);
+  outline-offset: 2px;
+}
+
+.opcionColor {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--blanco);
+  border-radius: 50%;
+}
+
+@media (max-width: 519px) {
+  .selector {
+    right: var(--espacio-4);
+    justify-content: space-between;
+  }
+
+  .selectorTitulo {
+    display: none;
+  }
 }
 
 /* ---------- Cabecera: links de texto y el carrito en píldora ---------- */
@@ -107,9 +189,9 @@
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 0 var(--espacio-8);
-  padding: var(--espacio-2) var(--gutter);
-  color: var(--tinta);
+  gap: 0 var(--espacio-10);
+  padding: var(--espacio-3) var(--espacio-6);
+  color: var(--negro);
 }
 
 .marca {
@@ -121,7 +203,6 @@
 
 .cabeceraLinks {
   display: flex;
-  justify-content: center;
   gap: var(--espacio-6);
 }
 
@@ -131,18 +212,17 @@
   gap: var(--espacio-6);
 }
 
-/* Inter Tight 600 en mayúsculas, con tracking leve; se subraya con el mouse.
-   El activo (aria-current) queda subrayado. */
+/* Mayúsculas a 13px con tracking; se subrayan con el mouse. El activo
+   (aria-current) queda subrayado. */
 .link {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   font-size: var(--t-dato);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
-  text-decoration: underline 2px transparent;
+  text-decoration: underline 1px transparent;
   text-underline-offset: 6px;
   transition: text-decoration-color var(--transicion);
 }
@@ -152,43 +232,38 @@
   text-decoration-color: currentColor;
 }
 
-/* El único que va en píldora: el carrito, en lima con borde tinta */
+/* El carrito: la única píldora, en el acento con texto blanco */
 .carrito {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   padding: 0 var(--espacio-5);
-  border: var(--borde) solid var(--tinta);
-  border-radius: var(--radio-redondo);
-  background: var(--lima);
-  color: var(--tinta);
+  border-radius: var(--radio-pildora);
+  background: var(--acento);
+  color: var(--blanco);
   font-size: var(--t-dato);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
-  transition:
-    background-color var(--transicion),
-    color var(--transicion);
+  transition: background-color var(--transicion);
 }
 
 .carrito:hover {
-  background: var(--tinta);
-  color: var(--lima);
+  background: var(--negro);
 }
 
-/* Sobre el video: links y wordmark en blanco */
+/* Sobre el video: wordmark y links en blanco */
 .sobreVideo {
-  --foco: var(--lima);
+  --foco: var(--blanco);
   color: var(--blanco);
 }
 
-.cabeceraCal {
-  border-bottom: var(--borde-fino) solid var(--tinta);
-  background: var(--cal);
+.sobreVideo .carrito:hover {
+  background: var(--blanco);
+  color: var(--negro);
 }
 
-.cabeceraCal .cabecera {
+.cabeceraBlanca .cabecera {
   padding-inline: 0;
 }
 
@@ -197,12 +272,12 @@
 @media (max-width: 1023px) {
   .cabecera {
     grid-template-columns: minmax(0, 1fr) auto;
+    padding-inline: var(--espacio-4);
   }
 
   .cabeceraLinks {
     grid-column: 1 / -1;
     grid-row: 2;
-    justify-content: flex-start;
     gap: var(--espacio-5);
     /* Lugar para el anillo de foco dentro del scroll */
     margin: 0 -6px;
@@ -224,48 +299,50 @@
 
 /* ---------- Botones ---------- */
 
+/* El principal: píldora del acento con texto blanco, sin borde. Hover: negro */
 .boton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--espacio-2);
   min-height: 48px;
-  padding: var(--espacio-3) var(--espacio-6);
-  border: var(--borde) solid var(--tinta);
-  border-radius: var(--radio-redondo);
-  background: var(--lima);
-  color: var(--tinta);
+  padding: var(--espacio-3) var(--espacio-8);
+  border: 1px solid transparent;
+  border-radius: var(--radio-pildora);
+  background: var(--acento);
+  color: var(--blanco);
   font-family: var(--fuente-texto);
-  font-size: var(--t-chico);
-  font-weight: 600;
+  font-size: var(--t-texto);
   line-height: 1;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   white-space: nowrap;
   transition:
     background-color var(--transicion),
-    color var(--transicion);
+    color var(--transicion),
+    border-color var(--transicion);
 }
 
 .boton:hover:not(:disabled) {
-  background: var(--tinta);
-  color: var(--lima);
+  background: var(--negro);
+  color: var(--blanco);
 }
 
 .boton:disabled {
-  border-color: var(--grafito-calido);
   background: var(--hormigon);
-  color: var(--grafito-calido);
+  color: var(--grafito);
   cursor: not-allowed;
 }
 
+/* El secundario: blanco con borde de 1px negro. Hover: hormigón */
 .secundario {
-  background: transparent;
+  border-color: var(--negro);
+  background: var(--blanco);
+  color: var(--negro);
 }
 
 .secundario:hover:not(:disabled) {
-  background: var(--blanco);
-  color: var(--tinta);
+  border-color: var(--negro);
+  background: var(--hormigon);
+  color: var(--negro);
 }
 
 .fila {
@@ -275,16 +352,21 @@
   gap: var(--espacio-3);
 }
 
-/* ---------- Hero ---------- */
+/* ---------- Hero: el video en un contenedor con margen ---------- */
 
 .hero {
-  --foco: var(--lima);
+  padding: var(--gutter);
+}
+
+.heroCaja {
+  --foco: var(--blanco);
   position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
-  min-height: max(600px, 100svh);
+  min-height: max(560px, calc(100svh - 2 * var(--gutter)));
   overflow: hidden;
-  background: var(--tinta);
+  border-radius: var(--radio);
+  background: var(--negro);
   color: var(--blanco);
 }
 
@@ -302,16 +384,16 @@
   object-fit: cover;
 }
 
-/* Capa plana de tinta al 55%: con eso el titular lima y la bajada blanca
-   pasan AA aun en el cuadro más claro del video */
+/* Capa plana negra al 55%: con eso el titular blanco pasa AA aun en el cuadro
+   más claro del video */
 .heroCapa {
   position: absolute;
   inset: 0;
-  background: rgb(26 20 17 / 0.55);
+  background: rgb(0 0 0 / 0.55);
   pointer-events: none;
 }
 
-.hero > .cabecera,
+.heroCaja > .cabecera,
 .heroTexto {
   position: relative;
   z-index: 1;
@@ -322,15 +404,16 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--espacio-5);
+  gap: var(--espacio-6);
   padding: var(--espacio-6) var(--gutter) var(--espacio-16);
   text-align: center;
 }
 
-/* Tres líneas: «Todo para / jugar al / tenis» mide 4,2em */
+/* Tres líneas: «Todo para / jugar al / tenis» mide 4,2em. En blanco: los
+   acentos no se leen sobre el video. */
 .heroTitulo {
   max-width: 5.5em;
-  color: var(--lima);
+  color: var(--blanco);
   font-size: var(--t-display-1);
 }
 
@@ -341,31 +424,36 @@
 }
 
 .botonHero {
-  min-height: 56px;
-  margin-top: var(--espacio-2);
-  padding-inline: var(--espacio-10);
+  min-height: 60px;
+  padding-inline: var(--espacio-12);
+  font-size: var(--t-entrada);
+}
+
+.botonHero:hover:not(:disabled) {
+  background: var(--blanco);
+  color: var(--negro);
 }
 
 /* Pausa/play: círculo blanco, abajo a la derecha */
 .pausa {
   position: absolute;
   z-index: 2;
-  right: var(--gutter);
-  bottom: var(--espacio-6);
+  right: var(--espacio-5);
+  bottom: var(--espacio-5);
   display: grid;
   place-items: center;
   width: 44px;
   height: 44px;
-  border: var(--borde) solid var(--tinta);
+  border: none;
   border-radius: 50%;
   background: var(--blanco);
-  color: var(--tinta);
+  color: var(--negro);
   cursor: pointer;
   transition: background-color var(--transicion);
 }
 
 .pausa:hover {
-  background: var(--lima);
+  background: var(--hormigon);
 }
 
 .icono {
@@ -373,155 +461,136 @@
   height: 18px;
 }
 
-/* ---------- La vitrina editorial ---------- */
+/* ---------- La vitrina ---------- */
 
-/* Mobile: dos columnas parejas. Desde 960px, cuatro columnas con celdas
-   grandes (medio ancho) y chicas (un cuarto), en filas de alto fijo. */
+/* Celdas grandes: 3 por fila en desktop, 2 en tablet y en mobile */
 .vitrina {
-  --alto-celda: clamp(17rem, 25vw, 22rem);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--espacio-8) var(--espacio-3);
+  gap: var(--espacio-10) var(--espacio-3);
   list-style: none;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 700px) {
   .vitrina {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--espacio-8) var(--espacio-5);
+    gap: var(--espacio-12) var(--espacio-5);
   }
+}
 
-  .grande {
-    grid-column: span 2;
+@media (min-width: 1000px) {
+  .vitrina {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .celda {
-  position: relative;
   min-width: 0;
+  container-type: inline-size;
 }
 
 .enlace {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-3);
-  color: var(--tinta);
+  gap: var(--espacio-4);
+  height: 100%;
+  color: var(--negro);
 }
 
 .enlace:focus-visible {
-  outline: var(--borde-grueso) solid var(--foco);
-  outline-offset: 4px;
+  outline: 3px solid var(--foco);
+  outline-offset: 6px;
+  border-radius: var(--radio);
 }
 
-/* La celda es solo la foto: estudio plano, sin borde y con esquinas rectas */
+/* La foto del producto: casi toda la celda, sobre estudio, sin borde y con
+   radio de 16px */
 .foto {
   position: relative;
   display: block;
   aspect-ratio: 4 / 5;
   overflow: hidden;
+  border-radius: var(--radio);
   background: var(--estudio);
 }
 
-@media (min-width: 960px) {
-  .foto {
-    aspect-ratio: auto;
-    height: var(--alto-celda);
-  }
-}
-
-/* El producto grande y centrado, con margen parejo: la silueta del
-   placeholder y la foto recortada (object-fit: contain) */
+/* El producto grande y centrado: la silueta del placeholder y la foto
+   recortada (object-fit: contain) */
 .foto svg {
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
+  top: 6%;
+  left: 6%;
+  width: 88%;
+  height: 88%;
 }
 
 .foto img {
-  padding: 8%;
+  padding: 5%;
   object-fit: contain;
 }
 
-/* Debajo de la foto: el nombre, el precio al lado y el «+» a la derecha */
-.pie {
+/* Debajo de la foto: el nombre subrayado a la izquierda y el precio a la
+   derecha */
+.filaNombre {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   gap: var(--espacio-3);
 }
 
-.pieTexto {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 0 var(--espacio-3);
-  min-width: 0;
-}
-
 .nombre {
-  font-size: 0.9375rem;
+  min-width: 0;
+  font-size: var(--t-texto);
   font-weight: 400;
   line-height: 1.3;
   letter-spacing: normal;
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
 }
 
 .precio {
+  flex-shrink: 0;
   font-family: var(--fuente-datos);
-  font-size: 0.75rem;
+  font-size: var(--t-dato);
   white-space: nowrap;
 }
 
-.mas {
-  display: grid;
-  flex-shrink: 0;
-  place-items: center;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  border: var(--borde) solid var(--tinta);
-  border-radius: 50%;
-  background: transparent;
-  color: var(--tinta);
+/* En celdas angostas, el precio baja debajo del nombre */
+@container (max-width: 260px) {
+  .filaNombre {
+    flex-direction: column;
+    gap: var(--espacio-1);
+  }
+}
+
+/* La barra de ancho completo: el acento con «Ver producto»; negra sin stock */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: auto;
+  padding: 0 var(--espacio-4);
+  border-radius: var(--radio-pildora);
+  background: var(--acento);
+  color: var(--blanco);
+  font-size: var(--t-chico);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
   transition: background-color var(--transicion);
 }
 
-.mas svg {
-  width: 20px;
-  height: 20px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.enlace:hover .barra,
+.enlace:focus-visible .barra {
+  background: var(--negro);
 }
 
-/* Con una sola variante el «+» es un botón aparte, a la derecha del pie */
-.masDirecto {
-  cursor: pointer;
+.barraAgotado {
+  background: var(--negro);
 }
 
-.conDirecto .pie {
-  padding-right: 52px;
-}
-
-.conDirecto .masDirecto {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-}
-
-.enlace:hover .mas,
-.enlace:focus-visible .mas,
-.masDirecto:hover,
-.masDirecto[data-agregado] {
-  background: var(--lima);
-}
-
-/* Sin stock: el producto en gris lavado */
-.agotado .fotoVitrina {
-  filter: grayscale(1);
-  opacity: 0.5;
+/* La celda de foto: del mismo tamaño, sin texto encima */
+.celdaFoto,
+.llenar {
+  height: 100%;
 }
 
 /* Con el mouse, el producto se acerca apenas. Sin giros. */
@@ -536,13 +605,22 @@
   }
 }
 
-/* ---------- Cancha: la anatomía ---------- */
+/* ---------- Bloques de foto entre secciones ---------- */
 
-.cancha {
+.bloque {
+  padding-bottom: var(--seccion);
+}
+
+/* ---------- Anatomía: banda negra ---------- */
+
+.anatomiaBanda {
+  --foco: var(--blanco);
   display: flex;
   align-items: center;
   min-height: 100svh;
-  padding-block: var(--espacio-16);
+  padding-block: var(--seccion);
+  background: var(--negro);
+  color: var(--blanco);
 }
 
 .anatomia {
@@ -567,8 +645,8 @@
   container-type: inline-size;
 }
 
-/* El nombre de la parte activa, gigante y blanco, detrás de la cabeza de la
-   raqueta (el encordado pasa por encima), donde no cae ninguna etiqueta.
+/* El nombre de la parte activa, gigante y gris oscuro, detrás de la cabeza de
+   la raqueta (el encordado le pasa por delante), donde no cae ningún nombre.
    Decorativo: repite el título del paso. */
 .nombreGigante {
   position: absolute;
@@ -576,7 +654,7 @@
   top: calc(145 / 560 * 100%);
   right: 0;
   left: 0;
-  color: var(--blanco);
+  color: var(--grafito);
   font-size: 17cqi;
   line-height: 0.8;
   text-align: center;
@@ -591,9 +669,8 @@
   height: 100%;
 }
 
-/* La raqueta con contraste contra la cancha: relleno claro y plano, borde
-   tinta de unos 2,5px y solo la parte activa en lima. Las demás partes no se
-   apagan. */
+/* La raqueta con contraste contra el negro: relleno blanco plano, contorno
+   negro y solo la parte activa en el acento. Las demás partes no se apagan. */
 .raqueta [stroke^="url(#muestra-cuerpo"] {
   stroke: var(--blanco);
 }
@@ -604,37 +681,28 @@
 }
 
 .raqueta [fill="url(#muestra-zona)"] {
-  fill: rgb(255 255 255 / 0.35);
+  fill: rgb(255 255 255 / 0.3);
 }
 
 .raqueta [stroke="url(#muestra-lima)"] {
-  stroke: var(--lima);
+  stroke: var(--acento);
 }
 
 .raqueta [fill$="-lima)"],
 .raqueta [fill="url(#muestra-lima)"] {
-  fill: var(--lima);
-}
-
-.raqueta [stroke="#000"] {
-  stroke: var(--tinta);
-}
-
-.raqueta [fill="#000"] {
-  fill: var(--tinta);
+  fill: var(--acento);
 }
 
 .escena .raqueta[data-resaltando] [data-parte]:not([data-resaltada]) {
   opacity: 1;
 }
 
-/* Cada parte se nombra con texto y una línea guía, sin cápsula */
+/* Cada parte se nombra con texto y una línea guía, afuera de la silueta */
 .parte {
   position: absolute;
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 0;
   transform: translate(-6px, -50%);
 }
 
@@ -643,12 +711,12 @@
   flex-shrink: 0;
   width: 12px;
   height: 12px;
-  border: var(--borde-grueso) solid var(--tinta);
+  border: 3px solid var(--negro);
   border-radius: 50%;
   background: var(--blanco);
 }
 
-/* Del lado izquierdo, la línea y el nombre van hacia afuera, a la izquierda */
+/* Del lado izquierdo, la línea y el nombre van hacia la izquierda */
 .parteIzquierda {
   flex-direction: row-reverse;
   transform: translate(calc(-100% + 6px), -50%);
@@ -657,9 +725,9 @@
 .parteGuia {
   flex-shrink: 0;
   width: clamp(1rem, 7cqi, 2.5rem);
-  height: var(--borde-grueso);
+  height: 2px;
   margin-right: var(--espacio-2);
-  background: var(--tinta);
+  background: var(--blanco);
 }
 
 .parteIzquierda .parteGuia {
@@ -669,8 +737,7 @@
 
 .parteNombre {
   font-size: var(--t-dato);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -678,7 +745,7 @@
 .anatomiaTexto {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-6);
+  gap: var(--espacio-8);
 }
 
 .tituloAnatomia {
@@ -696,68 +763,74 @@
 }
 
 .pasoDato {
-  padding-top: var(--espacio-3);
-  border-top: var(--borde-fino) solid var(--tinta);
   font-family: var(--fuente-datos);
   font-size: var(--t-chico);
   line-height: 1.6;
 }
 
-/* ---------- Césped: las categorías ---------- */
+/* ---------- Categorías: tarjetas blancas sobre hormigón ---------- */
 
-/* Una fila por categoría, entera clickeable, separadas por 1px liso */
 .categorias {
-  border-top: var(--borde-fino) solid var(--tinta);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-4);
   list-style: none;
 }
 
-.categorias li {
-  border-bottom: var(--borde-fino) solid var(--tinta);
+@media (min-width: 760px) {
+  .categorias {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--espacio-5);
+  }
+
+  .categoria {
+    min-height: 15rem;
+  }
 }
 
+/* Toda la tarjeta es el link; con el mouse se pinta del acento */
 .categoria {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "nombre flecha"
-    "descripcion flecha"
-    "cantidad flecha";
-  align-items: center;
-  gap: var(--espacio-1) var(--espacio-4);
-  padding: var(--espacio-6) var(--espacio-4);
-  transition: background-color var(--transicion);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  height: 100%;
+  padding: var(--espacio-8) var(--espacio-6) var(--espacio-6);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--negro);
+  transition:
+    background-color var(--transicion),
+    color var(--transicion);
 }
 
 .categoria:hover,
 .categoria:focus-visible {
-  background: var(--lima);
-}
-
-.categoria:focus-visible {
-  outline-offset: -3px;
+  background: var(--acento);
+  color: var(--blanco);
 }
 
 .categoriaNombre {
-  grid-area: nombre;
   font-size: var(--t-display-4);
 }
 
 .categoriaDescripcion {
-  grid-area: descripcion;
-  max-width: 48ch;
+  max-width: 44ch;
+  line-height: 1.5;
 }
 
-.categoria > .dato {
-  grid-area: cantidad;
+.categoriaPie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
 }
 
 .flecha {
-  grid-area: flecha;
   width: 32px;
   height: 32px;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2;
+  stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -773,20 +846,7 @@
   }
 }
 
-@media (min-width: 860px) {
-  .categoria {
-    grid-template-columns: minmax(14rem, 0.9fr) minmax(0, 1.5fr) auto auto;
-    grid-template-areas: "nombre descripcion cantidad flecha";
-    gap: var(--espacio-8);
-  }
-}
-
 /* ---------- Referencia ---------- */
-
-.cabeceraCal + .subtitulo,
-.fila + .subtitulo {
-  margin-top: var(--espacio-12);
-}
 
 .campos {
   display: grid;
@@ -810,48 +870,39 @@
 
 .etiquetaCampo {
   font-size: var(--t-dato);
-  font-weight: 600;
-  letter-spacing: 0.04em;
+  letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
 }
 
 .entradaCampo {
   min-height: 48px;
   padding: 0 var(--espacio-5);
-  border: var(--borde) solid var(--tinta);
-  border-radius: var(--radio-redondo);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
   background: var(--blanco);
-  color: var(--tinta);
+  color: var(--negro);
   font: inherit;
 }
 
 .entradaCampo:focus-visible {
-  outline: var(--borde-grueso) solid var(--foco);
+  outline: 3px solid var(--foco);
   outline-offset: 3px;
 }
 
 .error {
   padding: var(--espacio-3) var(--espacio-4);
-  border: var(--borde-fino) solid var(--tinta);
-  border-radius: var(--radio-medio);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
   background: var(--blanco);
   font-size: var(--t-chico);
-  font-weight: 600;
   line-height: 1.4;
-}
-
-.demoMas {
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-4);
 }
 
 .tablaMarco {
   margin-top: var(--espacio-5);
   overflow-x: auto;
-  border: var(--borde-fino) solid var(--tinta);
-  border-radius: var(--radio-medio);
-  background: var(--blanco);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
 }
 
 .tabla {
@@ -864,7 +915,7 @@
 .tabla th,
 .tabla td {
   padding: var(--espacio-3) var(--espacio-4);
-  border-bottom: var(--borde-fino) solid var(--tinta);
+  border-bottom: 1px solid var(--negro);
   text-align: left;
   vertical-align: top;
 }
@@ -875,32 +926,13 @@
 
 .tabla th {
   font-family: var(--fuente-texto);
-  font-weight: 600;
-}
-
-.muestraColor {
-  display: inline-block;
-  width: 0.9em;
-  height: 0.9em;
-  margin-right: 0.5em;
-  border: var(--borde-fino) solid var(--tinta);
-  border-radius: 50%;
-  vertical-align: -0.1em;
-}
-
-/* El peor píxel con grano, debajo */
-.peor {
-  display: block;
   font-weight: 400;
-  opacity: 0.85;
 }
 
-.permitida {
-  font-weight: 700;
-}
-
-.noPermitida {
-  color: var(--grafito-calido);
+.tabla .opcionColor {
+  margin-right: 0.5em;
+  border-color: var(--negro);
+  vertical-align: -0.1em;
 }
 
 @media (max-width: 599px) {
@@ -917,7 +949,7 @@
 .lugares {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  column-gap: var(--espacio-8);
+  gap: var(--espacio-6) var(--espacio-8);
   list-style: none;
 }
 
@@ -931,8 +963,6 @@
   display: grid;
   grid-template-columns: 2rem minmax(0, 1fr);
   gap: var(--espacio-1) var(--espacio-3);
-  padding-block: var(--espacio-4);
-  border-top: var(--borde-fino) solid var(--tinta);
 }
 
 .lugar > :nth-child(n + 2) {
@@ -945,10 +975,10 @@
 
 .lugarArchivo {
   font-family: var(--fuente-datos);
-  font-weight: 700;
 }
 
 .lugarDescripcion {
+  color: var(--grafito);
   font-size: var(--t-chico);
   line-height: 1.45;
 }

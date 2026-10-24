@@ -1,134 +1,115 @@
 # green. — Sistema de diseño
 
-green. es una tienda de tenis que se ve como una cancha: polvo de ladrillo,
-cancha rápida, césped y líneas blancas, con el lima de la pelota como color de
-marca y de acción. **La identidad la dan cuatro cosas**: los colores de las
-superficies, los titulares gigantes, las fotos y el grano. Todo lo demás se
-dice en voz baja: texto, líneas lisas de 1px y espacio. Los productos se ven
-solos, sobre fondo de estudio. Todo el texto pasa AA.
+green. es una tienda de tenis que se lee como un catálogo: blanco, un gris
+claro de fondo y negro, con **un solo color de acento** en las acciones. Las
+fotos de los productos y de la gente jugando traen todo el color que falta.
+Los titulares son enormes, en una display condensada; el resto se dice en voz
+baja, con mucho aire. **Pocas cosas, grandes y con aire.**
 
 ## Referencias y precedencia
 
 - **Este documento manda.** Las referencias son inspiración: de ellas no se
   copian textos, logos, ilustraciones, fotos ni colores. Los valores de acá son
   propios.
-- `docs/referencias/slush.md`: la display enorme y apretada.
-- `docs/referencias/hungry-tiger.md`: el lienzo cálido y saturado, los
-  titulares que ocupan la pantalla y los recuadros de fotos inclinados que se
-  enderezan con el scroll.
-- `docs/referencias/teenage-engineering.md`: solo la vitrina, como idea (la
-  celda es la foto del producto sobre estudio, y el nombre y el precio van
-  afuera, en voz baja).
-- `docs/referencias/twotwo.md` es **histórica**: describe el sistema anterior
-  (blanco y negro con un lima). No manda en nada.
+- `docs/referencias/twotwo.md` **manda en la base**: blanco y negro con un
+  único acento en las acciones, dos radios (16px y píldora), navegación de
+  texto en mayúsculas, el video del hero en un contenedor, la celda de
+  producto con la barra de acción a lo ancho y la banda negra del footer.
+- `docs/referencias/teenage-engineering.md` **manda en la vitrina**: el producto
+  solo, grande, sobre fondo de estudio, y el texto chico y afuera de la foto.
+- `docs/referencias/slush.md`: solo la idea de la display enorme y apretada.
+- `docs/referencias/hungry-tiger.md` es **histórica**: describe una dirección
+  que se probó y se descartó (superficies de color, fotos inclinadas). No manda
+  en nada.
 - Las capturas de terceros (`docs/referencias/capturas/`) no van al repo.
 
 ## Reglas de la estética
 
-1. **Cada sección juega en una superficie**: polvo, cancha o césped, o un
-   neutro (cal o tinta). Nunca hay más de dos superficies de color a la vista.
-2. **Sobre polvo, cancha y césped, todo el texto es tinta.** El lima es color
-   de marca y de acción: relleno con texto tinta, nunca texto sobre claro.
-3. **La display hace de objeto.** Mayúsculas pesadas y condensadas, enormes y
-   apretadas, solo en titulares. El texto corrido es Inter Tight.
-4. **Pocos recursos.** Sin stickers, sin punteados, sin cápsulas en la
-   navegación, sin sombras ni degradados. Las secciones se separan con espacio;
-   donde hace falta una línea, 1px lisa (ver «Moderación»).
-5. **Una escala para todo**: cuatro radios, tres bordes, una escala de
-   espacios de 4px.
-6. **El producto se ve solo**, grande y centrado sobre estudio.
+1. **Blanco, hormigón y negro, más un acento.** Todo es blanco, gris o negro.
+   El único color de la interfaz es el acento, y es funcional: acción
+   principal, barra de la vitrina, carrito, estados activos. Nunca de fondo de
+   sección, nunca de adorno.
+2. **El color lo traen las fotos**: los productos y la gente jugando.
+3. **Titulares enormes** en Archivo extra condensada, en mayúsculas. El resto
+   es Inter Tight en un solo peso, y JetBrains Mono para precios y datos.
+4. **Pocas cosas, grandes y con aire.** Las secciones se separan con espacio,
+   no con líneas. La línea de 1px queda solo para tablas, resúmenes, campos y
+   el botón secundario.
+5. **Dos radios y nada más**: 16px para lo que se mira (contenedores, celdas,
+   fotos) y píldora para lo que se toca (botones, barras, campos, etiquetas).
+6. **Sin adornos**: sin superficies de color, sin grano, sin marcas de agua,
+   sin stickers, sin punteados, sin sombras ni degradados.
 7. **Ningún elemento repite lo que ya dice el título.** Ni bajadas que lo
    reformulan, ni etiquetas que lo anuncian. Textos que describen, sin slogans
    (ver «Voz»).
 8. **Movimiento con sentido**, solo con `transform` y `opacity`, y nada con
    `prefers-reduced-motion`.
 
-## Paleta: las superficies del tenis
+## Paleta
 
 | Token | Nombre | Hex | Uso |
 | --- | --- | --- | --- |
-| `--polvo` | Polvo de ladrillo | `#D46C3F` | La base cálida de la marca: «Lo que más sale», listados, estados (404, error, pagos) |
-| `--cancha` | Cancha rápida | `#5A8FE6` | «Anatomía de una raqueta» |
-| `--cesped` | Césped | `#5A9E4A` | Categorías |
-| `--cal` | Cal | `#FBF6EE` | Neutro cálido: producto, carrito, cuenta, checkout y pedidos; el header con scroll |
-| `--blanco` | Blanco | `#FFFFFF` | Las líneas de las marcas de agua, los campos, el relleno de la raqueta dibujada |
-| `--estudio` | Estudio | `#F4F5F2` | Solo las celdas de la vitrina |
-| `--tinta` | Tinta | `#1A1411` | Negro cálido: el texto, los bordes, el footer |
-| `--grafito` | Grafito | `#4A403A` | Texto secundario, solo sobre cal, blanco y estudio |
-| `--hormigon` | Hormigón | `#E6E6E6` | Botones apagados y etiquetas de estado neutras |
-| `--lima` | Lima | `#DCF900` | Marca y acción: botón principal, carrito, hover, la parte activa, la pelota |
+| `--blanco` | Blanco | `#FFFFFF` | El fondo de las páginas y de las tarjetas |
+| `--hormigon` | Hormigón | `#E6E6E6` | El gris claro de fondo: secciones alternas, placeholders de fotos, botones apagados, etiquetas neutras |
+| `--estudio` | Estudio | `#F4F5F2` | Solo el fondo de las fotos de producto en la vitrina y la galería |
+| `--negro` | Negro | `#000000` | Texto, bordes de 1px, las bandas del footer y de la anatomía |
+| `--grafito` | Grafito | `#333333` | Texto secundario sobre blanco, hormigón y estudio; la palabra gigante de la anatomía |
+| `--acento` | Acento | ver abajo | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
+| `--lima` | Amarillo pelota | `#DCF900` | Solo la pelota del wordmark y del favicon |
 
-- **Superficies de color**: polvo, cancha y césped (y los placeholders de
-  fotos, que llevan esos colores). **Neutros**: cal, blanco, estudio y tinta.
-- El polvo es naranja tierra, no ladrillo oscuro: con un tono más oscuro el
-  texto tinta no llegaría a AA y el blanco tampoco.
+### El acento
 
-### Contrastes
+Uno solo en todo el sitio. Siempre lleva **texto blanco** encima. Tres
+opciones, probadas en `/muestra` con un selector:
 
-WCAG 2.1, calculados con estos valores (la muestra los calcula igual). Sobre
-polvo, cancha y césped el número entre paréntesis es el peor píxel con el grano
-(ver «Texturas»): el que oscurece el fondo para el texto oscuro y el que lo
-aclara para el texto claro.
+| Opción | Hex | Con blanco | Contra el negro | Contra hormigón | Como texto sobre el video |
+| --- | --- | --- | --- | --- | --- |
+| **Verde Wimbledon** (recomendada: la tienda se llama green.) | `#0F6E3C` | **6,33** | 3,32 | 5,07 | 1,12 |
+| Naranja polvo (tono Roland Garros) | `#B3471C` | **5,48** | 3,83 | 4,39 | 1,02 |
+| Azul cancha (tono US Open) | `#1F5BBF` | **6,35** | 3,31 | 5,09 | 1,13 |
 
-| Fondo | Tinta | Grafito | Blanco | Lima |
-| --- | --- | --- | --- | --- |
-| Polvo | **5,22 (4,51)** | 2,88 | 3,49 (3,15) | 2,92 |
-| Cancha | **5,65 (4,87)** | 3,12 | 3,23 (2,91) | 2,70 |
-| Césped | **5,58 (4,81)** | 3,08 | 3,27 (2,94) | 2,74 |
-| Cal | **16,94** | **9,36** | 1,08 | 1,11 |
-| Blanco | **18,23** | **10,07** | — | 1,19 |
-| Estudio | **16,66** | **9,20** | 1,09 | 1,09 |
-| Hormigón | **14,60** | **8,07** | 1,25 | 1,05 |
-| Tinta | — | 1,81 | **18,23** | **15,27** |
-| Lima | **15,27** | 8,44 | 1,19 | — |
-| Video del hero, con la capa | — | — | **4,71** | **3,94** (titular grande) |
+- **«Con blanco»** vale en los dos sentidos: texto blanco sobre el acento (en
+  botones, barras y el carrito) y el acento como texto sobre blanco. Los tres
+  pasan AA (4,5).
+- **Contra el negro** pasan 3:1, el contraste de un componente: alcanza para
+  la parte activa de la raqueta sobre la banda negra.
+- **Sobre el video no se leen** (1,02 a 1,13 en el cuadro más claro): el
+  titular del hero va en blanco y el acento queda en el botón.
+- El lima de antes ya no es acento: es el amarillo de la pelota del wordmark,
+  igual con las tres opciones.
 
-**En negrita, las combinaciones permitidas.** Todo lo demás no se usa como
-texto:
+### Contrastes de los neutros
 
-- Lima como texto sobre cualquier fondo claro o de color (1,1 a 2,9).
-- Blanco como texto sobre polvo, cancha o césped (2,9 a 3,5): solo como dibujo
-  decorativo y oculto para lectores de pantalla (el nombre gigante de la
-  anatomía, las marcas de agua). Los links del header sí van en blanco sobre el
-  video, con la capa de tinta.
-- Grafito sobre superficies de color (2,7 a 3,1): sobre color, la jerarquía
-  sale del tamaño y del peso, no del gris.
+| Fondo | Negro | Grafito | Blanco |
+| --- | --- | --- | --- |
+| Blanco | **21,00** | **12,63** | — |
+| Hormigón | **16,83** | **10,12** | 1,25 |
+| Estudio | **19,19** | **11,55** | 1,09 |
+| Negro | — | 1,66 | **21,00** |
+| Video del hero, con la capa negra al 55% | — | — | **5,58** |
 
-Los bordes de 2px en tinta dan el contraste de componente (3:1) contra las
-superficies: 5,22 sobre polvo, 5,65 sobre cancha, 5,58 sobre césped. El lima de
-relleno no llega solo (2,7 a 2,9 sobre las superficies, 1,1 sobre cal), por eso
-los botones lima llevan borde tinta.
+**En negrita, las combinaciones permitidas como texto.** El grafito sobre negro
+(1,66) solo se usa en la palabra gigante de la anatomía, que es decorativa y va
+oculta para lectores de pantalla. El lima nunca es texto.
 
-### Dos superficies como máximo
+### Superficies
 
-- En una pantalla nunca hay más de dos superficies de color. Dos secciones de
-  color seguidas se pueden tocar; si van tres, la del medio mide al menos
-  `100svh` o se separan con un neutro.
-- Los placeholders de fotos cuentan; las fotos reales no.
-
-### Mapa de superficies
-
-| Página | Superficie |
-| --- | --- |
-| Home | Hero (video, capa de tinta) → «Lo que más sale» en polvo → fotos (banda 1, sobre polvo) → Anatomía en cancha → fotos (banda 2, sobre cancha) → Categorías en césped → fotos (banda 3, sobre césped) → footer en tinta |
-| Categoría y combos | Encabezado y vitrina en polvo |
-| Producto, combo, carrito, cuenta, checkout, pedidos | Cal |
-| 404, error, páginas de pago | Polvo |
-| Carga | El color de lo que viene (tinta en la home), del alto de la pantalla |
-| Footer | Tinta |
+- **Las secciones van sobre blanco o hormigón**, alternadas cuando hace falta
+  separar, con mucho espacio arriba y abajo.
+- **Bandas negras**: el footer y la anatomía de la raqueta.
+- No hay más fondos: ni colores de superficie, ni texturas, ni dibujos de fondo.
 
 ### Foco
 
-Anillo de 3px a 3px de distancia, del color `--foco` que pone cada superficie:
-tinta sobre las claras y las de color, lima sobre tinta y sobre el video. En
-las filas que se pintan enteras (categorías), el anillo va por dentro.
+Anillo de 3px a 3px de distancia, del color `--foco` de cada fondo: negro sobre
+blanco, hormigón y estudio; blanco sobre negro y sobre el video.
 
 ## Tipografía
 
 | Rol | Fuente | Uso |
 | --- | --- | --- |
-| Display | **Archivo**, variable, ancho 62 y peso 900 | Titulares, en mayúsculas: hero, secciones, títulos de página, nombres de categoría, pasos de la anatomía, códigos de error; y el wordmark, en minúscula |
-| Texto | Inter Tight 400 y 600 | Texto corrido y nombres de producto (400); links del header, botones, etiquetas de estado y rótulos de campos (600) |
+| Display | **Archivo**, variable, ancho 62 y peso 900 | Titulares, en mayúsculas: hero, secciones, títulos de página, categorías, pasos de la anatomía, códigos de error; y el wordmark, en minúscula |
+| Texto | Inter Tight 400 | Todo lo demás, en un solo peso: texto, nombres de producto, links, botones, etiquetas. La jerarquía sale del tamaño |
 | Datos | JetBrains Mono 400 | Precios, contadores, fechas y la ficha técnica |
 
 Las tres van con `next/font` (Google Fonts, sin archivos propios), que reserva
@@ -138,231 +119,196 @@ nada.
 ### La display
 
 Archivo (ancho 62, peso 900). Se probó contra Anton y Big Shoulders: es una
-grotesca como Inter Tight, así que conviven sin chocar; es la más cercana a la
-display de Slush; es un solo archivo variable con eje de ancho y tiene los
-acentos completos. Anton pide interlineado 1,14 por la altura de sus tildes, y
-Big Shoulders no tiene métricas de respaldo en next/font (al cargar movería el
-texto).
+grotesca como Inter Tight, así que conviven sin chocar; es un solo archivo
+variable con eje de ancho y tiene los acentos completos. Anton pide
+interlineado 1,14 por la altura de sus tildes, y Big Shoulders no tiene
+métricas de respaldo en next/font (al cargar movería el texto).
 
 Uso: **siempre en mayúsculas** (`text-transform`, el texto se escribe normal),
 `font-stretch: 62%`, peso 900, tracking 0, `text-wrap: balance`. Nunca por
-debajo de 2rem ni en párrafos.
+debajo de 2rem ni en párrafos. A la izquierda; solo el hero y los estados se
+centran.
 
-**Interlineado: 0,92.** El 0,8 de Slush pisa los acentos del castellano: en
-Archivo, las mayúsculas acentuadas (Á É Í Ó Ú Ñ) suben hasta 0,89em sobre la
-línea de base, así que con menos de 0,9 la tilde de una línea toca la de
-arriba. 0,92 es el mínimo con aire (las mayúsculas miden 0,69em: entre línea y
-línea quedan 0,23em). En títulos de una sola línea (el nombre gigante de la
-anatomía) puede bajar a 0,8.
+**Interlineado: 0,92.** Con menos, las tildes de las mayúsculas (Á É Í Ó Ú Ñ,
+que en Archivo suben hasta 0,89em) tocan la línea de arriba. En títulos de una
+sola línea (la palabra gigante de la anatomía) puede bajar a 0,8.
 
 ### Escala
 
 | Token | Tamaño | Uso |
 | --- | --- | --- |
-| `--t-dato` | 0.8125rem (13px) | Links del header, pies de foto, nombres de las partes, legales, datos |
-| `--t-chico` | 0.875rem | Botones, notas |
-| `--t-texto` | 1rem | Texto corrido |
-| `--t-entrada` | clamp(1.0625rem, 1.3vw, 1.25rem) | Bajadas |
-| `--t-titulo` | clamp(1.25rem, 2vw, 1.625rem) | Subtítulos en Inter Tight 600 |
-| `--t-display-4` | clamp(2rem, 4vw, 3.25rem) | Pasos, filas de categorías, nombres en la página de producto |
-| `--t-display-3` | clamp(2.75rem, 6.5vw, 5.5rem) | Títulos de página y de bloque |
+| `--t-dato` | 0.8125rem (13px) | Links del header, nombres de las partes, legales, datos, placeholders |
+| `--t-chico` | 0.875rem | Barras de la vitrina, notas |
+| `--t-texto` | 1rem | Texto corrido, nombres de producto, botones |
+| `--t-entrada` | clamp(1.0625rem, 1.3vw, 1.25rem) | Bajadas, el botón del hero |
+| `--t-titulo` | clamp(1.25rem, 2vw, 1.625rem) | Subtítulos |
+| `--t-display-4` | clamp(2rem, 4vw, 3.25rem) | Pasos, categorías, nombres en la página de producto |
+| `--t-display-3` | clamp(2.75rem, 6.5vw, 5.5rem) | Títulos de página |
 | `--t-display-2` | clamp(3.5rem, 10vw, 9rem) | Títulos de sección de la home |
 | `--t-display-1` | clamp(4.5rem, min(15vw, 17svh), 14rem) | Hero, 404 y error. Depende también del alto, así el hero entra en una pantalla |
 
 Interlineado: 0,92 en la display, 1,2 en subtítulos, 1,5 en bajadas, 1,6 en
-texto. Tracking: 0,04em en las mayúsculas de Inter Tight (links, botones,
-etiquetas), −0,01em en subtítulos.
+texto. Tracking: 0,06em en las mayúsculas de Inter Tight (links, barras,
+etiquetas).
 
 ### Wordmark
 
 «green.» en minúscula, en Archivo (900, ancho 62), con el punto como **pelota
-de tenis**: el círculo lima con sus dos costuras en negro (`Pelota`), a 0,34em,
-sobre la línea de base. Con ese tamaño el trazo de las costuras queda en unos
-2px.
+de tenis**: el círculo amarillo pelota (`--lima`) con sus dos costuras en negro
+(`Pelota`), a 0,34em, sobre la línea de base. La pelota es la misma con
+cualquier acento.
 
-- Header: tinta sobre cal; blanco sobre el video.
-- Footer: gigante (hasta 12rem), en blanco sobre tinta.
+- Header: negro sobre blanco; blanco sobre el video.
+- Footer: gigante (hasta 12rem), en blanco sobre negro.
 - Favicon: la pelota sola, en `app/icon.svg`.
 
-## Escala única: radios, bordes y espacios
+## Radios, bordes y espacios
 
-- **Radios** (`--radio-chico`, `--radio-medio`, `--radio-bloque`,
-  `--radio-pildora`):
-  - 0: las celdas de la vitrina, con esquinas rectas.
-  - 6px: los recuadros de las fotos al scrollear y las etiquetas de estado.
-  - 12px: los recuadros de error y la tabla de la ficha.
-  - 20px: el resumen del carrito y los paneles.
-  - 999px (píldora): botones, el carrito del header, campos, opciones y el «+».
-- **Bordes** (`--borde-fino`, `--borde`, `--borde-grueso`), siempre en tinta:
-  - 1px: filas de tablas (pedidos, carrito, totales, ficha técnica), filas de
-    categorías, resúmenes y el header con scroll.
-  - 2px: botones, el carrito, campos y el «+».
-  - 3px: el anillo de foco y las líneas guía de la anatomía.
+- **Dos radios**: `--radio` (16px) para lo que se mira (el contenedor del hero,
+  las fotos de la vitrina, las celdas y los bloques de foto, las tarjetas de
+  categoría, el resumen, la tabla, los recuadros de error) y `--radio-pildora`
+  (50px) para lo que se toca (botones, la barra de la vitrina, el carrito,
+  campos, opciones, etiquetas de estado). Nada más: ni 4, ni 8, ni 12px.
+- **Bordes**: 1px negro, solo en tablas, resúmenes, campos, el botón
+  secundario y los recuadros de error.
 - **Espacios**: múltiplos de 4px, `--espacio-1` (4px) a `--espacio-32`
-  (128px): 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 96 y 128. El gutter es
-  `clamp(1rem, 4vw, 2rem)` y el ancho máximo del contenido, 1280px.
-
-En la fase 1 del rediseño conviven nombres provisorios en `globals.css`
-(`--grafito-calido`, `--radio-redondo`) con los viejos; en la fase 2 quedan los
-de este documento.
-
-## Texturas y motivos
-
-- **Grano**: `public/texturas/ruido.png` (128px, gris con alfa de hasta 16%)
-  como capa quieta al 50% (`::before`, detrás del contenido), solo sobre polvo,
-  cancha, césped y los placeholders. No se anima ni es un filtro. Mezcla cada
-  píxel con hasta un 7,8% de negro o de blanco; los contrastes de arriba ya lo
-  cuentan.
-- **Marcas de agua**, solo en **polvo y césped**: dibujos de línea en blanco
-  al 28%, con trazo fijo (`vector-effect: non-scaling-stroke`), detrás del
-  texto y recortados por la sección (`Superficie`, prop `marca`):
-  - `lineas`: una cancha vista desde arriba, enorme y girada −8°. En polvo.
-  - `costuras`: una pelota gigante con sus dos costuras, asomando por un
-    costado. En césped.
-  Al ser más claras que la superficie, el texto tinta gana contraste.
-- **Sin degradados ni sombras.** La raqueta y la pelota dibujadas de la
-  anatomía también van en relleno plano.
-
-## Moderación
-
-- **Lo que hace la identidad**: los colores de las superficies, los titulares
-  gigantes, las fotos y el grano.
-- **Marcas de agua**: como máximo una por pantalla, y nunca en una sección con
-  fotos inclinadas ni en la anatomía.
-- **Fuera**: stickers decorativos o girados, separadores punteados, cápsulas
-  en la navegación, cajas alrededor de nombres o etiquetas, íconos de adorno.
-- **Separaciones**: con espacio. Donde hace falta una línea (filas de tablas,
-  resúmenes, filas de categorías), 1px lisa en tinta.
-- **Ningún elemento repite lo que ya dice el título**: si el título dice «Lo
-  que más sale», no hay una bajada «Los más vendidos» ni una etiqueta «Más
-  vendidos».
+  (128px). Las secciones llevan `clamp(4rem, 10vw, 8rem)` arriba y abajo. El
+  gutter es `clamp(1rem, 4vw, 2rem)` y el ancho máximo del contenido, 1280px.
 
 ## Componentes
 
-### Botones
-
-- **Principal**: píldora lima con borde de 2px tinta y texto tinta, Inter
-  Tight 600 en mayúsculas a 14px con tracking 0,04em, mínimo 48px de alto (56px
-  en el hero). Hover: tinta con texto lima.
-- **Secundario**: transparente con borde de 2px tinta; hover, blanco.
-- **Sobre tinta o video**: el principal sigue lima; el secundario lleva borde y
-  texto blancos (hover: blanco con texto tinta).
-- **Apagado**: hormigón con borde y texto grafito.
-
 ### Header
 
-- **El wordmark a la izquierda, links de texto y solo el carrito en
-  píldora.** Los links (las cuatro categorías, «Combos» y «Mi cuenta») van en
-  Inter Tight 600 en mayúsculas a 13px, con tracking 0,04em y 44px de alto;
-  con el mouse se subrayan (2px, a 6px del texto). El carrito es la única
-  píldora: lima con borde de 2px tinta («Carrito (0)», con `BotonCarrito`);
-  hover, tinta con texto lima.
+- **El wordmark a la izquierda; al lado, los links de texto; a la derecha,
+  «Mi cuenta» y el carrito.** Los links (las cuatro categorías y «Combos») van
+  en mayúsculas a 13px, con tracking 0,06em y 44px de alto; con el mouse se
+  subrayan. Sin píldoras en los links.
+- **El carrito** es la única píldora: el acento con texto blanco («Carrito
+  (0)», con `BotonCarrito`); hover, negro (blanco sobre el video).
 - **El link activo** queda subrayado y lleva `aria-current="page"`, solo en la
   página que corresponde (la categoría abierta, los combos o la cuenta): el
-  header lo saca de la ruta (`usePathname`). En la home no hay ninguno activo.
-- **Sobre el video**: el wordmark y los links en blanco, sin fondo, con foco
-  lima; el carrito sigue lima.
-- **Fijo**. En la home arranca sin fondo sobre el video; al scrollear (un poco
-  antes de terminar el hero) pasa a banda cal con una línea lisa de 1px abajo.
-  En las demás páginas es cal desde el principio. La lógica de
-  `CabeceraFlotante` no cambia: mide su alto y lo publica en `--alto-header`.
+  header lo saca de la ruta (`usePathname`). En la home no hay ninguno.
+- **Sobre el video**: en la home el header va adentro del contenedor del hero,
+  sin fondo, con el wordmark y los links en blanco y foco blanco.
+- **Fijo**. Al scrollear (un poco antes de terminar el hero) pasa a banda
+  blanca, con el texto en negro. En las demás páginas es blanco desde el
+  principio. La lógica de `CabeceraFlotante` no cambia: mide su alto y lo
+  publica en `--alto-header`.
 - Por debajo de 1024px los links de las secciones bajan a una segunda fila con
   scroll horizontal; arriba quedan el wordmark, «Mi cuenta» y el carrito.
+
+### Botones
+
+- **Principal**: píldora del acento con texto blanco, sin borde, mínimo 48px de
+  alto (60px en el hero). Hover: negro (blanco con texto negro sobre el video).
+- **Secundario**: blanco con borde de 1px negro; hover, hormigón.
+- **Apagado**: hormigón con texto grafito.
 
 ### Etiquetas de estado
 
 Solo para estados: sin stock, pagado, pendiente, pago en proceso, cancelado,
-vencido (`Estado`). Nunca de adorno.
-
-- Inter Tight 600 en mayúsculas a 12px, tracking 0,04em, sobre un fondo plano,
-  con radio de 6px, **derechas, sin giro y sin borde**.
-- **Tonos**: lima (pagado), hormigón con texto tinta (pendiente, pago en
-  proceso), tinta con texto blanco (sin stock, cancelado, vencido). El texto
-  siempre dice el estado: el color no es la única señal.
+vencido (`Estado`). Nunca de adorno. Texto en mayúsculas a 12px sobre un fondo
+plano, en píldora, sin borde: el acento con texto blanco (pagado), hormigón
+con texto negro (pendiente, pago en proceso), negro con texto blanco (sin
+stock, cancelado, vencido). El texto siempre dice el estado.
 
 ### Campos
 
-Píldora blanca de 48px con borde de 2px tinta y texto a 16px; la etiqueta,
-arriba, en Inter Tight 600 en mayúsculas a 13px. El error va debajo, en un
-recuadro blanco con línea de 1px tinta y radio de 12px, en 600, ligado con
-`aria-describedby` y `aria-invalid`. Los campos de contraseña llevan el ojo
-adentro, a la derecha (ver «Cuenta»).
+Píldora blanca de 48px con borde de 1px negro y texto a 16px; la etiqueta,
+arriba, en mayúsculas a 13px. El error va debajo, en un recuadro blanco con
+borde de 1px y radio de 16px, ligado con `aria-describedby` y `aria-invalid`.
+Los campos de contraseña llevan el ojo adentro, a la derecha (ver «Cuenta»).
 
-## Movimiento
+### Tarjetas de categoría
 
-Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
-`width` ni filtros en lo que se mueve. Sin giros fuera de las fotos.
+Una por categoría, en dos columnas (una en mobile), blancas sobre hormigón, con
+radio de 16px. Adentro: el nombre en la display (`--t-display-4`), la bajada
+y, abajo, la cantidad en mono y una flecha. Toda la tarjeta es el link: con el
+mouse o el foco se pinta del acento, con el texto en blanco, y la flecha avanza
+6px.
 
-- **Hero**: el loop del video. Se puede pausar.
-- **Vitrina**: con el mouse o el foco, el producto se acerca (escala 1,03) y
-  el «+» pasa a lima.
-- **Categorías**: la fila se pinta lima y la flecha avanza 6px.
-- **Fotos al scrollear**: entran y se enderezan atadas al scroll (ver «Fotos
-  al scrollear»).
-- **Anatomía de una raqueta**: la cámara sigue al scroll (ver esa sección).
-- **Header**: pasa de transparente a cal con una transición de 300ms.
-- **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
-  quedan quietas en su giro final, la anatomía muestra la raqueta entera y
-  quieta con los nombres de sus partes, y no hay animaciones ni transiciones.
+## Vitrina de productos
 
-## Fotos al scrollear
+El producto solo, grande, sobre estudio; el nombre y el precio afuera, en voz
+baja; y la barra de acción a lo ancho.
 
-Recuadros de fotos apenas inclinados, intercalados entre las secciones de la
-home, que entran con el scroll y se enderezan.
+**Dónde va.** La grilla de cada categoría y cualquier listado de productos
+(`GrillaProductos` + `TarjetaProducto`), el listado de combos
+(`TarjetaCombo`) y «Lo que más sale» en la home. La foto de cada celda la pone
+`FotoVitrina`. La pantalla de carga dibuja la misma grilla vacía.
+
+### La grilla
+
+- **Celdas grandes**: tres por fila desde 1000px, dos en tablet y en mobile.
+- 20px entre columnas (12px en mobile) y 48px entre filas (40px en mobile).
+- **Celdas de foto**: cada tanto (una por tanda de seis, en la cuarta
+  posición), una celda con una foto de gente jugando, del mismo tamaño que las
+  de producto y **sin texto encima** (ver «Fotos»).
+
+### La celda
+
+- **La foto**: proporción 4:5, sobre `--estudio`, **sin borde, con radio de
+  16px**. El producto ocupa casi toda la celda: la foto recortada sin fondo
+  entra con `object-fit: contain` y un margen interno de 5%; el placeholder
+  centra la silueta igual.
+- **Debajo, una fila**: el nombre a la izquierda (Inter Tight a 16px,
+  subrayado) y el precio a la derecha, en mono a 13px («desde» si cambia con
+  las opciones). En celdas de menos de 260px, el precio baja debajo del nombre.
+- **Debajo, la barra**: una píldora de ancho completo y 48px de alto en el
+  acento, con «Ver producto» en mayúsculas y texto blanco. **Sin stock**, la
+  barra va en negro y dice «Sin stock».
+- **Toda la celda es un solo link** al producto (un solo paso de Tab).
+- Sin sombras, sin degradados, sin texto sobre la foto.
+
+### Estados
+
+- **Hover y foco**: el producto escala a 1,03 (400ms) y la barra pasa a negro.
+  El foco agrega el anillo de 3px alrededor de la celda. Sin giros.
+- Con `prefers-reduced-motion`, el producto no se mueve: queda el cambio de la
+  barra y el foco.
+
+### La galería del producto
+
+En `/producto/[slug]` y `/combo/[slug]` las fotos van sobre estudio, con radio
+de 16px y el producto centrado con el mismo margen, sin texto encima. La
+primera vista va grande; si hay más, van de a dos debajo. En escritorio queda
+fija mientras se lee la ficha y nunca es más alta que la pantalla. Acá el
+producto no se apaga aunque no haya stock: eso lo dice el selector de opciones,
+al lado.
+
+## Fotos
+
+Las fotos de juego y de objetos que traen color y aire al sitio. No son las de
+producto (ver «Fotos de producto»).
 
 ### Los lugares
 
 `lib/fotos.js` define 10 lugares, mitad gente jugando y mitad objetos, con
-nombre de archivo (`partido-polvo-01`, `pelota-linea-02`…), proporción
-(4:5, 3:2 o 1:1), descripción de qué foto buscar, pie, giro, parallax, banda,
-lado y si se ve en mobile. La lista para conseguirlas y cómo agregarlas está en
-`docs/FOTOS.md`.
+nombre de archivo, uso, proporción, página y descripción de qué foto buscar. La
+lista para conseguirlas y cómo agregarlas está en `docs/FOTOS.md`.
 
-### Bandas
-
-- Tres bandas en la home: la 1 sobre polvo (después de «Lo que más sale»), la 2
-  sobre cancha (después de la anatomía) y la 3 sobre césped (antes del footer).
-  Cada una es su propio bloque (`BandaFotos`), sin marca de agua: las fotos
-  nunca salen de su banda, nunca pisan texto ni botones y no reciben clics.
-- **Desktop**: las fotos van alternadas a un lado y al otro. Cada lugar mide
-  44svh y cada foto, 40svh de alto con su pie: así **se ven dos a la vez**, una
-  de cada lado, sin vacío entre ellas. Las verticales miden hasta 28vw de
-  ancho; las horizontales, 40vw; las cuadradas, 30vw.
-- **Mobile** (menos de 760px): una foto por banda (las de `mobile: true`),
-  centrada, a 76vw (88vw las horizontales).
-- La banda es decorativa: va oculta para lectores de pantalla.
-
-### El recuadro
-
-- La caja de afuera queda quieta y reserva el espacio de la foto, con la
-  proporción exacta, y del pie: nada se mueve en el layout. El recuadro de
-  adentro (la foto y su pie) es el que gira y se mueve.
-- La foto sin borde, con radio de 6px. **Debajo, el pie**: texto chico (13px,
-  tinta) que dice lo que se ve («Derecha en polvo»). Sin stickers ni números.
-- **Giro en reposo** entre −4° y 4°; con la entrada llega como mucho a ±6°.
+- **Celdas de la vitrina** (gente jugando, 4:5): una por página (la home y
+  cada categoría), del mismo tamaño que las celdas de producto, con la foto
+  recortada al alto de la fila (`object-fit: cover`), radio de 16px y sin texto
+  encima.
+- **Bloques entre secciones** (objetos, 16:9): de ancho completo dentro del
+  contenido, con radio de 16px y sin texto encima. En la home, uno después de
+  «Lo que más sale» y otro después de la anatomía.
+- Son decorativas: van ocultas para lectores de pantalla.
 
 ### Placeholder
 
-Hasta que esté la foto, el recuadro muestra un bloque del mismo tamaño, giro y
-movimiento, en el color de la superficie de la sección que viene (banda 1:
-cancha; banda 2: césped; banda 3: polvo), así se distingue del fondo y nunca
-hay más de dos superficies a la vista. Lleva grano, el nombre del archivo con la
-proporción en mono y la descripción en texto chico, en tinta; el pie va debajo,
-como con la foto. Las fotos reemplazan al placeholder solas, lugar por lugar.
+Hasta que esté la foto, el lugar muestra un bloque **hormigón** del mismo
+tamaño, con el nombre del archivo y la proporción en mono y la descripción en
+texto chico, en grafito. Las fotos reemplazan al placeholder solas, lugar por
+lugar.
 
 ### Movimiento
 
-`MovimientoFotos` (cliente) envuelve la banda y no dibuja nada: mide la caja
-quieta en cada `requestAnimationFrame` y escribe el `transform` del recuadro.
-Solo escucha el scroll mientras la banda está cerca de la pantalla
-(IntersectionObserver).
-
-- **Desktop**: la foto asoma desde 80px más abajo, girada 3° más (hacia el
-  mismo lado) y a escala 0,92, y en la primera mitad de su recorrido se asienta
-  en su giro y a escala 1. Encima, un parallax propio (`velocidad`, de 0,06 a
-  0,16 del alto de la pantalla), distinto en cada foto. Sin fundido.
-- **Mobile**: solo la entrada vertical (48px), con el giro fijo.
-- **Sin movimiento o sin JavaScript**: quietas en su giro final.
+Sin inclinación ni parallax. Como mucho, **una aparición suave al entrar en
+pantalla** (`Aparecer`): sube 24px y aparece en 600 a 800ms, una sola vez. Lo
+que ya está a la vista al cargar no se esconde, y con `prefers-reduced-motion`
+o sin JavaScript se ve desde el principio.
 
 ### Archivos y rendimiento
 
@@ -373,108 +319,62 @@ Solo escucha el scroll mientras la banda está cerca de la pantalla
   mira ese manifiesto (no la carpeta, que no llega a Vercel) para elegir entre
   la foto y el placeholder.
 - `FotoLugar` arma un `<picture>` con AVIF y WebP de respaldo usando
-  `getImageProps` de next/image: `sizes` por orientación, lazy, y el blur del
-  manifiesto de fondo mientras carga.
+  `getImageProps` de next/image: `sizes`, lazy, y el blur del manifiesto de
+  fondo mientras carga. Los bloques reservan su espacio con la proporción; las
+  celdas, con el alto de la fila.
 - **Créditos**: en `public/fotos/fuente/CREDITOS.txt` (`archivo | autor |
   fuente | url`); el script los pasa al manifiesto y el footer los muestra en
   una línea («Fotos: …»). Si no hay fotos, no se muestra nada.
 
+## Movimiento
+
+Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
+`width` ni filtros en lo que se mueve. Sin giros.
+
+- **Hero**: el loop del video. Se puede pausar.
+- **Vitrina**: con el mouse o el foco, el producto se acerca (escala 1,03) y la
+  barra pasa a negro.
+- **Categorías**: la tarjeta se pinta del acento y la flecha avanza 6px.
+- **Fotos**: la aparición suave al entrar en pantalla.
+- **Anatomía de una raqueta**: la cámara sigue al scroll (ver esa sección).
+- **Header**: pasa de transparente a blanco con una transición de 300ms.
+- **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
+  se ven desde el principio, la anatomía muestra la raqueta entera y quieta con
+  los nombres de sus partes, y no hay animaciones ni transiciones.
+
 ## Estructura de la home
 
-1. **Hero**: el video a pantalla completa, con el header flotando encima. Ver
-   «Hero».
-2. **Lo que más sale** (polvo, con la marca de agua de líneas): el título en
-   `--t-display-2` y, debajo, los seis destacados en la vitrina editorial. Sin
-   bajada: el título ya dice qué hay.
-3. **Fotos**, banda 1 (sobre polvo).
-4. **Anatomía de una raqueta** (cancha). Ver esa sección.
-5. **Fotos**, banda 2 (sobre cancha).
-6. **Categorías** (césped, con la marca de agua de costuras): una fila por
-   categoría, toda clickeable, separadas por líneas lisas de 1px: el nombre en
-   `--t-display-4`, la bajada, la cantidad en mono y una flecha. Con el mouse o
-   el foco, la fila se pinta lima y la flecha avanza.
-7. **Fotos**, banda 3 (sobre césped).
-8. **Footer** (tinta).
+1. **Hero**: el video en un contenedor, con el header adentro. Ver «Hero».
+2. **Lo que más sale** (blanco): el título en `--t-display-2` y la vitrina, con
+   una celda de foto entre los productos. Sin bajada: el título ya dice qué hay.
+3. **Bloque de foto** (`pelota-polvo-01`).
+4. **Anatomía de una raqueta** (banda negra). Ver esa sección.
+5. **Bloque de foto** (`raqueta-cancha-01`).
+6. **Categorías** (hormigón): el título y las cuatro tarjetas.
+7. **Footer** (negro).
 
-La home muestra productos, cómo es una raqueta y las categorías: no hay cintas
-con leyendas ni bloques de slogan.
+Sin cintas con leyendas ni bloques de slogan.
 
 ## Hero
 
+- **El video en un contenedor**, no a sangre: un bloque con radio de 16px y el
+  gutter de margen alrededor, del alto de la pantalla menos ese margen. Adentro,
+  el header (en blanco), el titular, la bajada y el botón.
 - **Video**: un jugador de blanco en una cancha techada de polvo de ladrillo,
   en loop y sin audio. Ver «Video».
-- **Capa plana de tinta al 55%**, pareja en toda la pantalla (no es un
-  degradado). Medida sobre el poster y sobre un cuadro cada medio segundo de
-  las dos versiones del video: en el cuadro más claro, el percentil 99 de la
-  zona del texto da 3,94:1 para el lima (el titular es display grande: alcanza
-  con 3:1) y 4,71:1 para el blanco de la bajada. Con la capa al 40% de antes
-  daba 2,57 y 3,07.
-- **Titular** centrado, en lima, en la display a `--t-display-1`, en tres
-  líneas («Todo para / jugar al / tenis»: ancho máximo 5,5em). Debajo, qué se
-  vende, en blanco, y la píldora lima de 56px.
-- **El header** flota arriba, sin fondo: wordmark y links en blanco, el
-  carrito en lima.
+- **Capa plana negra al 55%**, pareja en todo el contenedor (no es un
+  degradado). Medida sobre un cuadro cada medio segundo de las dos versiones del
+  video: en el cuadro más claro, el blanco del titular da 5,58:1 (percentil 99
+  de la zona del texto). Con la capa al 40% de antes no llegaba a AA.
+- **Titular** centrado, **en blanco**, en Archivo a `--t-display-1`, en tres
+  líneas («Todo para / jugar al / tenis»: ancho máximo 5,5em). Los acentos no
+  se leen sobre el video (de 1,02 a 1,13:1). Debajo, qué se vende, en blanco, y
+  el botón del acento, grande (60px de alto).
 - **Poster**: el primer cuadro de cada versión en WebP, pintado por el servidor
   en un `<picture>`. El video se monta encima desde un componente cliente
   (`VideoFondo`), que elige la versión según el ancho (corte en 760px).
-- **Control**: círculo blanco con borde de 2px tinta y el ícono de pausa/play,
-  abajo a la derecha, con etiqueta accesible.
-
-## Vitrina de productos
-
-La celda es la foto del producto, sola, sobre estudio; el nombre y el precio
-van afuera, en voz baja. La idea viene de teenage engineering (sin copiarla).
-
-**Dónde va.** La grilla de cada categoría y cualquier listado de productos
-(`GrillaProductos` + `TarjetaProducto`), el listado de combos
-(`TarjetaCombo`) y «Lo que más sale» en la home. La foto de cada celda la pone
-`FotoVitrina`. La pantalla de carga dibuja la misma grilla vacía.
-
-### La grilla
-
-- **Editorial** desde 960px: cuatro columnas, con celdas grandes (medio ancho)
-  y chicas (un cuarto) mezcladas. En cada tanda de seis, la primera y la última
-  son grandes: una grande al lado de dos chicas, y después dos chicas al lado de
-  una grande. El patrón se repite.
-- **Alto de fila fijo**: la foto mide `clamp(17rem, 25vw, 22rem)` de alto en
-  todas las celdas, grandes y chicas.
-- **20px de espacio** entre columnas y 32px entre filas (la foto más su pie).
-- **Mobile** (y hasta 959px): dos columnas parejas, con la foto en 4:5.
-
-### La celda
-
-- **La foto**: fondo `--estudio` plano, sin borde, con esquinas rectas. El
-  producto grande y centrado: la foto recortada sin fondo entra con
-  `object-fit: contain` y un margen interno parejo (8%); el placeholder centra
-  la silueta igual.
-- **Debajo y afuera de la foto**: el nombre en Inter Tight 400 a 15px, el
-  precio al lado, chico (12px) en mono («desde» si cambia con las opciones), y
-  a la derecha el **«+»**: un círculo de 44px con borde de 2px tinta y el signo
-  en SVG. Sin «Comprar», sin marca y sin la cantidad de opciones.
-- **El «+»**: con más de una variante, es parte del link al producto (toda la
-  celda es un solo link, un solo paso de Tab). Con una sola variante, es un
-  botón aparte (`AgregarDirecto`) que la agrega al carrito con el mismo
-  `agregarProducto` del selector; avisa con un tilde un momento y lo dice para
-  lectores de pantalla.
-- Sin sombras, sin degradados, sin texto sobre la foto.
-
-### Estados
-
-- **Hover y foco**: el producto escala a 1,03 (400ms) y el «+» pasa a lima. El
-  foco agrega el anillo de 3px alrededor de la celda. Sin giros.
-- **Sin stock**: el producto en gris lavado (escala de grises y opacidad 0,5) y,
-  en lugar del «+», la etiqueta de estado «Sin stock».
-- Con `prefers-reduced-motion`, el producto no se mueve: queda el «+» en lima y
-  el foco.
-
-### La galería del producto
-
-En `/producto/[slug]` y `/combo/[slug]` las fotos van en celdas de estudio,
-con esquinas rectas y el producto centrado con el mismo margen, sin texto
-encima. La primera vista va grande; si hay más, van de a dos debajo. En
-escritorio queda fija mientras se lee la ficha y nunca es más alta que la
-pantalla. Acá el producto no se apaga aunque no haya stock: eso lo dice el
-selector de opciones, al lado.
+- **Control**: círculo blanco con el ícono de pausa/play en negro, abajo a la
+  derecha del contenedor, con etiqueta accesible.
 
 ## Combos
 
@@ -489,16 +389,16 @@ venden como un producto más, con las mismas piezas.
   cliente elige una: el precio de cada combinación llega calculado y la página
   solo muestra el que corresponde. Un combo con algún producto inactivo no se
   muestra.
-- **La celda** (`TarjetaCombo`): la misma de la vitrina. Debajo, el nombre, el
-  precio del combo («desde» si cambia con las opciones) y, al lado, el
-  descuento en mono («−10 %»); el «+» lleva a su página. Sin foto propia, el
-  placeholder es el de su primer producto.
-- **El listado** (`/combos`): como una categoría, sobre polvo. Migas,
-  «Combos» a `--t-display-3`, la cantidad y la vitrina. Va en el header y en el
-  footer, después de las categorías.
-- **La página** (`/combo/[slug]`): como la de producto, sobre cal. La galería
-  muestra las fotos del combo, si tiene, y después la primera de cada producto.
-  A la derecha:
+- **La celda** (`TarjetaCombo`): la misma de la vitrina. En la fila, el nombre
+  y el precio del combo («desde» si cambia con las opciones); debajo del
+  precio, en mono, el descuento («10 % menos»). Sin foto propia, el placeholder
+  es el de su primer producto.
+- **El listado** (`/combos`): como una categoría. Migas, «Combos» a
+  `--t-display-3`, la cantidad y la vitrina. Va en el header y en el footer,
+  después de las categorías.
+- **La página** (`/combo/[slug]`): como la de producto. La galería muestra las
+  fotos del combo, si tiene, y después la primera de cada producto. A la
+  derecha:
   - «Combo» en mayúsculas, el nombre y la descripción;
   - la ficha «Qué trae»: una fila por producto, que lleva a su página, con la
     cantidad y la variante («1 × Tubo x3») o «a elección»;
@@ -521,23 +421,22 @@ venden como un producto más, con las mismas piezas.
   variante entre sueltos y combos. Lo que no alcanza, lo que ya no está a la
   venta o lo que falta elegir lo dice en la línea.
 - **Agregar**: «Agregar al carrito» suma una unidad y, debajo, dice «Agregado
-  al carrito. Ver carrito». Si ya estaba, suma a la misma línea. El «+» de la
-  vitrina (solo en productos de una variante) hace lo mismo.
-- **La página** (`/carrito`, sobre cal): título en `--t-display-3`. Las líneas
-  van separadas por 1px:
-  - la celda de estudio chica, con esquinas rectas, con la foto o la silueta;
+  al carrito. Ver carrito». Si ya estaba, suma a la misma línea.
+- **La página** (`/carrito`): título en `--t-display-3`. Las líneas van
+  separadas por 1px:
+  - la foto chica sobre estudio, con radio de 16px, o la silueta;
   - la marca (o «Combo») en mayúsculas, el nombre y, en grafito, la variante o
     lo que trae el combo;
-  - lo que impide comprarla, en un recuadro blanco con línea de 1px y radio de
-    12px, como los errores de los campos;
+  - lo que impide comprarla, en un recuadro con borde de 1px y radio de 16px,
+    como los errores de los campos;
   - la cantidad en una píldora (− n +, con tope por stock) y «Quitar»;
   - el subtotal en mono y, en los combos, cuánto se ahorra.
-- **El resumen**, a la derecha (abajo en mobile), fijo mientras se scrollea: un
-  bloque blanco con línea de 1px y radio de 20px, con subtotal, descuento de
-  combos, envío («Gratis» por ahora) y total en filas de 1px (`Totales`, el
-  mismo en el checkout y en los pedidos), y «Ir a pagar» (lima), apagado
-  mientras se recalcula o si alguna línea tiene un problema.
-- **Vacío**: «Tu carrito está vacío» y la píldora «Ver raquetas».
+- **El resumen**, a la derecha (abajo en mobile), fijo mientras se scrollea:
+  sobre hormigón, con radio de 16px, subtotal, descuento de combos, envío
+  («Gratis» por ahora) y total en filas de 1px (`Totales`, el mismo en el
+  checkout y en los pedidos), y «Ir a pagar» (el acento), apagado mientras se
+  recalcula o si alguna línea tiene un problema.
+- **Vacío**: «Tu carrito está vacío» y el botón «Ver raquetas».
 
 ## Cuenta
 
@@ -548,9 +447,9 @@ venden como un producto más, con las mismas piezas.
   debajo dice «Las contraseñas no coinciden» en el momento y el formulario no
   se envía (`CamposContrasena`); el servidor lo vuelve a revisar.
 - **Mostrar la contraseña**: cada campo de contraseña (`EntradaContrasena`)
-  lleva adentro, a la derecha, un ojo de línea fina en tinta (SVG en línea,
-  tachado cuando se ve lo escrito) en un círculo de 44px que se pinta lima al
-  pasar el mouse. Es un `type="button"` que no saca el foco del campo, con
+  lleva adentro, a la derecha, un ojo de línea fina en negro (SVG en línea,
+  tachado cuando se ve lo escrito) en un círculo de 44px que se pinta hormigón
+  al pasar el mouse. Es un `type="button"` que no saca el foco del campo, con
   «Mostrar contraseña» u «Ocultar contraseña» y `aria-pressed`. Al enviar, el
   campo vuelve a ocultarse, así el navegador ofrece guardar la contraseña.
 - **Rutas protegidas**: `/checkout`, `/mis-pedidos` y `/nueva-contrasena`. Sin
@@ -570,22 +469,22 @@ venden como un producto más, con las mismas piezas.
   castellano con `token_hash`, que sirve en cualquier navegador.
   `/auth/confirmar` acepta los dos.
 - **Ingresar, crear cuenta y recuperar** (`/ingresar`, `/registrarme`,
-  `/recuperar`, `/nueva-contrasena`, sobre cal): una columna angosta con el
-  título en `--t-display-3`, una bajada que dice para qué («Para terminar la
-  compra, ingresá con tu cuenta») y el formulario con los campos del sistema.
-  Debajo, el link a la otra página.
+  `/recuperar`, `/nueva-contrasena`): una columna angosta con el título en
+  `--t-display-3`, una bajada que dice para qué («Para terminar la compra,
+  ingresá con tu cuenta») y el formulario con los campos del sistema. Debajo,
+  el link a la otra página.
 - **Cerrar sesión**: en `/mis-pedidos`, con el botón secundario.
 
 ## Checkout
 
-- **`/checkout`** (con sesión, sobre cal), armado como el carrito. A la
-  izquierda, «Comprás como …» y los datos de envío: nombre y apellido,
-  teléfono, calle y número, piso o departamento (opcional), ciudad, provincia
-  (las 24) y código postal, con los campos del sistema. A la derecha, «Tu
-  pedido»: una fila por línea con la cantidad, **marca y nombre** («Babolat Pure
-  Drive»; los combos, por su nombre), la variante o lo que trae el combo en
-  grafito y el subtotal en mono; después los totales y «Cambiar el carrito».
-- **Confirmar y pagar** (la píldora lima): el servidor vuelve a cotizar el
+- **`/checkout`** (con sesión), armado como el carrito. A la izquierda,
+  «Comprás como …» y los datos de envío: nombre y apellido, teléfono, calle y
+  número, piso o departamento (opcional), ciudad, provincia (las 24) y código
+  postal, con los campos del sistema. A la derecha, «Tu pedido»: una fila por
+  línea con la cantidad, **marca y nombre** («Babolat Pure Drive»; los combos,
+  por su nombre), la variante o lo que trae el combo en grafito y el subtotal
+  en mono; después los totales y «Cambiar el carrito».
+- **Confirmar y pagar** (el botón del acento): el servidor vuelve a cotizar el
   carrito, valida el envío y crea el pedido con `crear_pedido`, que recalcula
   todo, reserva el stock y lo deja pendiente de pago. Si la base lo rechaza
   («No hay stock suficiente de …»), el mensaje aparece arriba del botón. Si
@@ -601,9 +500,9 @@ venden como un producto más, con las mismas piezas.
 
 ## Mis pedidos
 
-- **El listado** (`/mis-pedidos`, sobre cal): el encabezado de un listado con
-  la cuenta y «Cerrar sesión», y una fila de 1px por pedido con **columnas de
-  ancho fijo**, iguales en todas las filas, para que todo quede alineado:
+- **El listado** (`/mis-pedidos`): el encabezado de un listado con la cuenta y
+  «Cerrar sesión», y una fila de 1px por pedido con **columnas de ancho fijo**,
+  iguales en todas las filas, para que todo quede alineado:
   - desktop (desde 900px): número (11rem, «Pedido #1001», lleva al detalle),
     fecha y hora en mono (la única flexible), estado (11rem, la etiqueta de
     estado) y total en mono, alineado a la derecha (9rem);
@@ -614,27 +513,27 @@ venden como un producto más, con las mismas piezas.
   servidor busca sus pagos en Mercado Pago y los concilia, por si el aviso del
   webhook no llegó: un vencido pagado a tiempo vuelve a «Pagado».
   Un pendiente dice hasta qué hora se puede pagar («Tenés hasta las 14:32…»)
-  y lleva la píldora lima «Pagar con Mercado Pago», que reusa la preferencia
-  del pedido; si el último intento se rechazó, lo dice y ofrece probar de
-  nuevo. Con un pago en proceso se ve «Pago en proceso» y no vence; pasados
-  los 30 minutos sin pago, «Vencido». Un cancelado dice si fue por vencido o
-  porque se devolvió el pago, y si llegó un pago aprobado tarde, que se está
-  revisando. Debajo, «Qué compraste»: cada combo con sus productos sangrados y
-  lo que se ahorró, y los productos sueltos con marca y nombre, variante,
-  cantidad por precio y subtotal, todo con los precios congelados del pedido.
-  Al costado, los totales (con «Envío») y los datos de envío. Sin pago online,
-  un pendiente lleva arriba el aviso «El pago online todavía no está
+  y lleva el botón del acento «Pagar con Mercado Pago», que reusa la
+  preferencia del pedido; si el último intento se rechazó, lo dice y ofrece
+  probar de nuevo. Con un pago en proceso se ve «Pago en proceso» y no vence;
+  pasados los 30 minutos sin pago, «Vencido». Un cancelado dice si fue por
+  vencido o porque se devolvió el pago, y si llegó un pago aprobado tarde, que
+  se está revisando. Debajo, «Qué compraste»: cada combo con sus productos
+  sangrados y lo que se ahorró, y los productos sueltos con marca y nombre,
+  variante, cantidad por precio y subtotal, todo con los precios congelados del
+  pedido. Al costado, los totales (con «Envío») y los datos de envío. Sin pago
+  online, un pendiente lleva arriba el aviso «El pago online todavía no está
   disponible.» (con «Listo: tu pedido quedó registrado.» si recién se
   confirmó), dice hasta qué hora queda pendiente y no tiene botón de pago.
 - **La vuelta de Mercado Pago** (`/mis-pedidos/[id]/pago/aprobado`,
-  `/pendiente` y `/rechazado`, sobre polvo): un encabezado de estado centrado,
-  como el 404, con «Pago aprobado», «Pago en proceso» o «Pago rechazado» en la
-  display, qué significa y «Ver el pedido». El rechazado suma «Probar de nuevo»
-  (lima) mientras el pedido se pueda pagar y haya pago online. Antes de
-  mostrarse, si el pedido está pendiente, el servidor busca sus pagos en
-  Mercado Pago y los concilia (lo mismo que el detalle del pedido): «Pago
-  aprobado» dice si ya está acreditado. Los parámetros de la URL de vuelta
-  nunca cambian el pedido (ver docs/API.md).
+  `/pendiente` y `/rechazado`): un encabezado de estado centrado, como el 404,
+  con «Pago aprobado», «Pago en proceso» o «Pago rechazado» en la display, qué
+  significa y «Ver el pedido». El rechazado suma «Probar de nuevo» (el acento)
+  mientras el pedido se pueda pagar y haya pago online. Antes de mostrarse, si
+  el pedido está pendiente, el servidor busca sus pagos en Mercado Pago y los
+  concilia (lo mismo que el detalle del pedido): «Pago aprobado» dice si ya está
+  acreditado. Los parámetros de la URL de vuelta nunca cambian el pedido (ver
+  docs/API.md).
 
 ## Componente `Raqueta`
 
@@ -655,38 +554,35 @@ sin 3D y la va a usar «Armá tu raqueta».
 - **Cuerdas y ojales**: las cuerdas están en las mismas posiciones en los dos
   estilos. Las cruzadas dejan lugar abajo para el antivibrador, y los pasos
   están elegidos para que ningún ojal se pise con otro.
-- **Props**: `resaltadas` (las partes en lima), `estilo`, `encuadre`
+- **Props**: `resaltadas` (las partes en el acento), `estilo`, `encuadre`
   (`ajustado`, solo la raqueta, o `lienzo`, 400×560 con aire para las
   etiquetas) y `prefijo` (para los ids si hay más de una en la página). Exporta
   `ANCLAS` (el punto de cada parte), `PATRON` y `LIENZO`.
-- **Estilo `linea`** (el que va en «Armá tu raqueta»): línea tinta de 1,5px
-  sobre cal, sin rellenos. Es un dibujo técnico, no una ilustración. Resaltar es
-  poner un marcador lima debajo de la línea; el resto baja a gris (tinta al
-  28%).
+- **Estilo `linea`** (el que va en «Armá tu raqueta»): línea negra de 1,5px
+  sobre blanco, sin rellenos. Es un dibujo técnico, no una ilustración.
+  Resaltar es poner un marcador del acento debajo de la línea; el resto baja a
+  gris (negro al 28%).
 - **Estilo `inflada`** (el de la anatomía): cada parte con cuerpo, **relleno
-  blanco plano**, contorno tinta de unos 2,5px y el grano encima; **la parte
-  activa en lima**. Sin degradados ni brillos, y las demás partes no se apagan:
-  la raqueta se lee entera contra la cancha.
+  blanco plano** y contorno negro; **la parte activa en el acento**. Sin
+  degradados ni brillos, y las demás partes no se apagan: la raqueta se lee
+  entera contra la banda negra.
 
 ## Anatomía de una raqueta
 
-Una sección de la home, entre la banda de fotos 1 y la 2, que explica la
-raqueta parte por parte. Usa el sistema como cualquier otra sección: la
-superficie de cancha rápida, la display y los textos chicos en mayúsculas. Lo
-que sigue es lo propio de la sección.
+Una sección de la home, entre los dos bloques de foto, que explica la raqueta
+parte por parte. Lo que sigue es lo propio de la sección.
 
 ### Color y fondo
 
-- **Cancha rápida** (`--cancha`) de borde a borde, con grano y **sin marca de
-  agua**. Entra y sale con un borde recto.
-- Tinta para el texto, los contornos y las líneas guía (5,65:1 sobre cancha);
-  blanco para el relleno de la raqueta y el nombre gigante; lima para la parte
-  activa y la pelota.
-- **La raqueta contrasta con la cancha**: relleno claro, contorno tinta y la
-  parte activa en lima, tanto la dibujada como la 3D (en el modelo, el material
-  del marco pasa a blanco).
-- El blanco sobre la cancha (3,23:1) solo se usa en el nombre gigante, que es
-  decorativo y repite el título del paso.
+- **Banda negra** de borde a borde, sin texturas ni dibujos. Entra y sale con
+  un borde recto.
+- Blanco para el texto, las líneas guía y el relleno de la raqueta; el acento
+  para la parte activa (de 3,31 a 3,83:1 contra el negro, y bien distinta del
+  blanco del resto); grafito para la palabra gigante.
+- **La raqueta contrasta con la banda**: relleno blanco, contorno negro y la
+  parte activa en el acento, tanto la dibujada como la 3D (en el modelo, el
+  material del marco pasa a blanco y el de la parte activa, al acento).
+- Sin la pelota flotante de antes: pocas cosas.
 
 ### La raqueta 3D
 
@@ -696,45 +592,41 @@ que sigue es lo propio de la sección.
   texturas WebP de 2048px como máximo, de 19 MB a 364 KB. Trae tres mallas: la
   raqueta (marco con sus ojales, garganta, empuñadura con el grip y tapón) y el
   encordado en dos mallas. Viene acostado y se endereza en el código. El
-  material del marco se aclara (blanco) para que contraste con la cancha.
-- **Resaltar**: lo que es una malla aparte se pone lima con un emissive suave
-  (el encordado). Lo que no lo es (marco, protector, ojales, garganta,
-  empuñadura, grip, overgrip y tapón) se marca solo con su nombre anclado a su
-  posición 3D y la línea guía. El punto dulce es un disco lima semitransparente
-  que late sobre el encordado. El antivibrador no viene en el modelo: es una
-  pastilla blanca agregada en el código, entre las principales y debajo de la
-  última cruzada, que pasa a lima en su paso.
+  material del marco se aclara (blanco) para que se lea contra el negro.
+- **Resaltar**: lo que es una malla aparte se pone del acento con un emissive
+  suave (el encordado). Lo que no lo es (marco, protector, ojales, garganta,
+  empuñadura, grip, overgrip y tapón) se marca con su nombre anclado a su
+  posición 3D y la línea guía. El punto dulce es un disco del acento
+  semitransparente que late sobre el encordado. El antivibrador no viene en el
+  modelo: es una pastilla blanca agregada en el código, entre las principales y
+  debajo de la última cruzada, que pasa al acento en su paso.
 - **Luz de estudio suave**: un entorno chico armado con `Lightformer` de drei
   (no baja ningún HDR), una luz principal arriba a la derecha y una sombra de
   contacto debajo del tapón.
-- **La pelota**: una pelota de tenis dibujada (SVG), lima plana con contorno y
-  costuras tinta, flota arriba a la izquierda.
 
 ### La raqueta dibujada (SVG)
 
 Es `Raqueta` con `estilo="inflada"` y se ve cuando no va el 3D: con
 `prefers-reduced-motion`, sin WebGL, sin JavaScript y mientras carga el modelo.
 Ocupa la misma caja que el 3D, así que el cambio de una a otra no mueve el
-layout. Relleno blanco plano, contorno tinta, grano y la parte activa en lima;
+layout. Relleno blanco plano, contorno negro y la parte activa en el acento;
 quieta y completa, con los nombres de las partes a la vista.
 
 ### Nombres de las partes y tipografía
 
 - **Cada parte se nombra con texto y una línea guía**, sin cápsula: el nombre
-  en Inter Tight 600 en mayúsculas a 13px, en tinta, y una línea tinta de 3px
-  que sale de un punto blanco con borde tinta de 3px sobre la parte. **El
-  nombre va afuera de la silueta** (a la izquierda o a la derecha de la
-  raqueta): nunca sobre la raqueta ni sobre una zona lima, y nunca se sale del
-  escenario. Con el 3D se ve solo el del paso activo; en la versión dibujada,
-  todos.
-- **Nombre gigante**: el nombre de la parte activa en la display, enorme
-  (17cqi) y en una línea (interlineado 0,8), en blanco, **detrás de la raqueta,
-  nunca encima**: va a la altura de la cabeza, donde el encordado y el marco le
-  pasan por delante y no cae ningún nombre de parte.
+  en mayúsculas a 13px, en blanco, y una línea blanca de 2px que sale de un
+  punto blanco sobre la parte. **El nombre va afuera de la silueta** (a la
+  izquierda o a la derecha de la raqueta): nunca sobre la raqueta, y nunca se
+  sale del escenario. Con el 3D se ve solo el del paso activo; en la versión
+  dibujada, todos.
+- **Palabra gigante**: el nombre de la parte activa en la display, enorme
+  (17cqi) y en una línea (interlineado 0,8), en grafito, **detrás de la
+  raqueta, nunca encima**: va a la altura de la cabeza, donde el encordado y el
+  marco le pasan por delante y no cae ningún nombre de parte.
 - **Titular y pasos**: el titular de la sección en la display a
   `--t-display-2`; los títulos de los pasos en la display a `--t-display-4`. El
-  dato técnico va en mono, con una línea lisa de 1px arriba, y el texto en
-  Inter Tight 400.
+  dato técnico va en mono y el texto en Inter Tight, separados por espacio.
 
 ### Estructura
 
@@ -750,7 +642,7 @@ quieta y completa, con los nombres de las partes a la vista.
   5, largo de 27″) y una frase corta que dice qué cambia en el juego. Los
   pasos están en `lib/anatomia.js`.
 - **Todo el texto es HTML** (títulos y párrafos), nunca texto dentro del SVG.
-  Los nombres de las partes y el nombre gigante también son HTML y repiten el
+  Los nombres de las partes y la palabra gigante también son HTML y repiten el
   título del paso, por eso van ocultos para lectores de pantalla.
 
 ### Movimiento
@@ -763,14 +655,14 @@ quieta y completa, con los nombres de las partes a la vista.
   primer paso y después del último se ve la raqueta entera. Mira de frente, un
   poco desde la derecha y desde arriba. Los focos y las anclas de cada paso
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
-- **Al activarse un paso**: la parte pasa a lima (el encordado brilla, aparece
-  el disco del punto dulce o el antivibrador pasa a lima), el nombre de la
-  parte aparece con su línea guía (sube un poco, con un fundido corto) y el
-  nombre gigante aparece detrás. El paso activo se lee entero y los demás bajan
-  al 35%.
-- **Flotación y parallax**: la raqueta sube y baja medio centímetro y gira
-  apenas (±8°); la pelota sube, baja y gira con el scroll; el nombre gigante se
-  queda un poco atrás de la raqueta. Los nombres de las partes no flotan.
+- **Al activarse un paso**: la parte pasa al acento (el encordado brilla,
+  aparece el disco del punto dulce o el antivibrador pasa al acento), el nombre
+  de la parte aparece con su línea guía (un fundido corto) y la palabra
+  gigante aparece detrás. El paso activo se lee entero y los demás bajan al
+  35%.
+- **Flotación**: la raqueta sube y baja medio centímetro y gira apenas (±8°);
+  la palabra gigante se queda un poco atrás de la raqueta. Los nombres de las
+  partes no flotan.
 
 ### El final
 
@@ -790,7 +682,7 @@ bloque de cierre (`data-cierre`, de 170 a 180svh). A lo largo de ese tramo:
    entrada y salida suaves. Si se vuelve para atrás, desanda la vuelta.
 4. **Después queda flotando** con una rotación muy lenta (0,18 rad/s, una
    vuelta cada 35 segundos).
-5. **Aparece el botón lima «Ver raquetas»** (desde el 78%), debajo de la
+5. **Aparece el botón del acento «Ver raquetas»** (desde el 78%), debajo de la
    frase, al lado de la raqueta (debajo en mobile), y lleva a
    `/categoria/raquetas`. Entra subiendo; antes está oculto y fuera del orden
    de tabulación.
@@ -807,8 +699,8 @@ texto HTML del bloque de cierre, el mismo con y sin 3D.
   una sola vez, no en tiempo real.
 - **En la página, solo `transform` y `opacity`**: los nombres de las partes y
   sus líneas (posicionados en unidades del contenedor, `cqw`/`cqh`, a partir de
-  la proyección de su ancla 3D), el parallax y las apariciones. Nada de `left`,
-  `top` ni filtros SVG en elementos que se mueven.
+  la proyección de su ancla 3D), el parallax de la palabra gigante y las
+  apariciones. Nada de `left`, `top` ni filtros SVG en elementos que se mueven.
 - **Funciona igual en Chrome, Safari y Firefox**: el scroll se mide con
   `requestAnimationFrame`, sin `animation-timeline`.
 
@@ -816,11 +708,11 @@ texto HTML del bloque de cierre, el mismo con y sin 3D.
 
 Con `prefers-reduced-motion`, sin WebGL o sin JavaScript no se carga el 3D: se
 ve la raqueta dibujada, entera y quieta, con los nombres de las partes a la
-vista, cada uno con su línea guía. No flota nada. El final es la raqueta
-quieta con la frase de cierre (en la display) y el botón lima, fijos al lado
-(debajo en mobile) mientras dura el tramo de cierre, que mide lo mismo con y
-sin 3D. Mientras carga el modelo se ve lo mismo, y cuando está listo la
-raqueta 3D aparece encima con un fundido.
+vista, cada uno con su línea guía. El final es la raqueta quieta con la frase
+de cierre (en la display) y el botón del acento, fijos al lado (debajo en
+mobile) mientras dura el tramo de cierre, que mide lo mismo con y sin 3D.
+Mientras carga el modelo se ve lo mismo, y cuando está listo la raqueta 3D
+aparece encima con un fundido.
 
 ## Fotos de producto
 
@@ -847,20 +739,16 @@ mismo margen, sobre el estudio de la celda.
   AVIF queda al lado, con la misma ruta. `--sin-subir` procesa sin tocar
   Supabase; con slugs, procesa solo esos.
 - En la celda, `FotoVitrina` muestra el recorte con `object-fit: contain` y un
-  margen interno de 8%.
+  margen interno de 5%.
 
 ### Mientras tanto: placeholder
 
 Hasta que estén las fotos, `FotoVitrina` dibuja la celda en `--estudio` con la
 silueta plana de la categoría (raqueta, tubo de pelotas, rollo de cuerda o
-bolso raquetero) en tinta al 6%, centrada con el mismo margen que tendrá el
-recorte. Sin texto, sin ícono de imagen rota, sin líneas ni degradados. Es
-decorativo (`aria-hidden`): el nombre ya está debajo. Las fotos reemplazan al
-placeholder solas, producto por producto. Sin stock, la silueta se lava igual
-que una foto.
-
-Son otras fotos que las de «Fotos al scrollear»: estas muestran el producto;
-aquellas, el juego.
+bolso raquetero) en negro al 6%, centrada con el mismo margen que tendrá el
+recorte. Sin texto, sin ícono de imagen rota. Es decorativo (`aria-hidden`):
+el nombre ya está debajo. Las fotos reemplazan al placeholder solas, producto
+por producto.
 
 ## Video
 
@@ -875,106 +763,103 @@ sobre sus cuadros (ver «Hero»).
 
 ## Páginas
 
-- **Categoría** (polvo): migas en mayúsculas, el nombre en `--t-display-3`, la
-  bajada y la cantidad en mono. Debajo, la vitrina.
-- **Producto** (cal): la galería a la izquierda y, a la derecha, la marca en
+- **Categoría**: migas en mayúsculas, el nombre en `--t-display-3`, la bajada
+  y la cantidad en mono. Debajo, la vitrina, con su celda de foto, y al final
+  el bloque de foto de la categoría.
+- **Producto**: la galería a la izquierda y, a la derecha, la marca en
   mayúsculas, el nombre en la display a `--t-display-4`, la descripción, la
   **ficha técnica** (filas separadas por líneas de 1px, el dato en mono), el
-  precio y el selector: opciones en píldora con borde de 2px, la activa en
-  lima y las que no tienen stock en hormigón. «Agregar al carrito» es la
-  píldora lima. En las raquetas no hay grip ni peso elegidos de entrada: hasta
-  que el cliente elige, el precio es el «desde» (sin «desde» si todas las
-  opciones valen lo mismo), el botón está apagado y debajo dice «Falta elegir
-  grip y peso». Los demás productos arrancan con la primera opción con stock.
-  El stock va en singular o plural: «¡Queda 1!», «¡Quedan 3!».
+  precio y el selector: opciones en píldora con borde de 1px, la activa en el
+  acento con texto blanco y las que no tienen stock en hormigón. «Agregar al
+  carrito» es el botón del acento. En las raquetas no hay grip ni peso elegidos
+  de entrada: hasta que el cliente elige, el precio es el «desde» (sin «desde»
+  si todas las opciones valen lo mismo), el botón está apagado y debajo dice
+  «Falta elegir grip y peso». Los demás productos arrancan con la primera
+  opción con stock. El stock va en singular o plural: «¡Queda 1!», «¡Quedan
+  3!».
 - **Combos y combo**: el listado y la página de un combo, con las piezas de la
   categoría y del producto. Ver «Combos».
-- **Carga**: un bloque del alto de la pantalla, del color de lo que viene
-  (tinta en la home; cal con la vitrina vacía en los listados), con «Cargando…»
-  para lectores de pantalla. Mide al menos el alto de la pantalla: si no,
-  cuando llega el contenido el footer salta para abajo. La muestra lo probó: con
-  la pantalla de carga de hoy daba un CLS de 0,29; con la nueva, 0.
-- **Error y 404** (polvo): tipográficos, sin dibujos. El código gigante en la
-  display a `--t-display-1`, en tinta; un título que dice qué pasó («Página no
-  encontrada», «Algo salió mal») y la píldora para volver. Centrados.
+- **Carga**: un bloque blanco del alto de la pantalla, con «Cargando…» para
+  lectores de pantalla (en los listados, la vitrina vacía). Mide al menos el
+  alto de la pantalla: si no, cuando llega el contenido el footer salta para
+  abajo. La muestra lo probó: con la pantalla de carga de hoy daba un CLS de
+  0,29; con la nueva, 0.
+- **Error y 404**: tipográficos, sin dibujos. El código gigante en la display a
+  `--t-display-1`; un título que dice qué pasó («Página no encontrada», «Algo
+  salió mal») y el botón para volver. Centrados.
 
 ## Footer
 
-Banda tinta a todo el ancho. El wordmark gigante en blanco con su pelota lima;
-las categorías, «Combos» y «Mi cuenta» como links de texto en mayúsculas
-(blancos, subrayados con el mouse); la línea de créditos de las fotos si hay
-alguna («Fotos: …», ver «Fotos al scrollear») y los legales a 13px. Foco en
-lima. Sin íconos sociales ni separadores.
+Banda negra a todo el ancho. El wordmark gigante en blanco con su pelota
+amarilla; las categorías, «Combos» y «Mi cuenta» como links de texto en
+mayúsculas (blancos, subrayados con el mouse); la línea de créditos de las
+fotos si hay alguna («Fotos: …», ver «Fotos») y los legales a 13px. Foco
+blanco. Sin íconos sociales ni separadores.
 
 ## Voz
 
 Sencilla y descriptiva, en castellano rioplatense (de vos). Los textos dicen
 qué es cada cosa: «Todo para jugar al tenis», «Raquetas de potencia con un
 punto dulce amplio», «Página no encontrada». Sin slogans, leyendas, chistes ni
-frases inventadas. Los pies de foto dicen lo que se ve («Derecha en polvo»);
-las etiquetas, el estado («Sin stock»). **Ningún texto repite lo que ya dice el
-título.** Las descripciones de producto cuentan para qué sirve y qué lo
-distingue, en una o dos oraciones.
+frases inventadas. **Ningún texto repite lo que ya dice el título.** Las
+descripciones de producto cuentan para qué sirve y qué lo distingue, en una o
+dos oraciones.
 
 ## Rendimiento
 
 - El video del hero, las fotos y la anatomía no compiten: el video arranca
-  primero (el poster va con `fetchPriority="high"`); las fotos son lazy y su
-  movimiento solo escucha el scroll mientras su banda está cerca; el 3D carga
-  sin SSR y deja de renderizar fuera de pantalla.
+  primero (el poster va con `fetchPriority="high"`); las fotos son lazy; el 3D
+  carga sin SSR y deja de renderizar fuera de pantalla.
 - Todo lo que está debajo del pliegue es lazy: fotos, vitrinas fuera de la
   primera pantalla y el modelo 3D.
 - Las fuentes van con `next/font`, las imágenes reservan su espacio
-  (proporción o alto fijo) y la pantalla de carga mide una pantalla: nada se
+  (proporción o alto de fila) y la pantalla de carga mide una pantalla: nada se
   mueve al cargar.
-- En mobile, menos fotos (una por banda) y movimiento más simple.
 
 ## Accesibilidad
 
-- Contraste AA en todo el texto, con las combinaciones de la tabla «Contrastes».
-  El lima nunca es texto sobre claro.
-- Foco visible en todas las superficies: anillo de 3px de `--foco` (tinta en
-  claras y de color, lima en tinta y video).
+- Contraste AA en todo el texto, con las combinaciones de las tablas de
+  «Paleta». El lima nunca es texto; el acento siempre lleva texto blanco.
+- Foco visible en todos los fondos: anillo de 3px de `--foco` (negro en los
+  claros, blanco en el negro y el video).
 - Áreas táctiles de 44px como mínimo: links del header (44px de alto), el
-  carrito, botones (48px), campos (48px), opciones, el «+», el ojo de la
+  carrito, botones y barras (48px), campos (48px), opciones, el ojo de la
   contraseña y la pausa del video.
-- Navegación completa con teclado, un solo paso de Tab por producto (dos si el
-  «+» agrega directo) y salto al contenido.
+- Navegación completa con teclado, un solo paso de Tab por producto y salto al
+  contenido.
 - `prefers-reduced-motion` respetado en todo (ver «Movimiento»).
-- Lo decorativo va oculto para lectores de pantalla: bandas de fotos, marcas de
-  agua, el nombre gigante y los nombres de las partes de la anatomía (repiten el
-  paso).
+- Lo decorativo va oculto para lectores de pantalla: las fotos de juego y de
+  objetos, la palabra gigante y los nombres de las partes de la anatomía
+  (repiten el paso).
 - Layout fluido desde 320px, sin scroll horizontal.
 
 ## Evitar
 
 | Evitar | Cómo se resuelve |
 | --- | --- |
-| Separadores punteados | Espacio entre secciones; donde haga falta una línea, 1px lisa |
-| Stickers decorativos o girados | Solo etiquetas de estado: texto en mayúsculas sobre fondo plano, derechas y sin borde |
-| Cápsulas en la navegación | Links de texto en mayúsculas que se subrayan; solo el carrito en píldora |
-| Cápsulas alrededor de los nombres de las partes | Texto y línea guía, afuera de la silueta |
-| Textos que repiten el título | Ningún elemento repite lo que ya dice el título: ni bajadas que lo reformulan ni etiquetas que lo anuncian |
-| Lima como texto sobre claro o sobre las superficies | Lima de relleno, con texto y borde tinta. Como texto, solo sobre tinta o el video |
-| Grafito o blanco como texto sobre polvo, cancha o césped | Todo el texto en tinta; la jerarquía sale del tamaño y del peso |
-| Tres superficies de color a la vista | Dos como máximo; la del medio mide al menos 100svh o va un neutro |
-| Más de una marca de agua por pantalla, o marcas en cancha | Una como máximo, solo en polvo y césped |
-| Interlineado de 0,8 con mayúsculas acentuadas | 0,92 en la display: la tilde llega a 0,89em |
-| Display en párrafos o por debajo de 2rem | Display solo en titulares; el texto en Inter Tight |
-| Degradados, sombras, resplandores | Grano quieto, bordes tinta y rellenos planos, también en la raqueta dibujada |
-| Raqueta que se pierde contra la cancha | Relleno claro, contorno tinta, la parte activa en lima; las demás partes no se apagan |
-| La palabra gigante encima de la raqueta | Detrás, a la altura de la cabeza, donde no cae ningún nombre |
-| Tarjetas de producto con borde, radio o texto sobre la foto | La celda es la foto sobre estudio; el nombre y el precio van debajo |
-| «Comprar», la marca o «5 opciones» en la vitrina | Nombre, precio y el «+» |
-| Fotos que tapan texto o botones | Bandas propias, sin clics; las fotos no salen de su banda |
-| Stickers o números sobre las fotos | Un pie de foto chico debajo, que dice lo que se ve |
-| Rotaciones de más de 6°, o giros fuera de las fotos | Fotos de −4° a 4° (±6° con la entrada); nada más gira |
+| Superficies de color (polvo, cancha, césped) | Blanco, hormigón y negro; el color lo traen las fotos |
+| Grano o texturas | Fondos planos |
+| Marcas de agua y dibujos de fondo | Espacio y titulares grandes |
+| Fotos inclinadas o con parallax | Celdas y bloques derechos, con radio de 16px; como mucho, una aparición suave |
+| Stickers decorativos o girados | Solo etiquetas de estado, derechas y en píldora, sin borde |
+| Separadores punteados, o líneas para separar secciones | Espacio. La línea de 1px solo en tablas, resúmenes y campos |
+| Píldoras en la navegación | Links de texto en mayúsculas que se subrayan; solo el carrito en píldora |
+| Más de un color en la interfaz, o el acento de adorno | Un solo acento, solo en acciones y estados activos, siempre con texto blanco |
+| El acento como titular sobre el video | Titular en blanco; el acento en el botón |
+| El lima como texto o como acento | El lima es solo la pelota del wordmark |
+| Textos que repiten el título | Ningún elemento repite lo que ya dice el título |
+| Radios fuera de los dos | 16px para lo que se mira, píldora para lo que se toca |
+| Negritas para jerarquizar el texto | Inter Tight en un solo peso; la jerarquía sale del tamaño y de la display |
+| Interlineado de 0,8 con mayúsculas acentuadas | 0,92 en la display |
+| Sombras, resplandores, degradados | Fondos planos y bordes de 1px donde hacen falta; la raqueta dibujada, en relleno plano |
+| La palabra gigante encima de la raqueta | Detrás, a la altura de la cabeza |
+| Nombres de partes en cápsulas o sobre la raqueta | Texto y línea guía, afuera de la silueta |
+| Texto sobre las fotos | La foto sola; el nombre y el precio van debajo |
 | Movimiento con `top`, `left`, `width` o filtros | Solo `transform` y `opacity` |
 | Movimiento con `prefers-reduced-motion` | Todo quieto en su estado final |
-| Radios fuera de la escala | 0 en la vitrina, 6px fotos y etiquetas, 12px errores, 20px bloques, píldora para lo que se toca |
 | Áreas táctiles chicas | 44px como mínimo |
 | Pantalla de carga más baja que la pantalla | Un bloque del alto de la pantalla: el footer no salta |
-| Placeholder con ícono de imagen rota | Bloque con la proporción exacta y la descripción, o la silueta centrada |
+| Placeholder con ícono de imagen rota | Bloque gris con la proporción exacta y la descripción, o la silueta centrada |
 | Fotos de terceros sin crédito o sin licencia | `CREDITOS.txt` y licencias de uso (ver docs/FOTOS.md) |
 | Copiar textos, logos, ilustraciones, fotos o colores de las referencias | Valores y textos propios |
 | Slogans, leyendas y frases inventadas | Textos que describen qué hay y para qué sirve |
