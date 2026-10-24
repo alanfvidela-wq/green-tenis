@@ -1,30 +1,44 @@
 /* Sistema de diseño: ver DESIGN.md */
 :root {
-  /* Paleta: blanco y negro, más lima */
+  /* Paleta: blanco, hormigón y negro, más un solo acento */
   --blanco: #fff;
   --negro: #000;
   --grafito: #333;
+  /* El gris claro de fondo: secciones alternas, placeholders, apagados */
   --hormigon: #e6e6e6;
-  /* Solo la vitrina: el fondo de estudio de cada celda */
+  /* Solo el fondo de las fotos de producto */
   --estudio: #f4f5f2;
-  /* El amarillo de la pelota: acción principal, activo, hover. Nunca texto
-     sobre blanco. */
+  /* El acento: naranja polvo de ladrillo. El único color de la interfaz, solo
+     en acciones y estados activos, siempre con texto blanco (5,48:1). */
+  --acento: #b3471c;
+  /* El amarillo de la pelota: solo la pelota del wordmark y del favicon */
   --lima: #dcf900;
   --foco: var(--negro);
 
   /* Tipografía */
+  --fuente-display: var(--font-display), "Arial Narrow", sans-serif;
   --fuente-texto: var(--font-texto), "Helvetica Neue", Arial, sans-serif;
   --fuente-datos: var(--font-datos), ui-monospace, "Courier New", monospace;
   --t-dato: 0.8125rem;
+  --t-chico: 0.875rem;
   --t-texto: 1rem;
-  --t-entrada: 1.125rem;
+  --t-entrada: clamp(1.0625rem, 1.3vw, 1.25rem);
+  --t-titulo: clamp(1.25rem, 2vw, 1.625rem);
+  /* La display. La más grande depende también del alto: el hero entra en una
+     pantalla */
+  --t-display-4: clamp(2rem, 4vw, 3.25rem);
+  --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
+  --t-display-2: clamp(3.5rem, 10vw, 9rem);
+  --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
+  --tracking-titulos: -0.01em;
+  --tracking-nav: 0.06em;
+  /* Tamaños de antes, hasta que todas las páginas pasen al sistema nuevo */
   --t-titulo-3: 1.375rem;
   --t-titulo-2: clamp(2.375rem, 5vw, 4rem);
   --t-titulo-1: clamp(3rem, 8vw, 6rem);
-  --tracking-titulos: -0.02em;
-  --tracking-nav: 0.06em;
+  --t-entrada-fluida: var(--t-entrada);
 
-  /* Espaciado */
+  /* Espaciado: múltiplos de 4px */
   --espacio-1: 0.25rem;
   --espacio-2: 0.5rem;
   --espacio-3: 0.75rem;
@@ -33,8 +47,12 @@
   --espacio-6: 1.5rem;
   --espacio-8: 2rem;
   --espacio-10: 2.5rem;
+  --espacio-12: 3rem;
   --espacio-16: 4rem;
   --espacio-24: 6rem;
+  --espacio-32: 8rem;
+  /* Arriba y abajo de cada sección */
+  --seccion: clamp(4rem, 10vw, 8rem);
   --ancho-max: 1280px;
   --gutter: clamp(1rem, 4vw, 2rem);
 
@@ -45,31 +63,7 @@
   --transicion: 120ms ease;
   --suave: cubic-bezier(0.22, 1, 0.36, 1);
   /* Aproximado; el header lo reemplaza por su alto medido */
-  --alto-header: 72px;
-}
-
-/* Sistema nuevo (rediseño, ver DESIGN.md). Por ahora solo lo usa /muestra:
-   son tokens nuevos y no cambian ninguno de los de arriba. Los colores
-   neutros, los dos radios y los espacios son los de arriba. */
-:root {
-  /* El acento: el único color de la interfaz, solo en acciones y estados
-     activos, siempre con texto blanco. Verde Wimbledon; la muestra prueba
-     también el naranja polvo y el azul cancha. El lima queda solo para la
-     pelota del wordmark. */
-  --acento: #0f6e3c;
-
-  /* Display. La más grande depende también del alto: el hero entra en una
-     pantalla */
-  --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
-  --t-display-2: clamp(3.5rem, 10vw, 9rem);
-  --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
-  --t-display-4: clamp(2rem, 4vw, 3.25rem);
-  --t-titulo: clamp(1.25rem, 2vw, 1.625rem);
-  --t-entrada-fluida: clamp(1.0625rem, 1.3vw, 1.25rem);
-  --t-chico: 0.875rem;
-
-  --espacio-12: 3rem;
-  --espacio-32: 8rem;
+  --alto-header: 76px;
 }
 
 * {
@@ -109,17 +103,29 @@ main {
   width: 100%;
   max-width: var(--ancho-max);
   margin: 0 auto;
-  padding: var(--espacio-8) var(--gutter) var(--espacio-16);
+  padding: var(--espacio-10) var(--gutter) var(--seccion);
 }
 
-/* Un solo peso: la jerarquía sale del tamaño */
+/* Un solo peso: la jerarquía sale del tamaño y de la display */
 h1,
 h2,
 h3,
 h4 {
   font-weight: 400;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: var(--tracking-titulos);
+  text-wrap: balance;
+}
+
+/* La display: Archivo extra condensada, en mayúsculas. Con menos de 0,92 de
+   interlineado, las tildes de las mayúsculas tocan la línea de arriba. */
+.display {
+  font-family: var(--fuente-display);
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 0.92;
+  letter-spacing: 0;
+  text-transform: uppercase;
   text-wrap: balance;
 }
 
@@ -147,8 +153,8 @@ button {
   z-index: 20;
   padding: var(--espacio-2) var(--espacio-4);
   border-radius: var(--radio-pildora);
-  background: var(--lima);
-  color: var(--negro);
+  background: var(--acento);
+  color: var(--blanco);
   transform: translateY(-200%);
 }
 
@@ -156,8 +162,8 @@ button {
   transform: none;
 }
 
-/* Botones: píldoras. .boton es la acción principal (lima); .boton-secundario,
-   la blanca con borde. Sobre el video, solo lima. */
+/* Botones: píldoras. .boton es la acción principal (el acento, con texto
+   blanco); .boton-secundario, la blanca con borde de 1px. */
 .boton {
   display: inline-flex;
   align-items: center;
@@ -167,8 +173,8 @@ button {
   padding: var(--espacio-3) var(--espacio-8);
   border: 1px solid transparent;
   border-radius: var(--radio-pildora);
-  background: var(--lima);
-  color: var(--negro);
+  background: var(--acento);
+  color: var(--blanco);
   font-size: var(--t-texto);
   line-height: 1;
   transition:
@@ -179,7 +185,7 @@ button {
 
 .boton:hover:not(:disabled) {
   background: var(--negro);
-  color: var(--lima);
+  color: var(--blanco);
 }
 
 .boton:disabled {
@@ -195,8 +201,8 @@ button {
 }
 
 .boton-secundario:hover:not(:disabled) {
-  border-color: var(--lima);
-  background: var(--lima);
+  border-color: var(--negro);
+  background: var(--hormigon);
   color: var(--negro);
 }
 
@@ -235,9 +241,19 @@ button {
   text-decoration-thickness: 2px;
 }
 
-@media (max-width: 860px) {
+/* Solo para lectores de pantalla: oculto a la vista, pero se lee */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 1023px) {
   :root {
-    --alto-header: 108px;
+    --alto-header: 104px;
   }
 }
 
@@ -249,14 +265,4 @@ button {
     animation-duration: 0ms !important;
     animation-iteration-count: 1 !important;
   }
-}
-
-/* Solo para lectores de pantalla: oculto a la vista, pero se lee */
-.solo-lectores {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }

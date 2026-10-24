@@ -25,9 +25,10 @@ export default function CabeceraFlotante({ className, children }) {
   }, []);
 
   useEffect(() => {
-    const hero = document.querySelector("[data-hero]");
-    if (!hero) return;
+    if (pathname !== "/") return;
+    let hero = null;
     let cuadro = 0;
+    let observador = null;
     function medir() {
       cuadro = 0;
       const alto = ref.current.offsetHeight;
@@ -37,10 +38,24 @@ export default function CabeceraFlotante({ className, children }) {
     function alScrollear() {
       if (!cuadro) cuadro = requestAnimationFrame(medir);
     }
-    alScrollear();
-    window.addEventListener("scroll", alScrollear, { passive: true });
-    window.addEventListener("resize", alScrollear);
+    function empezar() {
+      hero = document.querySelector("[data-hero]");
+      if (!hero) return false;
+      alScrollear();
+      window.addEventListener("scroll", alScrollear, { passive: true });
+      window.addEventListener("resize", alScrollear);
+      return true;
+    }
+    // La página puede llegar después que el header (mientras se ve la pantalla
+    // de carga): si el hero todavía no está, se lo espera
+    if (!empezar()) {
+      observador = new MutationObserver(() => {
+        if (empezar()) observador.disconnect();
+      });
+      observador.observe(document.body, { childList: true, subtree: true });
+    }
     return () => {
+      observador?.disconnect();
       cancelAnimationFrame(cuadro);
       window.removeEventListener("scroll", alScrollear);
       window.removeEventListener("resize", alScrollear);

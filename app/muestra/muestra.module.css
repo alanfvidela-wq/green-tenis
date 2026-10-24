@@ -16,8 +16,8 @@
 
 /* El acento, a elección en la muestra: verde Wimbledon (el de globals.css),
    naranja polvo o azul cancha */
-.muestra:has(input[name="acento"][value="naranja"]:checked) {
-  --acento: #b3471c;
+.muestra:has(input[name="acento"][value="verde"]:checked) {
+  --acento: #0f6e3c;
 }
 
 .muestra:has(input[name="acento"][value="azul"]:checked) {

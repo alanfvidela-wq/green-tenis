@@ -54,29 +54,29 @@ baja, con mucho aire. **Pocas cosas, grandes y con aire.**
 | `--estudio` | Estudio | `#F4F5F2` | Solo el fondo de las fotos de producto en la vitrina y la galería |
 | `--negro` | Negro | `#000000` | Texto, bordes de 1px, las bandas del footer y de la anatomía |
 | `--grafito` | Grafito | `#333333` | Texto secundario sobre blanco, hormigón y estudio; la palabra gigante de la anatomía |
-| `--acento` | Acento | ver abajo | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
+| `--acento` | Naranja polvo | `#B3471C` | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
 | `--lima` | Amarillo pelota | `#DCF900` | Solo la pelota del wordmark y del favicon |
 
 ### El acento
 
-Uno solo en todo el sitio. Siempre lleva **texto blanco** encima. Tres
-opciones, probadas en `/muestra` con un selector:
+**Naranja polvo** (`#B3471C`, un tono de polvo de ladrillo, cercano al de
+Roland Garros): uno solo en todo el sitio, y siempre con **texto blanco**
+encima. Se eligió en la muestra del rediseño entre tres opciones, medidas igual:
 
 | Opción | Hex | Con blanco | Contra el negro | Contra hormigón | Como texto sobre el video |
 | --- | --- | --- | --- | --- | --- |
-| **Verde Wimbledon** (recomendada: la tienda se llama green.) | `#0F6E3C` | **6,33** | 3,32 | 5,07 | 1,12 |
-| Naranja polvo (tono Roland Garros) | `#B3471C` | **5,48** | 3,83 | 4,39 | 1,02 |
-| Azul cancha (tono US Open) | `#1F5BBF` | **6,35** | 3,31 | 5,09 | 1,13 |
+| **Naranja polvo** (la elegida) | `#B3471C` | **5,48** | 3,83 | 4,39 | 1,02 |
+| Verde Wimbledon | `#0F6E3C` | 6,33 | 3,32 | 5,07 | 1,12 |
+| Azul cancha | `#1F5BBF` | 6,35 | 3,31 | 5,09 | 1,13 |
 
 - **«Con blanco»** vale en los dos sentidos: texto blanco sobre el acento (en
-  botones, barras y el carrito) y el acento como texto sobre blanco. Los tres
-  pasan AA (4,5).
-- **Contra el negro** pasan 3:1, el contraste de un componente: alcanza para
+  botones, barras y el carrito) y el acento como texto sobre blanco: 5,48:1,
+  AA.
+- **Contra el negro** da 3,83:1, más que el 3:1 de un componente: alcanza para
   la parte activa de la raqueta sobre la banda negra.
-- **Sobre el video no se leen** (1,02 a 1,13 en el cuadro más claro): el
-  titular del hero va en blanco y el acento queda en el botón.
-- El lima de antes ya no es acento: es el amarillo de la pelota del wordmark,
-  igual con las tres opciones.
+- **Sobre el video no se lee** (1,02:1 en el cuadro más claro): el titular del
+  hero va en blanco y el acento queda en el botón.
+- El lima de antes ya no es acento: es el amarillo de la pelota del wordmark.
 
 ### Contrastes de los neutros
 
@@ -367,8 +367,8 @@ Sin cintas con leyendas ni bloques de slogan.
   video: en el cuadro más claro, el blanco del titular da 5,58:1 (percentil 99
   de la zona del texto). Con la capa al 40% de antes no llegaba a AA.
 - **Titular** centrado, **en blanco**, en Archivo a `--t-display-1`, en tres
-  líneas («Todo para / jugar al / tenis»: ancho máximo 5,5em). Los acentos no
-  se leen sobre el video (de 1,02 a 1,13:1). Debajo, qué se vende, en blanco, y
+  líneas («Todo para / jugar al / tenis»: ancho máximo 5,5em). El acento no se
+  lee sobre el video (1,02:1). Debajo, qué se vende, en blanco, y
   el botón del acento, grande (60px de alto).
 - **Poster**: el primer cuadro de cada versión en WebP, pintado por el servidor
   en un `<picture>`. El video se monta encima desde un componente cliente
@@ -577,7 +577,7 @@ parte por parte. Lo que sigue es lo propio de la sección.
 - **Banda negra** de borde a borde, sin texturas ni dibujos. Entra y sale con
   un borde recto.
 - Blanco para el texto, las líneas guía y el relleno de la raqueta; el acento
-  para la parte activa (de 3,31 a 3,83:1 contra el negro, y bien distinta del
+  para la parte activa (3,83:1 contra el negro, y bien distinta del
   blanco del resto); grafito para la palabra gigante.
 - **La raqueta contrasta con la banda**: relleno blanco, contorno negro y la
   parte activa en el acento, tanto la dibujada como la 3D (en el modelo, el

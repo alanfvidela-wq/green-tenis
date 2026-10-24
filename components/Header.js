@@ -1,10 +1,12 @@
-import Link from "next/link";
 import { CATEGORIAS } from "@/lib/productos";
 import BotonCarrito from "./BotonCarrito";
 import CabeceraFlotante from "./CabeceraFlotante";
+import LinkNav from "./LinkNav";
 import Logo from "./Logo";
 import styles from "./Header.module.css";
 
+// El header (ver «Header» en DESIGN.md): el wordmark, los links de texto y, a
+// la derecha, «Mi cuenta» y el carrito, la única píldora.
 export default function Header() {
   return (
     <CabeceraFlotante className={styles.header}>
@@ -13,17 +15,23 @@ export default function Header() {
 
         <nav className={styles.nav} aria-label="Secciones">
           {CATEGORIAS.map((categoria) => (
-            <Link key={categoria.slug} href={`/categoria/${categoria.slug}`}>
+            <LinkNav
+              key={categoria.slug}
+              href={`/categoria/${categoria.slug}`}
+              className={styles.link}
+            >
               {categoria.nombre}
-            </Link>
+            </LinkNav>
           ))}
-          <Link href="/combos">Combos</Link>
+          <LinkNav href="/combos" tambien="/combo/" className={styles.link}>
+            Combos
+          </LinkNav>
         </nav>
 
         <div className={styles.acciones}>
-          <Link href="/mis-pedidos" className={styles.cuenta}>
+          <LinkNav href="/mis-pedidos" className={styles.link}>
             Mi cuenta
-          </Link>
+          </LinkNav>
           <BotonCarrito className={styles.carrito} />
         </div>
       </div>

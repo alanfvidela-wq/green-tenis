@@ -12,116 +12,115 @@
     color 300ms ease;
 }
 
-/* Sobre el hero: sin fondo y con el texto en blanco */
+/* Sobre el hero: sin fondo, en blanco y metido adentro del contenedor del
+   video (bajado el margen del contenedor, con transform: el alto medido no
+   cambia) */
 .header[data-transparente] {
-  --foco: var(--lima);
+  --foco: var(--blanco);
   background: transparent;
   color: var(--blanco);
 }
 
 .contenido {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--espacio-8);
+  gap: 0 var(--espacio-10);
   max-width: var(--ancho-max);
   margin: 0 auto;
   padding: var(--espacio-4) var(--gutter);
+  transition: transform 300ms var(--suave);
 }
 
-/* Navegación en mayúsculas con tracking */
+.header[data-transparente] .contenido {
+  padding-inline: calc(var(--gutter) + var(--espacio-6));
+  transform: translateY(var(--gutter));
+}
+
+/* Links de texto en mayúsculas, a la izquierda, al lado del wordmark */
 .nav {
   display: flex;
-  justify-content: flex-end;
   gap: var(--espacio-6);
-  font-size: var(--t-dato);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
 }
 
-.nav a {
-  padding: var(--espacio-2) 0;
-  white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
-  transition: text-decoration-color var(--transicion);
-}
-
-.nav a:hover {
-  text-decoration-color: currentColor;
-}
-
-/* «Mi cuenta» y el carrito, a la derecha */
 .acciones {
   display: flex;
   align-items: center;
-  gap: var(--espacio-5);
+  gap: var(--espacio-6);
 }
 
-/* «Mi cuenta»: un link más de la navegación */
-.cuenta {
-  padding: var(--espacio-2) 0;
+/* Se subrayan con el mouse; el de la página abierta queda subrayado */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-size: var(--t-dato);
   letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 5px;
+  text-decoration: underline 1px transparent;
+  text-underline-offset: 6px;
   transition: text-decoration-color var(--transicion);
 }
 
-.cuenta:hover {
+.link:hover,
+.link[aria-current="page"] {
   text-decoration-color: currentColor;
 }
 
-/* Carrito: píldora con borde de 1px; sobre el video, lima */
+/* El carrito: la única píldora, en el acento con texto blanco */
 .carrito {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 var(--espacio-5);
-  border: 1px solid var(--negro);
   border-radius: var(--radio-pildora);
-  background: var(--blanco);
-  color: var(--negro);
+  background: var(--acento);
+  color: var(--blanco);
   font-size: var(--t-dato);
   letter-spacing: var(--tracking-nav);
   text-transform: uppercase;
   white-space: nowrap;
   transition:
     background-color var(--transicion),
-    border-color var(--transicion);
+    color var(--transicion);
 }
 
-.header[data-transparente] .carrito {
-  border-color: var(--lima);
-  background: var(--lima);
+.carrito:hover {
+  background: var(--negro);
 }
 
-.carrito:hover,
 .header[data-transparente] .carrito:hover {
-  border-color: var(--lima);
-  background: var(--lima);
+  background: var(--blanco);
+  color: var(--negro);
 }
 
-/* En pantallas chicas la navegación baja a una segunda fila con scroll horizontal */
-@media (max-width: 860px) {
+/* Sin lugar para todo en una fila: las secciones bajan a una segunda fila con
+   scroll horizontal */
+@media (max-width: 1023px) {
   .contenido {
-    grid-template-columns: 1fr auto;
-    row-gap: var(--espacio-2);
-    padding-bottom: var(--espacio-2);
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: var(--espacio-2);
   }
 
   .nav {
     grid-column: 1 / -1;
     grid-row: 2;
-    justify-content: flex-start;
     gap: var(--espacio-5);
+    /* Lugar para el anillo de foco dentro del scroll */
+    margin: 0 -6px;
+    padding: 0 6px;
     overflow-x: auto;
     scrollbar-width: none;
+  }
+
+  .acciones {
+    gap: var(--espacio-4);
+  }
+}
+
+@media (max-width: 519px) {
+  .logo {
+    font-size: 1.875rem;
   }
 }

@@ -1,14 +1,21 @@
-import { Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Archivo, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-// Grotesca suiza (alternativa gratuita a Whyte). En todo el sitio va en 400;
-// el 800 es solo para la excepción de «Anatomía de una raqueta».
+// La display: Archivo extra condensada (ancho 62, peso 900), en mayúsculas en
+// los titulares y en minúscula en el wordmark. Variable, con el eje de ancho.
+const display = Archivo({
+  variable: "--font-display",
+  subsets: ["latin"],
+  axes: ["wdth"],
+});
+
+// El texto: grotesca suiza (alternativa gratuita a Whyte), en un solo peso
 const texto = Inter_Tight({
   variable: "--font-texto",
   subsets: ["latin"],
-  weight: ["400", "800"],
+  weight: "400",
 });
 
 // Voz técnica para precios, contadores y la ficha
@@ -29,7 +36,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={`${texto.variable} ${datos.variable}`}>
+    <html lang="es" className={`${display.variable} ${texto.variable} ${datos.variable}`}>
       <body>
         <a href="#contenido" className="saltar">
           Ir al contenido

@@ -33,8 +33,8 @@ export const metadata = {
 // peor contraste del acento como texto sobre el video del hero, con la capa al
 // 55%, medido en un cuadro cada medio segundo (el blanco da 5,58).
 const ACENTOS = [
-  { id: "verde", nombre: "Verde Wimbledon", corto: "Verde", hex: "#0f6e3c", video: 1.12, recomendado: true },
-  { id: "naranja", nombre: "Naranja polvo", corto: "Naranja", hex: "#b3471c", video: 1.02 },
+  { id: "verde", nombre: "Verde Wimbledon", corto: "Verde", hex: "#0f6e3c", video: 1.12 },
+  { id: "naranja", nombre: "Naranja polvo", corto: "Naranja", hex: "#b3471c", video: 1.02, recomendado: true },
   { id: "azul", nombre: "Azul cancha", corto: "Azul", hex: "#1f5bbf", video: 1.13 },
 ];
 
