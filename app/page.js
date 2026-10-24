@@ -1,8 +1,7 @@
 import Link from "next/link";
 import AnatomiaRaqueta from "@/components/AnatomiaRaqueta";
 import GrillaProductos from "@/components/GrillaProductos";
-import Aparecer from "@/components/Aparecer";
-import FotoLugar from "@/components/FotoLugar";
+import BloqueFoto from "@/components/BloqueFoto";
 import Hero from "@/components/Hero";
 import {
   BAJADA_ANATOMIA,
@@ -11,7 +10,6 @@ import {
   TITULO_ANATOMIA,
 } from "@/lib/anatomia";
 import { lugaresDe } from "@/lib/fotos";
-import generadas from "@/lib/fotosGeneradas.json";
 import { contar } from "@/lib/formato";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
 import styles from "./page.module.css";
@@ -22,14 +20,7 @@ export default async function Home() {
   const destacados = productos.filter((p) => p.destacado).slice(0, 5);
   const [celda] = lugaresDe("home", "celda");
   const [bloqueUno, bloqueDos] = lugaresDe("home", "bloque");
-  const bloque = (lugar) =>
-    lugar && (
-      <div className={`${styles.contenido} ${styles.bloque}`} aria-hidden="true">
-        <Aparecer>
-          <FotoLugar lugar={lugar} foto={generadas.fotos[lugar.archivo]} sizes="(max-width: 1280px) 100vw, 1216px" />
-        </Aparecer>
-      </div>
-    );
+  const claseBloque = `${styles.contenido} ${styles.bloque}`;
 
   return (
     <main className={styles.home}>
@@ -44,7 +35,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {bloque(bloqueUno)}
+      <BloqueFoto lugar={bloqueUno} className={claseBloque} />
 
       {/* Anatomía de una raqueta: la banda negra, con la raqueta fija y los
           pasos con el scroll (ver DESIGN.md) */}
@@ -55,7 +46,7 @@ export default async function Home() {
         pasos={PASOS_ANATOMIA}
       />
 
-      {bloque(bloqueDos)}
+      <BloqueFoto lugar={bloqueDos} className={claseBloque} />
 
       <section aria-labelledby="titulo-categorias" className={styles.hormigon}>
         <div className={`${styles.contenido} ${styles.seccion}`}>

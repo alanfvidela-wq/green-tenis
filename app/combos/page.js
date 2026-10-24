@@ -20,7 +20,7 @@ export default async function PaginaCombos() {
           <span aria-hidden="true">/</span>
           <span aria-current="page">Combos</span>
         </nav>
-        <h1 className={styles.titulo}>Combos</h1>
+        <h1 className={`display ${styles.titulo}`}>Combos</h1>
         <p className={styles.descripcion}>{DESCRIPCION}</p>
         <p className={`dato ${styles.cuenta}`}>
           {contar(combos.length, "combo", "combos")}

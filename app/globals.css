@@ -230,7 +230,11 @@ button {
   text-transform: uppercase;
 }
 
+/* El área táctil llega a 44px sin mover la línea */
 .migas a {
+  display: inline-block;
+  margin: -12px -2px;
+  padding: 12px 2px;
   color: var(--negro);
   text-decoration: underline;
   text-decoration-thickness: 1px;

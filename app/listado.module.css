@@ -1,26 +1,30 @@
-/* Encabezado de los listados (categoría, combos): migas, el nombre gigante,
-   la bajada y la cantidad */
+/* Encabezado de los listados (categoría, combos): migas, el nombre en la
+   display, la bajada y la cantidad */
 .encabezado {
   display: flex;
   flex-direction: column;
-  gap: var(--espacio-4);
-  padding: var(--espacio-4) 0 var(--espacio-10);
+  gap: var(--espacio-5);
+  padding-bottom: var(--espacio-12);
 }
 
 .titulo {
-  margin-top: var(--espacio-4);
-  font-size: var(--t-titulo-1);
-  line-height: 1;
+  margin-top: var(--espacio-6);
+  font-size: var(--t-display-3);
 }
 
 .descripcion {
   max-width: 44ch;
-  color: var(--grafito);
   font-size: var(--t-entrada);
+  line-height: 1.5;
 }
 
 .cuenta {
   color: var(--grafito);
+}
+
+/* El bloque de foto de la categoría, al final */
+.bloque {
+  padding-top: var(--seccion);
 }
 
 /* Listado sin nada para mostrar */
