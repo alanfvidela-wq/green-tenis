@@ -1,13 +1,12 @@
 import { getImageProps } from "next/image";
 import { orientacion } from "@/lib/fotos";
-import Sticker from "./Sticker";
 import styles from "./FotoLugar.module.css";
 
 // El ancho que ocupa cada orientación (igual que en FotoLugar.module.css)
 const SIZES = {
-  vertical: "(max-width: 759px) 76vw, 30vw",
-  horizontal: "(max-width: 759px) 88vw, 42vw",
-  cuadrada: "(max-width: 759px) 72vw, 32vw",
+  vertical: "(max-width: 759px) 76vw, 28vw",
+  horizontal: "(max-width: 759px) 88vw, 40vw",
+  cuadrada: "(max-width: 759px) 72vw, 30vw",
 };
 
 const srcSet = (archivo, anchos, formato) =>
@@ -39,11 +38,12 @@ function Foto({ archivo, foto, sizes }) {
 }
 
 // Un lugar de foto de la banda (ver «Fotos al scrollear» en DESIGN.md). La
-// caja quieta reserva el espacio con la proporción exacta; el recuadro de
-// adentro es lo que gira y se mueve (MovimientoFotos). Sin foto generada, el
-// placeholder: el color de su superficie, con grano, el nombre del archivo y
-// qué foto buscar.
-export default function FotoLugar({ lugar, foto, numero }) {
+// caja de afuera queda quieta y reserva el espacio (la foto con su proporción
+// exacta y el pie); el recuadro de adentro es lo que gira y se mueve
+// (MovimientoFotos). Debajo de la foto, el pie dice lo que se ve. Sin foto
+// generada, el placeholder: el color de una superficie, con grano, el nombre
+// del archivo y qué foto buscar.
+export default function FotoLugar({ lugar, foto }) {
   const [a, b] = lugar.proporcion;
   const forma = orientacion(lugar.proporcion);
 
@@ -57,10 +57,6 @@ export default function FotoLugar({ lugar, foto, numero }) {
         data-velocidad={lugar.velocidad}
       >
         <div className={styles.recuadro} data-recuadro>
-          <figcaption className={styles.etiqueta}>
-            <span className={styles.numero}>{numero}</span>
-            <Sticker>{lugar.etiqueta}</Sticker>
-          </figcaption>
           {foto ? (
             <div className={styles.marco}>
               <Foto archivo={lugar.archivo} foto={foto} sizes={SIZES[forma]} />
@@ -73,6 +69,7 @@ export default function FotoLugar({ lugar, foto, numero }) {
               <p className={styles.descripcion}>{lugar.descripcion}</p>
             </div>
           )}
+          <figcaption className={styles.pie}>{lugar.pie}</figcaption>
         </div>
       </figure>
     </div>

@@ -73,8 +73,8 @@
   --t-chico: 0.875rem;
 
   /* Escala única de radios y bordes */
-  --radio-foto: 6px;
-  --radio-sticker: 12px;
+  --radio-chico: 6px;
+  --radio-medio: 12px;
   --radio-bloque: 20px;
   --radio-redondo: 999px;
   --borde-fino: 1px;
@@ -262,4 +262,14 @@ button {
     animation-duration: 0ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Solo para lectores de pantalla: oculto a la vista, pero se lee */
+.solo-lectores {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }

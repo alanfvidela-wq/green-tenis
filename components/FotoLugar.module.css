@@ -1,15 +1,16 @@
-/* Banda de fotos al scrollear (ver DESIGN.md). Cada lugar ocupa 80svh: así
-   nunca hay más de dos fotos inclinadas a la vista. */
+/* Banda de fotos al scrollear (ver DESIGN.md). En desktop cada lugar mide
+   44svh y la foto, 40svh con su pie: alternadas a un lado y al otro, se ven dos
+   a la vez sin vacío entre ellas. */
 .banda {
-  padding-block: var(--espacio-16);
+  padding-block: 6svh 10svh;
   /* Recorta lo que el giro saca por los costados, sin scroll horizontal */
   overflow-x: clip;
 }
 
 .lugar {
   display: flex;
-  align-items: center;
-  min-height: 80svh;
+  align-items: flex-start;
+  height: 44svh;
   padding-inline: max(var(--gutter), 6vw);
 }
 
@@ -17,34 +18,27 @@
   justify-content: flex-end;
 }
 
-.lugar[data-lado="centro"] {
-  justify-content: center;
-}
-
-/* La caja quieta: reserva el espacio con la proporción exacta */
+/* La caja quieta: reserva el espacio de la foto y su pie */
 .caja {
-  position: relative;
   width: var(--ancho);
-  aspect-ratio: var(--proporcion);
   pointer-events: none;
 }
 
 .vertical {
-  --ancho: min(30vw, 400px, calc(56svh * var(--relacion)));
+  --ancho: min(28vw, 380px, calc(40svh * var(--relacion)));
 }
 
 .horizontal {
-  --ancho: min(42vw, 600px, calc(56svh * var(--relacion)));
+  --ancho: min(40vw, 560px, calc(40svh * var(--relacion)));
 }
 
 .cuadrada {
-  --ancho: min(32vw, 420px, 56svh);
+  --ancho: min(30vw, 400px, 40svh);
 }
 
-/* Lo que se mueve. En reposo (y sin JS o sin movimiento), su giro. */
+/* Lo que se mueve: la foto con su pie. En reposo (y sin JS o sin
+   movimiento), su giro. */
 .recuadro {
-  position: absolute;
-  inset: 0;
   transform: rotate(var(--giro));
 }
 
@@ -53,11 +47,10 @@
 }
 
 .marco {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  aspect-ratio: var(--proporcion);
   overflow: hidden;
-  border: var(--borde) solid var(--tinta);
-  border-radius: var(--radio-foto);
+  border-radius: var(--radio-chico);
 }
 
 .imagen {
@@ -67,29 +60,11 @@
   object-fit: cover;
 }
 
-/* La etiqueta: el número en un círculo y el sticker, pegados al borde de
-   arriba del recuadro */
-.etiqueta {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  left: var(--espacio-4);
-  display: flex;
-  align-items: center;
-  gap: var(--espacio-2);
-  transform: translateY(-50%);
-}
-
-.numero {
-  display: grid;
-  place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  background: var(--tinta);
-  color: var(--lima);
-  font-family: var(--fuente-datos);
+/* El pie: qué se ve en la foto, en texto chico */
+.pie {
+  margin-top: var(--espacio-2);
   font-size: var(--t-dato);
+  line-height: 1.35;
 }
 
 /* Placeholder: el color de una superficie, con grano, y qué foto va */
@@ -99,7 +74,7 @@
   flex-direction: column;
   justify-content: space-between;
   gap: var(--espacio-4);
-  padding: var(--espacio-10) var(--espacio-4) var(--espacio-4);
+  padding: var(--espacio-4);
   color: var(--tinta);
 }
 
@@ -144,8 +119,8 @@
   .lugar,
   .lugar[data-lado] {
     justify-content: center;
-    min-height: 0;
-    padding-block: var(--espacio-10);
+    height: auto;
+    padding-block: var(--espacio-8);
   }
 
   .vertical {

@@ -1,5 +1,4 @@
 import generadas from "@/lib/fotosGeneradas.json";
-import { numeroDeLugar } from "@/lib/fotos";
 import FotoLugar from "./FotoLugar";
 import MovimientoFotos from "./MovimientoFotos";
 import styles from "./FotoLugar.module.css";
@@ -16,7 +15,6 @@ export default function BandaFotos({ lugares, className = "" }) {
             key={lugar.archivo}
             lugar={lugar}
             foto={generadas.fotos[lugar.archivo]}
-            numero={numeroDeLugar(lugar.archivo)}
           />
         ))}
       </MovimientoFotos>
