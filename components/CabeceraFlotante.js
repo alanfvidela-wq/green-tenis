@@ -40,7 +40,9 @@ export default function CabeceraFlotante({ className, children }) {
     }
     function empezar() {
       hero = document.querySelector("[data-hero]");
-      if (!hero) return false;
+      // Mientras se ve la pantalla de carga, React trae el hero en un bloque
+      // oculto: ahí mide 0, así que se espera a que se muestre
+      if (!hero || hero.getClientRects().length === 0) return false;
       alScrollear();
       window.addEventListener("scroll", alScrollear, { passive: true });
       window.addEventListener("resize", alScrollear);
@@ -52,7 +54,7 @@ export default function CabeceraFlotante({ className, children }) {
       observador = new MutationObserver(() => {
         if (empezar()) observador.disconnect();
       });
-      observador.observe(document.body, { childList: true, subtree: true });
+      observador.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["hidden"] });
     }
     return () => {
       observador?.disconnect();

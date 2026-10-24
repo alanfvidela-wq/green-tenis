@@ -194,9 +194,12 @@
 }
 
 /* El nombre de la parte: texto en mayúsculas, sin cápsula y sin giro */
+/* Fondo negro como la banda: no se ve como recuadro, pero el nombre se lee
+   aunque caiga sobre el marco blanco */
 .etiqueta {
   display: block;
   padding: 0.2em 0.5em;
+  background: var(--negro);
   color: var(--blanco);
   font-size: var(--t-dato);
   letter-spacing: var(--tracking-nav);
