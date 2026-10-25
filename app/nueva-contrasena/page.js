@@ -12,7 +12,7 @@ export default async function PaginaNuevaContrasena() {
 
   return (
     <main className={styles.pagina}>
-      <h1 className={styles.titulo}>Contraseña nueva</h1>
+      <h1 className={`display ${styles.titulo}`}>Contraseña nueva</h1>
       <p className={styles.bajada}>Elegí la contraseña nueva para {usuario.email}.</p>
 
       <FormularioNuevaContrasena />

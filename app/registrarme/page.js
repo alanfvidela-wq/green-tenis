@@ -10,7 +10,7 @@ export default async function PaginaRegistrarme({ searchParams }) {
 
   return (
     <main className={styles.pagina}>
-      <h1 className={styles.titulo}>Crear cuenta</h1>
+      <h1 className={`display ${styles.titulo}`}>Crear cuenta</h1>
       <p className={styles.bajada}>
         {siguiente === "/checkout"
           ? "Con una cuenta podés terminar la compra y seguir tus pedidos. El carrito queda como está."

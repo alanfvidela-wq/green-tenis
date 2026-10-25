@@ -10,7 +10,7 @@ export default async function PaginaIngresar({ searchParams }) {
 
   return (
     <main className={styles.pagina}>
-      <h1 className={styles.titulo}>Ingresar</h1>
+      <h1 className={`display ${styles.titulo}`}>Ingresar</h1>
       <p className={styles.bajada}>
         {siguiente === "/checkout"
           ? "Para terminar la compra, ingresá con tu cuenta. El carrito queda como está."

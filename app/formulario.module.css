@@ -10,14 +10,15 @@
   padding-top: var(--espacio-10);
 }
 
+/* El título, en la display */
 .titulo {
-  font-size: var(--t-titulo-2);
-  line-height: 1.05;
+  margin-bottom: var(--espacio-2);
+  font-size: var(--t-display-3);
 }
 
 .bajada {
-  color: var(--grafito);
   font-size: var(--t-entrada);
+  line-height: 1.5;
 }
 
 .formulario {
@@ -64,7 +65,7 @@
 .conBoton .entrada {
   flex: 1;
   min-width: 0;
-  padding-right: calc(var(--espacio-2) + 40px);
+  padding-right: calc(var(--espacio-2) + 44px);
 }
 
 /* Sin el ojo propio de Edge: ya está el nuestro */
@@ -73,16 +74,16 @@
   display: none;
 }
 
-/* Lo que se toca va en píldora (acá, un círculo): sin fondo, lima al pasar el
-   mouse, como las opciones */
+/* Lo que se toca va en píldora (acá, un círculo de 44px): sin fondo,
+   hormigón al pasar el mouse, como las opciones */
 .ojo {
   position: absolute;
   top: 50%;
-  right: var(--espacio-1);
+  right: 2px;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: var(--radio-pildora);
   background: transparent;
@@ -92,7 +93,7 @@
 }
 
 .ojo:hover {
-  background: var(--lima);
+  background: var(--hormigon);
 }
 
 .ojo svg {
@@ -110,11 +111,16 @@
   font-size: var(--t-dato);
 }
 
-/* Lo que salió mal: en negro, sin color, con una línea al costado */
+/* Lo que salió mal: en negro, sin color, en un recuadro blanco con borde de
+   1px y radio de 16px */
 .error {
-  padding-left: var(--espacio-2);
-  border-left: 1px solid var(--negro);
-  font-size: var(--t-dato);
+  display: block;
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  font-size: var(--t-chico);
+  line-height: 1.4;
 }
 
 .enviar {
@@ -134,7 +140,11 @@
   font-size: var(--t-dato);
 }
 
+/* El área táctil llega a 44px sin mover la línea */
 .alternativa a {
+  display: inline-block;
+  margin: -14px -2px;
+  padding: 14px 2px;
   color: var(--negro);
   text-decoration: underline;
   text-underline-offset: 3px;

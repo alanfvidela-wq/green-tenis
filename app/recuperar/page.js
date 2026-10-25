@@ -9,7 +9,7 @@ export default async function PaginaRecuperar({ searchParams }) {
 
   return (
     <main className={styles.pagina}>
-      <h1 className={styles.titulo}>Recuperar la contraseña</h1>
+      <h1 className={`display ${styles.titulo}`}>Recuperar la contraseña</h1>
       <p className={styles.bajada}>
         Escribí el email de tu cuenta y te mandamos un link para elegir una contraseña nueva.
       </p>
