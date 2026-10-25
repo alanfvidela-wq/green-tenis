@@ -27,6 +27,12 @@
   padding-top: var(--seccion);
 }
 
+/* Lo que se arma en el navegador (el carrito): ocupa al menos la pantalla,
+   así el footer no salta cuando llegan las líneas */
+.pantalla {
+  min-height: calc(100svh - var(--alto-header));
+}
+
 /* Listado sin nada para mostrar */
 .vacio {
   color: var(--grafito);
