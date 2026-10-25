@@ -127,6 +127,18 @@
   text-underline-offset: 4px;
 }
 
+/* El número del pedido: el área táctil llega a 44px sin mover la fila */
+.numeroPedido {
+  display: inline-block;
+  min-width: 44px;
+  margin-block: -12px;
+  padding-block: 12px;
+}
+
+.fecha {
+  white-space: nowrap;
+}
+
 .secundario {
   color: var(--grafito);
   font-family: var(--fuente-datos);
