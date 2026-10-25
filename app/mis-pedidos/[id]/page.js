@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
+import Estado, { tonoDePedido } from "@/components/Estado";
 import Totales from "@/components/Totales";
 import { SIN_PAGO_ONLINE, conciliarPedido, pagoOnlineDisponible } from "@/lib/cobros";
 import { formatearFecha, formatearHora, formatearPrecio } from "@/lib/formato";
@@ -98,9 +99,11 @@ export default async function PaginaPedido({ params, searchParams }) {
             {aviso}
           </p>
         )}
-        <h1 className={listado.titulo}>Pedido #{pedido.numero}</h1>
+        <h1 className={`display ${listado.titulo}`}>Pedido #{pedido.numero}</h1>
         <p className={styles.fecha}>{formatearFecha(pedido.creadoEn)}</p>
-        <p className={styles.estado}>{pedido.estado.texto}</p>
+        <p className={styles.estado}>
+          <Estado tono={tonoDePedido(pedido.estado.clave)}>{pedido.estado.texto}</Estado>
+        </p>
         {nota && <p className={listado.descripcion}>{nota}</p>}
         {pendiente && pagoOnline && <BotonPagar pedidoId={pedido.id} />}
       </header>

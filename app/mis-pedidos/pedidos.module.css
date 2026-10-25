@@ -34,7 +34,7 @@
 .numero {
   grid-area: numero;
   min-width: 0;
-  font-size: var(--t-titulo-3);
+  font-size: var(--t-titulo);
   text-underline-offset: 4px;
 }
 
@@ -52,10 +52,9 @@
   grid-area: fecha;
 }
 
+/* La etiqueta de estado (Estado), alineada con el resto de la fila */
 .estado {
-  font-size: var(--t-dato);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
+  line-height: 1;
 }
 
 .pedido .estado {

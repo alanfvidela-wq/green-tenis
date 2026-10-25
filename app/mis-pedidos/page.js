@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import Estado, { tonoDePedido } from "@/components/Estado";
 import { salir } from "@/lib/cuenta";
 import { formatearFecha, formatearPrecio } from "@/lib/formato";
 import { getPedidos } from "@/lib/pedidos";
@@ -30,7 +31,7 @@ export default async function PaginaMisPedidos({ searchParams }) {
             Listo: cambiaste tu contraseña.
           </p>
         )}
-        <h1 className={listado.titulo}>Mis pedidos</h1>
+        <h1 className={`display ${listado.titulo}`}>Mis pedidos</h1>
         <p className={listado.descripcion}>Ingresaste como {usuario.email}.</p>
         <form action={salir}>
           <button type="submit" className="boton boton-secundario">
@@ -51,7 +52,9 @@ export default async function PaginaMisPedidos({ searchParams }) {
                 Pedido #{pedido.numero}
               </Link>
               <p className={styles.fecha}>{formatearFecha(pedido.creadoEn)}</p>
-              <p className={styles.estado}>{pedido.estado.texto}</p>
+              <p className={styles.estado}>
+                <Estado tono={tonoDePedido(pedido.estado.clave)}>{pedido.estado.texto}</Estado>
+              </p>
               <p className={styles.monto}>{formatearPrecio(pedido.total)}</p>
             </li>
           ))}
