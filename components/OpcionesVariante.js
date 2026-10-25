@@ -14,7 +14,7 @@ function textoStock(stock) {
   return "En stock";
 }
 
-// Las opciones de un producto en píldoras: la elegida en lima y las que no
+// Las opciones de un producto en píldoras: la elegida en el acento y las que no
 // alcanzan, en hormigón. Va dentro de SelectorVariante y de SelectorCombo, que
 // son los que guardan la elección.
 export default function OpcionesVariante({

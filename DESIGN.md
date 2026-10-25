@@ -255,8 +255,8 @@ baja; y la barra de acción a lo ancho.
   subrayado) y el precio a la derecha, en mono a 13px («desde» si cambia con
   las opciones). En celdas de menos de 260px, el precio baja debajo del nombre.
 - **Debajo, la barra**: una píldora de ancho completo y 48px de alto en el
-  acento, con «Ver producto» en mayúsculas y texto blanco. **Sin stock**, la
-  barra va en negro y dice «Sin stock».
+  acento, con «Ver producto» (en los combos, «Ver combo») en mayúsculas y
+  texto blanco. **Sin stock**, la barra va en negro y dice «Sin stock».
 - **Toda la celda es un solo link** al producto (un solo paso de Tab).
 - Sin sombras, sin degradados, sin texto sobre la foto.
 
@@ -618,8 +618,9 @@ quieta y completa, con los nombres de las partes a la vista.
   en mayúsculas a 13px, en blanco, y una línea blanca de 2px que sale de un
   punto blanco sobre la parte. **El nombre va afuera de la silueta** (a la
   izquierda o a la derecha de la raqueta): nunca sobre la raqueta, y nunca se
-  sale del escenario. Con el 3D se ve solo el del paso activo; en la versión
-  dibujada, todos.
+  sale del escenario. El nombre lleva el fondo negro de la banda (no se ve
+  como recuadro): si en el 3D llega a rozar el marco, se sigue leyendo. Con el
+  3D se ve solo el del paso activo; en la versión dibujada, todos.
 - **Palabra gigante**: el nombre de la parte activa en la display, enorme
   (17cqi) y en una línea (interlineado 0,8), en grafito, **detrás de la
   raqueta, nunca encima**: va a la altura de la cabeza, donde el encordado y el
@@ -782,8 +783,10 @@ sobre sus cuadros (ver «Hero»).
 - **Carga**: un bloque blanco del alto de la pantalla, con «Cargando…» para
   lectores de pantalla (en los listados, la vitrina vacía). Mide al menos el
   alto de la pantalla: si no, cuando llega el contenido el footer salta para
-  abajo. La muestra lo probó: con la pantalla de carga de hoy daba un CLS de
-  0,29; con la nueva, 0.
+  abajo: con la pantalla de carga anterior, la home, las categorías y el
+  producto daban un CLS de 0,135; con esta, 0. Los listados la arman con
+  `CargaVitrina`; el carrito y el checkout, que se arman en el navegador,
+  también miden al menos una pantalla.
 - **Error y 404**: tipográficos, sin dibujos. El código gigante en la display a
   `--t-display-1`; un título que dice qué pasó («Página no encontrada», «Algo
   salió mal») y el botón para volver. Centrados.

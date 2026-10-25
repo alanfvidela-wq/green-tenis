@@ -5,7 +5,7 @@ import { pagarPedido } from "@/lib/checkout";
 import formulario from "@/app/formulario.module.css";
 import styles from "./BotonPagar.module.css";
 
-// La píldora lima para pagar un pedido pendiente: el servidor reusa la
+// La píldora del acento para pagar un pedido pendiente: el servidor reusa la
 // preferencia del pedido (o crea una) y lleva a Checkout Pro. Si no se puede
 // pagar, dice por qué debajo.
 export default function BotonPagar({ pedidoId, texto = "Pagar con Mercado Pago" }) {
