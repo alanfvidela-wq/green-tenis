@@ -1,5 +1,7 @@
-import { conErrores, noEncontrado, sinSesion, validar } from "@/lib/api";
+import { avanzarPedido } from "@/lib/admin";
+import { conErrores, exigirAdminApi, leerJson, noEncontrado, sinSesion, validar } from "@/lib/api";
 import { ParametrosPedido } from "@/lib/esquemas";
+import { CambioDeEstado } from "@/lib/esquemasAdmin";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
 
@@ -13,5 +15,17 @@ export const GET = conErrores(async (_request, { params }) => {
 
   const pedido = await getPedido(id);
   if (!pedido) throw noEncontrado("No hay ningún pedido tuyo con ese id.");
+  return Response.json({ pedido }, { headers: { "Cache-Control": "private, no-store" } });
+});
+
+// PATCH /api/v1/pedidos/[id] (solo el admin): pasa el pedido al estado
+// siguiente, { "estado": "preparando" } (desde pagado) o { "estado": "enviado" }
+// (desde en preparación). Otro salto, 409 transicion_invalida.
+export const PATCH = conErrores(async (request, { params }) => {
+  const supabase = await exigirAdminApi();
+  const { id } = validar(ParametrosPedido, await params);
+  const { estado } = validar(CambioDeEstado, await leerJson(request));
+
+  const pedido = await avanzarPedido(supabase, id, estado);
   return Response.json({ pedido }, { headers: { "Cache-Control": "private, no-store" } });
 });

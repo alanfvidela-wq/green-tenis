@@ -2,19 +2,27 @@
 
 La tienda no depende de esta API: las páginas leen de Supabase en el servidor y
 las mutaciones van por Server Actions (`lib/carrito.js`, `lib/checkout.js`,
-`lib/cuenta.js`). `/api/v1` es la puerta para lo que llega de afuera: el
-catálogo, de solo lectura, los pedidos del usuario con sesión y el webhook de
-Mercado Pago.
+`lib/cuenta.js`). `/api/v1` es la puerta para lo que llega de afuera (el
+catálogo, los pedidos del usuario con sesión y el webhook de Mercado Pago) y
+para la administración (`/admin`), que la consume con `fetch` desde el
+navegador y es la única que escribe por acá.
 
-| Método | URL                            | Pide            | Devuelve                                   |
-| ------ | ------------------------------ | --------------- | ------------------------------------------ |
-| GET    | `/api/v1/productos`            | —               | El catálogo, paginado                      |
-| GET    | `/api/v1/productos/[slug]`     | —               | Un producto con su ficha                   |
-| GET    | `/api/v1/combos`               | —               | Los combos a la venta                      |
-| GET    | `/api/v1/combos/[slug]`        | —               | Un combo, con el precio de cada elección   |
-| GET    | `/api/v1/pedidos`              | Sesión          | Los pedidos del usuario                    |
-| GET    | `/api/v1/pedidos/[id]`         | Sesión          | Un pedido del usuario                      |
-| POST   | `/api/v1/webhooks/mercadopago` | Firma HMAC      | Recibe los avisos de pago de Mercado Pago  |
+| Método | URL                              | Pide            | Devuelve                                   |
+| ------ | -------------------------------- | --------------- | ------------------------------------------ |
+| GET    | `/api/v1/productos`              | —               | El catálogo, paginado                      |
+| GET    | `/api/v1/productos?todos=1`      | Admin           | Todos los productos, con búsqueda          |
+| POST   | `/api/v1/productos`              | Admin           | Crea un producto con sus variantes         |
+| GET    | `/api/v1/productos/[slug]`       | —               | Un producto con su ficha                   |
+| GET    | `/api/v1/productos/[id]`         | Admin           | Un producto como lo edita el admin         |
+| PATCH  | `/api/v1/productos/[id]`         | Admin           | Cambia un producto, sus variantes y stock  |
+| DELETE | `/api/v1/productos/[id]`         | Admin           | Borra un producto                          |
+| GET    | `/api/v1/combos`                 | —               | Los combos a la venta                      |
+| GET    | `/api/v1/combos/[slug]`          | —               | Un combo, con el precio de cada elección   |
+| GET    | `/api/v1/pedidos`                | Sesión          | Los pedidos del usuario                    |
+| GET    | `/api/v1/pedidos?todos=1`        | Admin           | Los pedidos de todos, por estado           |
+| GET    | `/api/v1/pedidos/[id]`           | Sesión          | Un pedido del usuario                      |
+| PATCH  | `/api/v1/pedidos/[id]`           | Admin           | Pasa el pedido al estado siguiente         |
+| POST   | `/api/v1/webhooks/mercadopago`   | Firma HMAC      | Recibe los avisos de pago de Mercado Pago  |
 
 ## Convenciones
 
@@ -30,9 +38,11 @@ Mercado Pago.
   una con error, en `{ "error": … }`. Los precios son enteros en ARS.
 - **Código**: cada endpoint es un Route Handler (`app/api/v1/**/route.js`)
   envuelto en `conErrores` de `lib/api.js`. Los parámetros pasan por un esquema
-  de `lib/esquemas.js` con `validar`, y los datos salen de `lib/productos.js`,
-  `lib/combos.js` y `lib/pedidos.js`: las mismas funciones que usan las páginas.
-- **Métodos y rutas**: un método que la ruta no tiene (`POST /api/v1/productos`)
+  de `lib/esquemas.js` (los de la administración, de `lib/esquemasAdmin.js`)
+  con `validar`, y los datos salen de `lib/productos.js`, `lib/combos.js` y
+  `lib/pedidos.js`, las mismas funciones que usan las páginas, o de
+  `lib/admin.js`.
+- **Métodos y rutas**: un método que la ruta no tiene (`PUT /api/v1/productos/[id]`)
   lo responde Next con `405 Method Not Allowed`, sin cuerpo. Una ruta que no
   existe bajo `/api/v1` responde `404 ruta_inexistente` en JSON
   (`app/api/v1/[...ruta]/route.js`), no la página HTML de Next.
@@ -70,13 +80,18 @@ Todos con la misma forma, armada por el helper de `lib/api.js`:
 | Código                      | Status | Cuándo                                                              |
 | --------------------------- | ------ | ------------------------------------------------------------------- |
 | `datos_invalidos`           | 400    | La query, los parámetros de ruta o el cuerpo no pasan el esquema    |
+| `json_invalido`             | 400    | Admin: el cuerpo de un POST o un PATCH no es JSON                   |
 | `sin_sesion`                | 401    | El endpoint pide sesión y no hay (o venció y no se pudo renovar)    |
 | `firma_invalida`            | 401    | Webhook: falta `x-signature` o no coincide                          |
-| `sin_permiso`               | 403    | Hay sesión pero no alcanza. Reservado: hoy ningún endpoint lo usa (ver «Por qué un pedido ajeno da 404») |
+| `sin_permiso`               | 403    | Hay sesión pero no el rol de admin, o la base no reconoce el rol (ver «Administración») |
 | `no_encontrado`             | 404    | El recurso no existe, o no es del usuario                           |
 | `ruta_inexistente`          | 404    | No hay ningún endpoint en esa ruta                                  |
 | —                           | 405    | El método no existe en esa ruta (lo responde Next, sin cuerpo)      |
+| `ya_existe`                 | 409    | Admin: el slug o un sku ya los usa otro producto, o dos variantes se llaman igual |
+| `en_uso`                    | 409    | Admin: el producto (o una variante que se quita) ya tiene pedidos o está en un combo |
+| `transicion_invalida`       | 409    | Admin: el pedido no está en el estado anterior al que se lo quiere pasar |
 | `error_interno`             | 500    | Un error nuestro (falta una variable, falló la base…)               |
+| `falta_migracion`           | 500    | Admin: falta correr `supabase/migrations/0004_admin.sql`           |
 | `mercadopago_no_responde`   | 502    | Webhook: Mercado Pago no respondió o respondió con error            |
 | `pago_online_no_disponible` | 503    | Webhook: falta configurar Mercado Pago (ver «Sin configurar»)       |
 
@@ -335,8 +350,9 @@ curl "https://<dominio>/api/v1/combos/kit-para-arrancar"
 
 ## Pedidos
 
-Los pedidos del usuario con sesión. Son de solo lectura: se crean desde el
-checkout (`confirmarPedido`).
+Los pedidos del usuario con sesión. Para el usuario son de solo lectura: se
+crean desde el checkout (`confirmarPedido`). El admin, además, ve los de todos
+y les cambia el estado (ver «Administración»).
 
 ### Autenticación
 
@@ -514,6 +530,235 @@ conviene callar.
 El 403 queda para cuando revelar la existencia no importa y lo que falta es un
 permiso: por ejemplo, un endpoint de admin al que entra un usuario común.
 
+## Administración
+
+La parte de la API que escribe: el catálogo (productos, variantes, stock y
+fichas) y el estado de los pedidos. La usan las pantallas de `/admin`
+(`app/admin/`), que la llaman con `fetch` desde el navegador, con la cookie de
+sesión del sitio.
+
+### El rol de admin
+
+Es el mismo que mira la base con `es_admin()`: `{"rol": "admin"}` en el
+`app_metadata` del usuario (`lib/roles.js`). `app_metadata` solo se escribe con
+la clave secreta o desde el SQL Editor: el usuario no se lo puede poner solo
+(no es `user_metadata`).
+
+**Dar el rol** (en el SQL Editor de Supabase, con el email del usuario):
+
+```sql
+update auth.users
+set raw_app_meta_data = raw_app_meta_data || '{"rol": "admin"}'
+where email = 'admin@ejemplo.com';
+```
+
+Después hay que **cerrar sesión y volver a entrar**: el rol viaja en el token,
+y el que ya estaba no lo trae. Para sacarlo, lo mismo con
+`raw_app_meta_data - 'rol'`.
+
+### Quién controla qué
+
+1. **`proxy.js`**: sin sesión, `/admin` lleva a `/ingresar` (y de vuelta); con
+   sesión y sin el rol, a la home. Lee el rol de los claims del token: es un
+   control optimista, para no mostrar la pantalla.
+2. **Cada página de `/admin`** llama a `exigirAdmin()` (`lib/sesion.js`), que
+   pide el usuario a Supabase Auth. El layout también, pero no alcanza: un
+   layout no se vuelve a renderizar al navegar entre sus páginas.
+3. **Cada endpoint** llama a `exigirAdminApi()` (`lib/api.js`) antes de mirar
+   nada: sin sesión, `401 sin_sesion`; sin el rol, `403 sin_permiso` (acá no
+   hay nada que esconder: que el endpoint existe ya lo dice esta página).
+   Después van los parámetros y el cuerpo, con su esquema.
+4. **La base**, con la sesión del usuario, nunca con la clave secreta. Las
+   políticas «admin: todo» (catálogo) y «admin actualiza» (pedidos) dejan
+   escribir solo si `es_admin()`, que mira el token. Para eso,
+   `0004_admin.sql` les da a los usuarios con sesión `insert`, `update` y
+   `delete` en las tablas del catálogo y `update` de la columna `estado` en
+   `pedidos`: el permiso abre la tabla y RLS la cierra a todos menos al admin.
+   Aunque el código se equivocara, un usuario común no podría escribir.
+
+Si el rol se asignó con la sesión abierta, Supabase Auth ya lo devuelve (pasa
+el paso 3) pero el token todavía no (la base dice que no): el endpoint
+responde `403 sin_permiso` y pide cerrar sesión y volver a entrar.
+
+### `GET /api/v1/productos?todos=1`
+
+Todos los productos, activos o no, para el listado del admin. Ordenados por
+categoría y por el orden de la tienda.
+
+| Parámetro (query) | Por defecto | Reglas                                                          |
+| ----------------- | ----------- | --------------------------------------------------------------- |
+| `todos`           | —           | Cualquier valor: pide la vista del admin                        |
+| `q`               | —           | Hasta 60 caracteres: letras, números, espacios y guiones. Cada palabra tiene que estar en la marca, el nombre o el slug |
+| `categoria`       | todas       | `raquetas`, `pelotas`, `cuerdas-y-grips` o `bolsos`             |
+| `page`            | `1`         | De 1 a 1000                                                     |
+| `limit`           | `50`        | De 1 a 100                                                      |
+
+```json
+{
+  "productos": [
+    {
+      "id": 1, "slug": "babolat-pure-drive", "categoria": "raquetas", "tipo": "raqueta",
+      "marca": "Babolat", "nombre": "Pure Drive", "activo": true, "destacado": true,
+      "variantes": 5, "precioDesde": 389000, "stock": 9
+    }
+  ],
+  "paginacion": { "page": 1, "limit": 50, "total": 20, "paginas": 1 }
+}
+```
+
+`stock` suma el de las variantes activas que lo controlan (`null` si ninguna).
+
+### `GET /api/v1/productos/[id]`
+
+Con un id (un número) en vez de un slug, el producto como lo edita la
+administración: activo o no, con todas sus variantes (también las inactivas) y
+sus skus. Es la misma forma que reciben `POST` y `PATCH`.
+
+```json
+{
+  "producto": {
+    "id": 1, "slug": "babolat-pure-drive", "categoria": "raquetas", "tipo": "raqueta",
+    "marca": "Babolat", "nombre": "Pure Drive", "descripcion": "…",
+    "destacado": true, "activo": true,
+    "ficha": {
+      "cabezaPulg2": 100, "largoMm": 685, "balanceMm": 320, "patron": [16, 19],
+      "rigidezRa": 71, "tensionKg": [23, 26]
+    },
+    "variantes": [
+      { "id": 1, "sku": "BABOLAT-PURE-DRIVE-G1-300", "nombre": "Grip 1 / 300 g",
+        "precio": 389000, "stock": 2, "activa": true, "grip": 1, "pesoG": 300 }
+    ]
+  }
+}
+```
+
+### `POST /api/v1/productos`
+
+Crea un producto con su ficha y sus variantes. El cuerpo pasa por
+`ProductoAdmin` (`lib/esquemasAdmin.js`), con los mismos límites que los
+`check` de la base, así el error sale campo por campo:
+
+| Campo         | Reglas                                                                  |
+| ------------- | ----------------------------------------------------------------------- |
+| `categoria`   | `raquetas`, `pelotas`, `cuerdas-y-grips` o `bolsos`                     |
+| `tipo`        | El de la categoría: `raqueta`, `pelota`, `cuerda` o `grip`, `bolso`     |
+| `marca`       | Hasta 40 caracteres                                                     |
+| `nombre`      | Hasta 80 caracteres                                                     |
+| `slug`        | Minúsculas, números y guiones; único                                    |
+| `descripcion` | Hasta 600 caracteres                                                    |
+| `destacado`   | Booleano; por defecto `false` (sale en «Lo que más sale»)               |
+| `activo`      | Booleano; por defecto `true` (sin activar, la tienda no lo muestra)     |
+| `ficha`       | Raqueta: `{ cabezaPulg2, largoMm, balanceMm, patron: [principales, cruzadas], rigidezRa, tensionKg: [mínima, máxima] }`. Cuerda: `{ material, calibreMm, perfil }`. Pelota, grip y bolso: filas `[["Tipo", "Presurizada"], …]`, hasta 12. O `null` |
+| `variantes`   | De 1 a 30, en el orden de la tienda                                     |
+
+Cada variante: `sku` (mayúsculas, números y guiones; único), `nombre` (hasta 60;
+no se repite en el producto), `precio` (entero en ARS, mayor que 0), `stock`
+(entero desde 0, o `null` si no se controla) y `activa` (por defecto `true`).
+Las raquetas llevan además `grip` (0 a 5) y `pesoG` (220 a 360); las cuerdas,
+`largoM`.
+
+Lo guarda `admin_guardar_producto` (`0004_admin.sql`), una función de la base
+que hace todo en una sola transacción: si algo falla (un slug repetido, por
+ejemplo), no queda un producto a medias. Corre con los permisos de quien la
+llama (`security invoker`), así que RLS aplica igual.
+
+| Status | Cuándo                                                    |
+| ------ | --------------------------------------------------------- |
+| 201    | Creado: `{ "producto": … }` y `Location` con su URL      |
+| 400    | El cuerpo no es JSON o no pasa el esquema                 |
+| 401    | Sin sesión                                                |
+| 403    | Sin el rol de admin                                       |
+| 409    | `ya_existe`: el slug o un sku ya están usados             |
+
+### `PATCH /api/v1/productos/[id]`
+
+Cambia los campos que llegan; los demás quedan como estaban. `variantes`, si
+llega, es la **lista completa**: las que tienen `id` se actualizan, las que no
+se crean y las que faltan se borran. Así se cambian el precio y el stock.
+
+```json
+{ "activo": false }
+```
+
+```json
+{
+  "variantes": [
+    { "id": 1, "sku": "BABOLAT-PURE-DRIVE-G1-300", "nombre": "Grip 1 / 300 g",
+      "precio": 399000, "stock": 4, "activa": true, "grip": 1, "pesoG": 300 }
+  ]
+}
+```
+
+El tipo no se cambia (las fichas tipadas están atadas a él): un campo que no
+existe o no se puede cambiar da `400` con ese campo en `detalles`. Lo guardado
+más los cambios vuelve a pasar entero por `ProductoAdmin`. Responde
+`{ "producto": … }` con el producto guardado.
+
+Una variante que ya se vendió no se puede borrar (la base la necesita para los
+pedidos): `409 en_uso`, sin cambiar nada. Se desactiva con `"activa": false`.
+
+### `DELETE /api/v1/productos/[id]`
+
+Borra el producto, con sus variantes, sus fichas y sus filas de fotos (en
+cascada). Responde `204` sin cuerpo. Si alguna variante ya se vendió o el
+producto está en un combo, la base no lo deja: `409 en_uso`, y se desactiva con
+`PATCH { "activo": false }`. Los archivos de las fotos quedan en Storage.
+
+### `GET /api/v1/pedidos?todos=1`
+
+Los pedidos de todos, el más nuevo primero.
+
+| Parámetro (query) | Por defecto | Reglas                                                              |
+| ----------------- | ----------- | ------------------------------------------------------------------- |
+| `todos`           | —           | Cualquier valor: pide la vista del admin                            |
+| `estado`          | todos       | `pendiente_pago`, `pagado`, `preparando`, `enviado`, `entregado` o `cancelado` (el de la base) |
+| `page`            | `1`         | De 1 a 1000                                                         |
+| `limit`           | `50`        | De 1 a 100                                                          |
+
+```json
+{
+  "pedidos": [
+    {
+      "id": "1c0e…", "numero": 12, "email": "cliente@ejemplo.com",
+      "nombre": "Ana Pérez", "destino": "Rosario, Santa Fe", "total": 777620,
+      "creadoEn": "2026-10-25T18:20:00Z",
+      "estado": { "clave": "pagado", "texto": "Pagado" },
+      "siguiente": "preparando"
+    }
+  ],
+  "paginacion": { "page": 1, "limit": 50, "total": 1, "paginas": 1 }
+}
+```
+
+`estado` es el mismo que ve el cliente (un pendiente puede verse «Pago en
+proceso» o «Vencido»); `siguiente`, a qué estado se lo puede pasar, o `null`.
+
+### `PATCH /api/v1/pedidos/[id]`
+
+Pasa el pedido al estado siguiente:
+
+```json
+{ "estado": "preparando" }
+```
+
+Solo dos saltos: de `pagado` a `preparando` (en preparación) y de
+`preparando` a `enviado`. Los demás estados los mueven el pago y el
+vencimiento. La condición sobre el estado anterior va en el mismo `UPDATE`:
+si otro admin ya lo movió, no se pisa y responde `409 transicion_invalida`
+(«El pedido está enviado: a «Enviado» se pasa desde «En preparación».»).
+Responde `{ "pedido": … }` con la misma forma que el listado.
+
+### Las pantallas
+
+- **`/admin/productos`**: el listado, con búsqueda y filtro por categoría, y
+  borrar con confirmación. Si el producto ya tiene ventas, ofrece
+  desactivarlo.
+- **`/admin/productos/nuevo`** y **`/admin/productos/[id]`**: el formulario,
+  con la ficha de cada tipo y las variantes (precio y stock incluidos). Los
+  errores de la API se muestran en su campo.
+- **`/admin/pedidos`**: el listado con filtro por estado y el botón para
+  pasar cada pedido al estado siguiente.
+
 ## Server Actions
 
 No están bajo `/api/v1`, pero son endpoints igual: Next las publica como `POST`
@@ -586,7 +831,11 @@ aunque el código se equivoque:
   publicable puede estar en el código: con ella no se ve más que lo que muestra
   la tienda, y no se puede escribir.
 - **Pedidos**: cada usuario ve los suyos y el admin, todos («dueño o admin»).
-  Nadie los escribe directo: solo las funciones.
+  Nadie los escribe directo, salvo el admin, que cambia solo la columna
+  `estado` («admin actualiza» y el `update (estado)` de `0004_admin.sql`).
+- **Administración**: el catálogo se escribe con la sesión del admin, no con
+  la clave secreta: «admin: todo» deja solo si `es_admin()`. Ver «Quién
+  controla qué».
 - **Funciones**: las que escriben con privilegios (`security definer`, con
   `search_path` vacío) tienen el `execute` restringido. `crear_pedido` es solo
   para `authenticated` y toma al usuario de `auth.uid()`, no de un argumento.
@@ -1004,7 +1253,8 @@ al navegador. `lib/mercadopago.js`, `lib/supabaseServicio.js` y
 | `SUPABASE_SECRET_KEY`  | Llamar a `conciliar_pago` y `guardar_preferencia`           | Supabase › Project Settings › API Keys › Secret keys (`sb_secret_…`)                             |
 
 Las de Supabase que ya estaban (`NEXT_PUBLIC_SUPABASE_URL` y
-`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) siguen igual.
+`NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) siguen igual. Los nombres de todas
+están en `.env.example`, sin valores: se copia como `.env.local`.
 
 ### Sin configurar
 
@@ -1034,10 +1284,12 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
 
 ### Supabase
 
-1. Correr `supabase/migrations/0002_pagos.sql` y después
-   `0003_reactivar_pagados_a_tiempo.sql`, cada una entera, en el SQL Editor,
-   **antes** de publicar el código que las usa (son compatibles con el código
-   anterior).
+1. Correr `supabase/migrations/0002_pagos.sql`, después
+   `0003_reactivar_pagados_a_tiempo.sql` y después `0004_admin.sql`, cada una
+   entera, en el SQL Editor, **antes** de publicar el código que las usa (son
+   compatibles con el código anterior). Sin `0004`, la tienda anda igual y la
+   administración responde `500 falta_migracion` o `403 sin_permiso` al
+   guardar.
 2. Copiar una Secret key a `SUPABASE_SECRET_KEY`.
 
 ### Mercado Pago
