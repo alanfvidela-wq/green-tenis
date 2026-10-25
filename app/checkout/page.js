@@ -13,7 +13,7 @@ export default async function PaginaCheckout() {
   if (!usuario) redirect("/ingresar?siguiente=/checkout");
 
   return (
-    <main>
+    <main className={styles.pantalla}>
       <header className={styles.encabezado}>
         <nav className="migas" aria-label="Ubicación">
           <Link href="/">Inicio</Link>
@@ -22,7 +22,7 @@ export default async function PaginaCheckout() {
           <span aria-hidden="true">/</span>
           <span aria-current="page">Finalizar compra</span>
         </nav>
-        <h1 className={styles.titulo}>Finalizar compra</h1>
+        <h1 className={`display ${styles.titulo}`}>Finalizar compra</h1>
       </header>
 
       <Checkout email={usuario.email} pagoOnline={pagoOnlineDisponible()} />
