@@ -57,7 +57,7 @@ export default async function PaginaResultadoPago({ params }) {
 
   return (
     <main className={styles.estado}>
-      <h1 className={styles.titulo}>{mensaje.titulo}</h1>
+      <h1 className={`display ${styles.titulo}`}>{mensaje.titulo}</h1>
       <p className={styles.texto}>{mensaje.texto(pedido.numero, pedido.estado.clave === "pagado")}</p>
       {resultado === "rechazado" && pedido.estado.clave === "vencido" && (
         <p className={styles.texto}>El pedido ya venció: para comprar, armalo de nuevo.</p>

@@ -17,14 +17,16 @@
   letter-spacing: -0.04em;
 }
 
+/* El título, en la display */
 .titulo {
-  font-size: var(--t-titulo-2);
+  max-width: 8em;
+  font-size: var(--t-display-3);
 }
 
 .texto {
-  max-width: 40ch;
-  color: var(--grafito);
+  max-width: 44ch;
   font-size: var(--t-entrada);
+  line-height: 1.5;
 }
 
 .acciones {
