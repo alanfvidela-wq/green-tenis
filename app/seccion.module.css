@@ -1,0 +1,85 @@
+/* La barra de una sección con navegación propia (la cuenta, el admin): entre
+   el header y la página, al ancho del contenido */
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2) var(--espacio-8);
+  width: 100%;
+  max-width: var(--ancho-max);
+  margin: 0 auto;
+  padding: var(--espacio-6) var(--gutter) 0;
+}
+
+/* En el admin, la barra va en un bloque hormigón: se ve que es otra parte */
+.admin {
+  padding-top: var(--espacio-4);
+}
+
+.admin .caja {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2) var(--espacio-8);
+  padding: var(--espacio-2) var(--espacio-6);
+  border-radius: var(--radio);
+  background: var(--hormigon);
+}
+
+.nombre {
+  font-family: var(--fuente-display);
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-stretch: 62%;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--espacio-6);
+}
+
+/* Como los links del header: en mayúsculas, subrayados con el mouse y en la
+   página abierta */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-decoration: underline 1px transparent;
+  text-underline-offset: 6px;
+  transition: text-decoration-color var(--transicion);
+}
+
+.link:hover,
+.link[aria-current="page"] {
+  text-decoration-color: currentColor;
+}
+
+/* Con quién se ingresó y «Cerrar sesión» */
+.extra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-4);
+  color: var(--grafito);
+  font-size: var(--t-chico);
+}
+
+.email {
+  color: var(--negro);
+}
+
+.salir {
+  min-height: 44px;
+  padding-inline: var(--espacio-5);
+  font-size: var(--t-chico);
+}

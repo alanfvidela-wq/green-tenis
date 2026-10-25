@@ -1,0 +1,20 @@
+/* Las páginas de la administración: más sobrias que la tienda, con la misma
+   tipografía y paleta. Títulos en la display a --t-display-4, tablas con
+   filas de 1px y los datos en mono. */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-8);
+}
+
+.encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+}
+
+.titulo {
+  font-size: var(--t-display-4);
+}

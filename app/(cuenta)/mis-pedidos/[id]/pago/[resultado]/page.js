@@ -5,7 +5,7 @@ import ChequeoExito from "@/components/ChequeoExito";
 import { conciliarPedido, pagoOnlineDisponible } from "@/lib/cobros";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
-import styles from "../../../../estados.module.css";
+import styles from "@/app/estados.module.css";
 
 // Adonde vuelve Checkout Pro (las back_urls de la preferencia). El título dice
 // qué contestó Mercado Pago, pero los parámetros de la URL nunca cambian el

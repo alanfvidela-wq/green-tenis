@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import FormularioNuevaContrasena from "@/components/FormularioNuevaContrasena";
 import { getUsuario } from "@/lib/sesion";
-import styles from "../formulario.module.css";
+import styles from "@/app/formulario.module.css";
 
 export const metadata = { title: "Contraseña nueva" };
 

@@ -1,16 +1,19 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse } from "next/server";
+import { esAdmin } from "./lib/roles";
 import { rutaSiguiente } from "./lib/siguiente";
 
 // Corre antes de las rutas de cuenta y de compra (ver `matcher`). Renueva la
 // sesión de Supabase si venció y redirige:
-// - sin sesión, /checkout, /mis-pedidos y /nueva-contrasena llevan a
+// - sin sesión, /checkout, /mis-pedidos, /nueva-contrasena y /admin llevan a
 //   /ingresar, con la ruta en «siguiente» para volver después;
+// - con sesión pero sin el rol de admin, /admin lleva a la home;
 // - con sesión, /ingresar y /registrarme llevan a «siguiente».
 // Es un control optimista (lee la sesión de la cookie): cada página y cada
 // acción protegida vuelve a pedir el usuario con getUsuario().
 
-const PROTEGIDAS = ["/checkout", "/mis-pedidos", "/nueva-contrasena"];
+const PROTEGIDAS = ["/checkout", "/mis-pedidos", "/nueva-contrasena", "/admin"];
+const ADMIN = "/admin";
 const DE_CUENTA = ["/ingresar", "/registrarme"];
 
 export async function proxy(request) {
@@ -39,7 +42,8 @@ export async function proxy(request) {
 
   // Verifica la sesión y, si hace falta, la renueva (escribe cookies nuevas)
   const { data } = await supabase.auth.getClaims();
-  const conSesion = Boolean(data?.claims?.sub);
+  const claims = data?.claims;
+  const conSesion = Boolean(claims?.sub);
 
   // Una redirección que conserva las cookies renovadas
   const redirigir = (destino) => {
@@ -50,11 +54,18 @@ export async function proxy(request) {
   };
 
   const { pathname, search, searchParams } = request.nextUrl;
+  const en = (ruta) => pathname === ruta || pathname.startsWith(`${ruta}/`);
 
-  if (!conSesion && PROTEGIDAS.some((r) => pathname === r || pathname.startsWith(`${r}/`))) {
+  if (!conSesion && PROTEGIDAS.some(en)) {
     const destino = new URL("/ingresar", request.url);
     destino.searchParams.set("siguiente", pathname + search);
     return redirigir(destino);
+  }
+
+  // El rol viaja en el token (app_metadata); cada página de /admin y cada
+  // endpoint que escribe lo vuelven a pedir a Supabase Auth
+  if (en(ADMIN) && !esAdmin(claims.app_metadata)) {
+    return redirigir(new URL("/", request.url));
   }
 
   if (conSesion && DE_CUENTA.includes(pathname)) {
@@ -69,6 +80,7 @@ export const config = {
     "/checkout/:path*",
     "/mis-pedidos/:path*",
     "/nueva-contrasena",
+    "/admin/:path*",
     "/ingresar",
     "/registrarme",
   ],

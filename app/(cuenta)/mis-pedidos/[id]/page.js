@@ -7,7 +7,7 @@ import { SIN_PAGO_ONLINE, conciliarPedido, pagoOnlineDisponible } from "@/lib/co
 import { formatearFecha, formatearHora, formatearPrecio } from "@/lib/formato";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
-import listado from "../../listado.module.css";
+import listado from "@/app/listado.module.css";
 import styles from "../pedidos.module.css";
 
 export const metadata = { title: "Pedido" };

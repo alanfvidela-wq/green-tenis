@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import Estado, { tonoDePedido } from "@/components/Estado";
-import { salir } from "@/lib/cuenta";
 import { formatearFecha, formatearPrecio } from "@/lib/formato";
 import { getPedidos } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
-import listado from "../listado.module.css";
+import listado from "@/app/listado.module.css";
 import styles from "./pedidos.module.css";
 
 export const metadata = { title: "Mis pedidos" };
@@ -32,12 +31,6 @@ export default async function PaginaMisPedidos({ searchParams }) {
           </p>
         )}
         <h1 className={`display ${listado.titulo}`}>Mis pedidos</h1>
-        <p className={listado.descripcion}>Ingresaste como {usuario.email}.</p>
-        <form action={salir}>
-          <button type="submit" className="boton boton-secundario">
-            Cerrar sesión
-          </button>
-        </form>
       </header>
 
       {pedidos.length === 0 ? (
