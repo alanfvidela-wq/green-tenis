@@ -1,10 +1,13 @@
 /* Las páginas de la administración: más sobrias que la tienda, con la misma
    tipografía y paleta. Títulos en la display a --t-display-4, tablas con
-   filas de 1px y los datos en mono. */
+   filas de 1px, los datos en mono y lo que se toca en píldora. */
+/* Al menos una pantalla: los listados llegan después (de la API) y así el
+   footer no salta */
 .pagina {
   display: flex;
   flex-direction: column;
   gap: var(--espacio-8);
+  min-height: calc(100svh - var(--alto-header));
 }
 
 .encabezado {
@@ -17,4 +20,307 @@
 
 .titulo {
   font-size: var(--t-display-4);
+}
+
+.bajada {
+  max-width: 60ch;
+  color: var(--grafito);
+}
+
+/* ---------- Filtros ---------- */
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--espacio-4);
+}
+
+.filtro {
+  flex: 1 1 14rem;
+  max-width: 26rem;
+}
+
+/* Las píldoras de los estados: la elegida, en negro */
+.pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.pildora {
+  min-height: 44px;
+  padding-inline: var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  font-size: var(--t-chico);
+  transition: background-color var(--transicion);
+}
+
+.pildora:hover {
+  background: var(--hormigon);
+}
+
+.pildora[aria-pressed="true"] {
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+/* ---------- Tablas ---------- */
+
+/* En mobile la tabla se desplaza de costado, sin romper la página. Sin
+   contain: paint, Chrome en mobile agranda el viewport al ancho de la tabla
+   aunque esté adentro del scroll. */
+.desplazar {
+  overflow-x: auto;
+  contain: paint;
+}
+
+.tabla {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+}
+
+.tabla th {
+  padding: 0 var(--espacio-3) var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+  color: var(--grafito);
+  font-size: var(--t-dato);
+  font-weight: 400;
+  letter-spacing: var(--tracking-nav);
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tabla td {
+  padding: var(--espacio-3) var(--espacio-3) var(--espacio-3) 0;
+  border-bottom: 1px solid var(--negro);
+  vertical-align: middle;
+}
+
+.tabla .numero {
+  font-family: var(--fuente-datos);
+  font-size: var(--t-chico);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.tabla th.numero {
+  font-family: var(--fuente-texto);
+  font-size: var(--t-dato);
+}
+
+/* Lo apagado (un producto inactivo) */
+.apagada td {
+  color: var(--grafito);
+}
+
+.principal {
+  font-size: var(--t-texto);
+}
+
+.principal a {
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
+}
+
+.secundario {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.etiquetas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+}
+
+.acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--espacio-2);
+}
+
+/* Los botones de una fila: píldoras chicas, de 44px de alto */
+.chico {
+  min-height: 44px;
+  padding-inline: var(--espacio-4);
+  font-size: var(--t-chico);
+  white-space: nowrap;
+}
+
+/* ---------- Estados de la lista ---------- */
+
+.vacio,
+.estado {
+  color: var(--grafito);
+}
+
+.paginas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-4);
+  color: var(--grafito);
+  font-size: var(--t-chico);
+}
+
+/* Lo que pasó (borrado, guardado): un bloque con borde de 1px */
+.aviso {
+  padding: var(--espacio-3) var(--espacio-4);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio);
+}
+
+/* ---------- Confirmación ---------- */
+
+.dialogo {
+  width: min(100% - 2 * var(--gutter), 30rem);
+  margin: auto;
+  padding: var(--espacio-8);
+  border: none;
+  border-radius: var(--radio);
+  background: var(--blanco);
+  color: var(--negro);
+}
+
+.dialogo::backdrop {
+  background: rgb(0 0 0 / 0.5);
+}
+
+.dialogoTitulo {
+  margin-bottom: var(--espacio-3);
+  font-size: var(--t-titulo);
+  line-height: 1.2;
+}
+
+.dialogoTexto {
+  margin-bottom: var(--espacio-6);
+  color: var(--grafito);
+}
+
+.dialogoAcciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-6);
+}
+
+/* ---------- Formulario ---------- */
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-10);
+}
+
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  min-width: 0;
+  border: none;
+}
+
+.grupoTitulo {
+  padding-bottom: var(--espacio-3);
+  border-bottom: 1px solid var(--negro);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-5);
+}
+
+@media (min-width: 760px) {
+  .campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ancho {
+    grid-column: 1 / -1;
+  }
+}
+
+.formulario .texto {
+  min-height: 7.5rem;
+  padding: var(--espacio-3) var(--espacio-5);
+  border-radius: var(--radio);
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.marcas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-6);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--espacio-2);
+  min-height: 44px;
+}
+
+.marca input {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--acento);
+}
+
+/* Las filas de la ficha libre y de las variantes */
+.filas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+  align-items: start;
+  gap: var(--espacio-3);
+}
+
+/* Una variante: sus campos en una grilla que se acomoda al ancho */
+.variante {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  align-items: start;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  border-radius: var(--radio);
+  background: var(--estudio);
+}
+
+.varianteSku {
+  grid-column: span 2;
+}
+
+/* Lo que va al lado de los campos (la casilla, «Quitar»): a la altura de los
+   inputs, debajo de la etiqueta, aunque un campo tenga un error abajo */
+.alLado {
+  justify-self: start;
+  margin-top: calc(var(--t-dato) * 1.5 + var(--espacio-2));
+}
+
+.agregar {
+  align-self: flex-start;
+}
+
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-4);
 }
