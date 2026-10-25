@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useCarrito } from "@/hooks/useCarrito";
 import { formatearPrecio } from "@/lib/formato";
+import AvisoAgregado, { useAvisoAgregado } from "./AvisoAgregado";
 import OpcionesVariante, { alcanza } from "./OpcionesVariante";
 import base from "./SelectorVariante.module.css";
 import styles from "./SelectorCombo.module.css";
@@ -25,7 +25,7 @@ export default function SelectorCombo({
   const { agregarCombo } = useCarrito();
   const aElegir = items.filter((item) => item.elige);
   const [elegidas, setElegidas] = useState({});
-  const [agregado, setAgregado] = useState(false);
+  const [avisoVisible, mostrarAviso] = useAvisoAgregado();
   const faltan = aElegir.filter((item) => !elegidas[item.id]);
   const elegido =
     faltan.length === 0 ? precios[aElegir.map((item) => elegidas[item.id]).join(",")] : null;
@@ -39,12 +39,6 @@ export default function SelectorCombo({
     nota = `Falta elegir: ${listaNombres.format(
       faltan.map((item) => `${item.producto.marca} ${item.producto.nombre}`),
     )}.`;
-  } else if (agregado) {
-    nota = (
-      <>
-        Agregado al carrito. <Link href="/carrito">Ver carrito</Link>
-      </>
-    );
   }
 
   return (
@@ -72,10 +66,7 @@ export default function SelectorCombo({
           variantes={item.variantes}
           cantidad={item.cantidad}
           elegidaId={elegidas[item.id] ?? null}
-          onElegir={(id) => {
-            setElegidas((actuales) => ({ ...actuales, [item.id]: id }));
-            setAgregado(false);
-          }}
+          onElegir={(id) => setElegidas((actuales) => ({ ...actuales, [item.id]: id }))}
         />
       ))}
 
@@ -85,7 +76,7 @@ export default function SelectorCombo({
         disabled={agotado || !elegido}
         onClick={() => {
           agregarCombo(comboId, elegidas);
-          setAgregado(true);
+          mostrarAviso();
         }}
       >
         {agotado ? "Sin stock" : "Agregar al carrito"}
@@ -95,6 +86,7 @@ export default function SelectorCombo({
           {nota}
         </p>
       )}
+      <AvisoAgregado visible={avisoVisible} />
     </div>
   );
 }

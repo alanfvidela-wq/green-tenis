@@ -11,7 +11,7 @@ export default function TarjetaCombo({ combo, sizes }) {
   const disponible = comboTieneStock(combo);
 
   return (
-    <li className={styles.celda}>
+    <li className={styles.celda} data-escalonar="">
       <Link href={`/combo/${combo.slug}`} className={styles.enlace}>
         <div className={styles.marco}>
           <FotoVitrina

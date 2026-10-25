@@ -56,6 +56,11 @@
 
   --transicion: 120ms ease;
   --suave: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Las curvas de las microanimaciones, inspiradas en Kinetics
+     (kinetics.colorion.co) por Csaba Kissi: un deslizamiento que frena largo
+     y un resorte que se pasa un poco y vuelve */
+  --deslizar: cubic-bezier(0.16, 1, 0.3, 1);
+  --resorte: cubic-bezier(0.34, 1.56, 0.64, 1);
   /* Aproximado; el header lo reemplaza por su alto medido */
   --alto-header: 76px;
 }

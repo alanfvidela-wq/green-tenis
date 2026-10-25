@@ -24,3 +24,29 @@
   min-width: 0;
   height: 100%;
 }
+
+/* Las tarjetas que entran al scrollear (VitrinaEscalonada): suben 14px y
+   aparecen, de a una.
+   Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
+   https://kinetics.colorion.co/effects/stagger-entrance/ */
+.vitrina > [data-escalonar] {
+  transition:
+    opacity 0.45s var(--deslizar),
+    transform 0.45s var(--deslizar);
+}
+
+.vitrina > [data-oculta] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vitrina > [data-escalonar] {
+    transition: none;
+  }
+
+  .vitrina > [data-oculta] {
+    opacity: 1;
+    transform: none;
+  }
+}

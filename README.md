@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Créditos
+
+Las microanimaciones de green. (el esqueleto del carrito, la insignia del
+carrito, el aviso «Agregado al carrito», el selector de cantidad, el chequeo de
+pago aprobado y la entrada escalonada de la vitrina) están inspiradas en
+[Kinetics](https://kinetics.colorion.co), la biblioteca de animaciones de
+interfaz de [Csaba Kissi](https://github.com/ckissi/kinetics). El código es
+propio y replica los tiempos, las curvas, las escalas y las distancias de cada
+efecto; cada archivo enlaza al efecto en el que se inspira:
+
+- [Skeleton to Content](https://kinetics.colorion.co/effects/skeleton-to-content/)
+- [Badge Counter](https://kinetics.colorion.co/effects/badge-counter/)
+- [Toast Overshoot](https://kinetics.colorion.co/effects/toast-overshoot/)
+- [Quantity Stepper](https://kinetics.colorion.co/effects/quantity-stepper/)
+- [Success Check](https://kinetics.colorion.co/effects/success-check/)
+- [Stagger Entrance](https://kinetics.colorion.co/effects/stagger-entrance/)

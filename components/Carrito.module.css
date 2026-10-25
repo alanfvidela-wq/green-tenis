@@ -114,41 +114,6 @@
   gap: var(--espacio-4);
 }
 
-/* La cantidad en una píldora: − n + */
-.cantidad {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid var(--negro);
-  border-radius: var(--radio-pildora);
-  font-family: var(--fuente-datos);
-}
-
-.cantidad button {
-  width: 44px;
-  height: 44px;
-  border: none;
-  border-radius: var(--radio-pildora);
-  background: transparent;
-  font-size: var(--t-entrada);
-  line-height: 1;
-  transition: background-color var(--transicion);
-}
-
-.cantidad button:hover:not(:disabled) {
-  background: var(--hormigon);
-}
-
-.cantidad button:disabled {
-  color: var(--grafito);
-  opacity: 0.35;
-  cursor: not-allowed;
-}
-
-.cantidad span {
-  min-width: 2ch;
-  text-align: center;
-}
-
 /* «Quitar»: un link discreto, como «Comprar» en la vitrina */
 .quitar {
   min-height: 44px;
@@ -251,4 +216,124 @@
 .nota {
   color: var(--grafito);
   font-size: var(--t-dato);
+}
+
+/* ---------- Mientras llega la cotización ----------
+   Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
+   https://kinetics.colorion.co/effects/skeleton-to-content/ */
+
+/* El esqueleto y el contenido, uno encima del otro: la celda mide lo que el
+   más alto. Cuando llega la cotización, el esqueleto sale del flujo (mide lo
+   del contenido) y se apaga encima. */
+.capas {
+  position: relative;
+  display: grid;
+}
+
+.capas > * {
+  grid-area: 1 / 1;
+  min-width: 0;
+}
+
+.esqueleto {
+  transition: opacity 0.3s ease;
+}
+
+.esqueleto[data-listo] {
+  position: absolute;
+  inset: 0 0 auto;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* El contenido real sube 8px y aparece */
+.real {
+  transition:
+    opacity 0.4s var(--deslizar),
+    transform 0.4s var(--deslizar);
+}
+
+.real:not([data-listo]) {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* Lo que aparece recién con la cotización (los totales) entra igual */
+.entra {
+  animation: entrar 0.4s var(--deslizar);
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* Una barra con el brillo que pasa: ocupa el renglón del texto que reemplaza,
+   así mide lo mismo */
+.barra,
+.esqueletoFoto {
+  background: linear-gradient(
+    90deg,
+    var(--hormigon) 25%,
+    var(--estudio) 50%,
+    var(--hormigon) 75%
+  );
+  background-size: 200% 100%;
+  animation: brillo 1.4s ease-in-out infinite;
+}
+
+.barra {
+  display: inline-block;
+  width: var(--ancho, 100%);
+  max-width: 100%;
+  height: 0.8em;
+  border-radius: var(--radio-pildora);
+  vertical-align: middle;
+}
+
+/* La miniatura, cubierta mientras no se sabe qué producto es */
+.esqueletoFoto {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  transition: opacity 0.3s ease;
+}
+
+.esqueletoFoto[data-listo] {
+  opacity: 0;
+  animation: none;
+}
+
+.esqueleto[data-listo] .barra {
+  animation: none;
+}
+
+@keyframes brillo {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .barra,
+  .esqueletoFoto,
+  .entra {
+    animation: none;
+  }
+
+  .esqueleto,
+  .esqueletoFoto,
+  .real {
+    transition: none;
+  }
+
+  .real:not([data-listo]) {
+    transform: none;
+  }
 }

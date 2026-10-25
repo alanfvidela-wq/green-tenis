@@ -1,0 +1,41 @@
+/* La insignia con la cantidad, en la esquina de la píldora del carrito: negra
+   con el número blanco y un borde blanco que la despega de la píldora.
+   Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
+   https://kinetics.colorion.co/effects/badge-counter/ */
+.boton {
+  position: relative;
+}
+
+.insignia {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  display: grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border: 2px solid var(--blanco);
+  border-radius: var(--radio-pildora);
+  background: var(--negro);
+  color: var(--blanco);
+  font-family: var(--fuente-datos);
+  font-size: 0.75rem;
+  line-height: 1;
+  letter-spacing: 0;
+  transition: transform 0.3s var(--resorte);
+}
+
+.pop {
+  transform: scale(1.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .insignia {
+    transition: none;
+  }
+
+  .pop {
+    transform: none;
+  }
+}

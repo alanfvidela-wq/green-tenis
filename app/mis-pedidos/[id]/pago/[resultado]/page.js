@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import BotonPagar from "@/components/BotonPagar";
+import ChequeoExito from "@/components/ChequeoExito";
 import { conciliarPedido, pagoOnlineDisponible } from "@/lib/cobros";
 import { getPedido } from "@/lib/pedidos";
 import { getUsuario } from "@/lib/sesion";
@@ -57,6 +58,7 @@ export default async function PaginaResultadoPago({ params }) {
 
   return (
     <main className={styles.estado}>
+      {resultado === "aprobado" && <ChequeoExito />}
       <h1 className={`display ${styles.titulo}`}>{mensaje.titulo}</h1>
       <p className={styles.texto}>{mensaje.texto(pedido.numero, pedido.estado.clave === "pagado")}</p>
       {resultado === "rechazado" && pedido.estado.clave === "vencido" && (

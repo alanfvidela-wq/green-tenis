@@ -1,0 +1,83 @@
+/* El círculo de 84px con el aro y la tilde en el acento, sobre un fondo del
+   acento al 14%. Los trazos usan pathLength="1": el guion mide todo el
+   recorrido y se corre hasta 0.
+   Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
+   https://kinetics.colorion.co/effects/success-check/ */
+.chequeo {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  border: 1px solid var(--hormigon);
+  border-radius: 50%;
+  background: var(--blanco);
+  animation: fondo 0.4s ease forwards;
+}
+
+.dibujo {
+  width: 52px;
+  height: 52px;
+}
+
+.aro {
+  fill: none;
+  stroke: var(--hormigon);
+  stroke-width: 3;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation:
+    trazar 0.5s cubic-bezier(0.65, 0, 0.35, 1) forwards,
+    colorear 0.5s ease forwards;
+}
+
+/* La tilde arranca un poco más atrás (1,1 y un hueco de 1,2): así la punta
+   redondeada no asoma antes de tiempo */
+.tilde {
+  fill: none;
+  stroke: var(--acento);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1.2;
+  stroke-dashoffset: 1.1;
+  animation: trazar 0.3s ease-out 0.4s forwards;
+}
+
+@keyframes fondo {
+  to {
+    border-color: color-mix(in srgb, var(--acento) 50%, var(--blanco));
+    background: color-mix(in srgb, var(--acento) 14%, var(--blanco));
+  }
+}
+
+@keyframes trazar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes colorear {
+  to {
+    stroke: var(--acento);
+  }
+}
+
+/* Sin movimiento: el chequeo ya completo */
+@media (prefers-reduced-motion: reduce) {
+  .chequeo,
+  .aro,
+  .tilde {
+    animation: none;
+  }
+
+  .chequeo {
+    border-color: color-mix(in srgb, var(--acento) 50%, var(--blanco));
+    background: color-mix(in srgb, var(--acento) 14%, var(--blanco));
+  }
+
+  .aro,
+  .tilde {
+    stroke: var(--acento);
+    stroke-dashoffset: 0;
+  }
+}

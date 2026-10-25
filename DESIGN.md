@@ -338,9 +338,33 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
 - **Fotos**: la aparición suave al entrar en pantalla.
 - **Anatomía de una raqueta**: la cámara sigue al scroll (ver esa sección).
 - **Header**: pasa de transparente a blanco con una transición de 300ms.
+- **Microanimaciones** (inspiradas en Kinetics, de Csaba Kissi; ver
+  «Créditos» en el README). Dos curvas en `globals.css`: `--deslizar`
+  (cubic-bezier(0.16, 1, 0.3, 1)) y `--resorte` (cubic-bezier(0.34, 1.56,
+  0.64, 1)).
+  - **Carrito**: mientras llega la cotización, cada línea y el resumen
+    muestran un esqueleto del mismo alto que lo que va a llegar, con un brillo
+    que pasa en 1,4s; cuando llega, el esqueleto se apaga en 0,3s y el
+    contenido sube 8px y aparece en 0,4s (`--deslizar`). El CLS del carrito
+    en mobile pasó de 0,31 a 0.
+  - **Insignia del carrito** (header): cuando sube la cantidad, salta a escala
+    1,4 con `--resorte` en 0,3s y vuelve a los 320ms.
+  - **«Agregado al carrito»**: una píldora negra abajo al centro, que entra
+    desde 140% más abajo a escala 0,9 y se pasa un poco de su lugar
+    (cubic-bezier(0.18, 1.25, 0.4, 1), 0,55s). Se va a los 2,2s. Reemplaza la
+    nota que había debajo del botón.
+  - **Cantidad** (carrito y producto): el número rebota a escala 1,3 con
+    `--resorte` en 0,35s y el botón apretado se hunde a 0,9 en 0,1s.
+  - **Pago aprobado**: el aro se dibuja en 0,5s (cubic-bezier(0.65, 0, 0.35,
+    1)) y toma el acento; después se traza la tilde en 0,3s.
+  - **Vitrina**: las tarjetas que están debajo de la pantalla al cargar suben
+    14px y aparecen en 0,45s (`--deslizar`), cada una 90ms después de la
+    anterior. La celda de foto mantiene su propia aparición.
 - **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
   se ven desde el principio, la anatomía muestra la raqueta entera y quieta con
-  los nombres de sus partes, y no hay animaciones ni transiciones.
+  los nombres de sus partes, y no hay animaciones ni transiciones (tampoco
+  las microanimaciones: el esqueleto queda quieto, el aviso aparece sin
+  moverse y el chequeo se ve completo).
 
 ## Estructura de la home
 

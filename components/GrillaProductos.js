@@ -3,6 +3,7 @@ import Aparecer from "./Aparecer";
 import FotoLugar from "./FotoLugar";
 import TarjetaCombo from "./TarjetaCombo";
 import TarjetaProducto from "./TarjetaProducto";
+import VitrinaEscalonada from "./VitrinaEscalonada";
 import styles from "./GrillaProductos.module.css";
 
 // Dónde va la celda de foto entre los productos (la cuarta)
@@ -12,7 +13,9 @@ const SIZES = "(max-width: 999px) 50vw, 400px";
 // La vitrina (ver «Vitrina de productos» en DESIGN.md): celdas grandes, tres
 // por fila desde 1000px y dos abajo. Muestra productos, combos o los dos (los
 // combos primero) y, con `foto` (un lugar de lib/fotos.js), una celda con una
-// foto de gente jugando, del mismo tamaño y sin texto encima.
+// foto de gente jugando, del mismo tamaño y sin texto encima. Las tarjetas
+// entran escalonadas al scrollear (VitrinaEscalonada); la celda de foto tiene
+// su propia aparición.
 export default function GrillaProductos({ productos = [], combos = [], foto }) {
   const celdas = [
     ...combos.map((combo) => <TarjetaCombo key={`combo-${combo.id}`} combo={combo} sizes={SIZES} />),
@@ -32,5 +35,5 @@ export default function GrillaProductos({ productos = [], combos = [], foto }) {
     );
   }
 
-  return <ul className={styles.vitrina}>{celdas}</ul>;
+  return <VitrinaEscalonada className={styles.vitrina}>{celdas}</VitrinaEscalonada>;
 }

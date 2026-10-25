@@ -12,7 +12,7 @@ export default function TarjetaProducto({ producto, sizes }) {
   const disponible = tieneStock(producto);
 
   return (
-    <li className={styles.celda}>
+    <li className={styles.celda} data-escalonar="">
       <Link href={`/producto/${producto.slug}`} className={styles.enlace}>
         <div className={styles.marco}>
           <FotoVitrina
