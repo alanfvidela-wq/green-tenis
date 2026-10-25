@@ -46,7 +46,7 @@ export default async function PaginaCombo({ params }) {
 
         <div className={styles.info}>
           <p className={styles.marca}>Combo</p>
-          <h1 className={styles.nombre}>{combo.nombre}</h1>
+          <h1 className={`display ${styles.nombre}`}>{combo.nombre}</h1>
           <p className={styles.descripcion}>{combo.descripcion}</p>
 
           <section className={styles.ficha} aria-labelledby="titulo-ficha">

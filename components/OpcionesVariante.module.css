@@ -15,7 +15,8 @@
   gap: var(--espacio-2);
 }
 
-/* Cada opción es una píldora con borde de 1px; la activa, lima */
+/* Cada opción es una píldora con borde de 1px; la activa, en el acento con
+   texto blanco */
 .opcion {
   display: flex;
   flex-direction: column;
@@ -35,8 +36,7 @@
 }
 
 .opcion:hover:not(:disabled) {
-  border-color: var(--lima);
-  background: var(--lima);
+  background: var(--hormigon);
 }
 
 /* Sin stock: hormigón, tachada */
@@ -53,8 +53,9 @@
 
 .activa,
 .activa:hover:not(:disabled) {
-  border-color: var(--lima);
-  background: var(--lima);
+  border-color: var(--acento);
+  background: var(--acento);
+  color: var(--blanco);
 }
 
 .opcionStock {
@@ -63,7 +64,10 @@
   font-size: 0.75rem;
 }
 
-.activa .opcionStock,
 .pocas {
   color: var(--negro);
+}
+
+.activa .opcionStock {
+  color: var(--blanco);
 }

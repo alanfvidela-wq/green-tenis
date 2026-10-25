@@ -39,7 +39,7 @@ export default async function PaginaProducto({ params }) {
 
         <div className={styles.info}>
           <p className={styles.marca}>{producto.marca}</p>
-          <h1 className={styles.nombre}>{producto.nombre}</h1>
+          <h1 className={`display ${styles.nombre}`}>{producto.nombre}</h1>
           <p className={styles.descripcion}>{producto.descripcion}</p>
 
           <section className={styles.ficha} aria-labelledby="titulo-ficha">

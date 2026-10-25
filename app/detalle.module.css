@@ -29,15 +29,15 @@
   text-transform: uppercase;
 }
 
+/* El nombre, en la display */
 .nombre {
-  font-size: var(--t-titulo-2);
-  line-height: 1.05;
+  font-size: var(--t-display-4);
 }
 
 .descripcion {
   max-width: 46ch;
-  color: var(--grafito);
   font-size: var(--t-entrada);
+  line-height: 1.5;
 }
 
 /* Ficha técnica: filas separadas por líneas de 1px, el dato en mono */
