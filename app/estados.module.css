@@ -1,4 +1,4 @@
-/* Error y 404: tipográficos y centrados, sin dibujos */
+/* Error, 404 y las páginas de pago: tipográficos y centrados, sin dibujos */
 .estado {
   display: flex;
   flex-direction: column;
@@ -10,11 +10,15 @@
   text-align: center;
 }
 
-/* El código gigante, en negro: el lima nunca va como texto sobre blanco */
+/* Error y 404: el código gigante en la display y, debajo, qué pasó en
+   texto, así manda el código */
 .codigo {
-  font-size: clamp(5rem, 18vw, 12rem);
-  line-height: 0.9;
-  letter-spacing: -0.04em;
+  font-size: var(--t-display-1);
+}
+
+.subtitulo {
+  font-size: var(--t-titulo);
+  line-height: 1.2;
 }
 
 /* El título, en la display */
@@ -37,42 +41,43 @@
   margin-top: var(--espacio-4);
 }
 
-/* Carga: el texto y la vitrina vacía */
+/* Carga: un bloque blanco de una pantalla, así cuando llega la página no
+   se mueve nada (ni el footer). «Cargando…» queda para lectores de
+   pantalla. */
 .carga {
-  display: flex;
-  flex-direction: column;
-  gap: var(--espacio-8);
-  padding-block: var(--espacio-10) var(--espacio-24);
+  min-height: max(600px, calc(100svh - var(--alto-header)));
 }
 
-.cargaTexto {
-  font-size: var(--t-titulo-2);
-  line-height: 1.05;
-  letter-spacing: var(--tracking-titulos);
-}
-
-/* La vitrina vacía: el mismo marco, las mismas celdas y líneas de 1px */
-.marco {
-  overflow: hidden;
-  border: 1px solid var(--negro);
+/* En los listados, el encabezado y la vitrina vacía: las mismas celdas de
+   estudio, sin productos */
+.cargaTitulo {
+  width: min(60%, 24rem);
+  height: var(--t-display-3);
+  margin: var(--espacio-12) 0 var(--espacio-16);
   border-radius: var(--radio);
+  background: var(--estudio);
 }
 
-.gondola {
+.vitrina {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 0 -1px -1px 0;
+  gap: var(--espacio-10) var(--espacio-3);
 }
 
 @media (min-width: 700px) {
-  .gondola {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .vitrina {
+    gap: var(--espacio-12) var(--espacio-5);
+  }
+}
+
+@media (min-width: 1000px) {
+  .vitrina {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .hueco {
   aspect-ratio: 4 / 5;
-  border-right: 1px solid var(--negro);
-  border-bottom: 1px solid var(--negro);
+  border-radius: var(--radio);
   background: var(--estudio);
 }

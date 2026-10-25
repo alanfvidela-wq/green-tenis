@@ -8,8 +8,8 @@ export const metadata = {
 export default function NotFound() {
   return (
     <main className={styles.estado}>
-      <p className={styles.codigo}>404</p>
-      <h1 className={styles.titulo}>Página no encontrada</h1>
+      <p className={`display ${styles.codigo}`}>404</p>
+      <h1 className={styles.subtitulo}>Página no encontrada</h1>
       <p className={styles.texto}>Lo que buscás no está o ya no existe.</p>
       <div className={styles.acciones}>
         <Link href="/" className="boton">

@@ -11,8 +11,8 @@ export default function Error({ error, retry }) {
 
   return (
     <main className={styles.estado}>
-      <p className={styles.codigo}>Error</p>
-      <h1 className={styles.titulo}>Algo salió mal</h1>
+      <p className={`display ${styles.codigo}`}>Error</p>
+      <h1 className={styles.subtitulo}>Algo salió mal</h1>
       <p className={styles.texto}>
         Falló algo de nuestro lado. Probá de nuevo en un momento.
       </p>
