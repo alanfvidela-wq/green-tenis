@@ -55,3 +55,6 @@ next-env.d.ts
 
 # Fotos originales; en public/fotos va la versión optimizada (npm run fotos)
 /public/fotos/fuente/
+
+# Configuración local de Claude Code (preview del panel del navegador); no va al repo
+/.claude/
