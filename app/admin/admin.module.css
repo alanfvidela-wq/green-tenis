@@ -79,7 +79,7 @@
 
 .tabla {
   width: 100%;
-  min-width: 44rem;
+  min-width: 40rem;
   border-collapse: collapse;
 }
 
@@ -99,6 +99,14 @@
   padding: var(--espacio-3) var(--espacio-3) var(--espacio-3) 0;
   border-bottom: 1px solid var(--negro);
   vertical-align: middle;
+}
+
+/* La última columna (las acciones) va al ras: si no, a lo ancho de una
+   tablet la tabla se pasa unos píxeles y, al tocar un botón del borde, el
+   scroll se corre */
+.tabla th:last-child,
+.tabla td:last-child {
+  padding-right: 0;
 }
 
 .tabla .numero {

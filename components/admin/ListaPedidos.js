@@ -19,10 +19,12 @@ const FILTROS = [
   ["cancelado", "Cancelados"],
 ];
 
-// El botón de cada salto (ver SIGUIENTE_ESTADO en lib/tipos.js)
+// El botón de cada salto (ver SIGUIENTE_ESTADO en lib/tipos.js): corto a la
+// vista, para que la tabla entre en una tablet, y completo para lectores de
+// pantalla
 const ACCIONES = {
-  preparando: "Pasar a en preparación",
-  enviado: "Marcar como enviado",
+  preparando: { texto: "Preparar", completo: "Pasar a en preparación" },
+  enviado: { texto: "Marcar enviado", completo: "Marcar como enviado" },
 };
 
 // El listado de pedidos de la administración: lo pide a la API
@@ -104,11 +106,13 @@ export default function ListaPedidos() {
         </p>
       )}
 
-      {errorLista ? (
+      {errorLista && (
         <p className={formulario.error} role="alert">
           {errorLista}
         </p>
-      ) : (
+      )}
+      {/* Sin filas no hay tabla: queda solo el mensaje de abajo */}
+      {!errorLista && pedidos.length > 0 && (
         <div className={styles.desplazar} aria-busy={cargando}>
           <table className={styles.tabla}>
             <thead>
@@ -157,10 +161,10 @@ export default function ListaPedidos() {
                             type="button"
                             className={`boton ${styles.chico}`}
                             disabled={enviando !== null}
-                            aria-label={`${ACCIONES[pedido.siguiente]}: pedido #${pedido.numero}`}
+                            aria-label={`${ACCIONES[pedido.siguiente].completo}: pedido #${pedido.numero}`}
                             onClick={() => avanzar(pedido)}
                           >
-                            {enviando === pedido.id ? "Guardando…" : ACCIONES[pedido.siguiente]}
+                            {enviando === pedido.id ? "Guardando…" : ACCIONES[pedido.siguiente].texto}
                           </button>
                         )}
                       </span>
@@ -170,14 +174,15 @@ export default function ListaPedidos() {
               })}
             </tbody>
           </table>
-          {!cargando && pedidos.length === 0 && (
-            <p className={styles.vacio}>
-              {estado ? "No hay pedidos en este estado." : "Todavía no hay pedidos."}
-            </p>
-          )}
-          {cargando && !resultado && <p className={styles.estado}>Cargando…</p>}
         </div>
       )}
+      {/* Fuera del scroll de la tabla: así no se corren con él */}
+      {!errorLista && !cargando && pedidos.length === 0 && (
+        <p className={styles.vacio}>
+          {estado ? "No hay pedidos en este estado." : "Todavía no hay pedidos."}
+        </p>
+      )}
+      {cargando && !resultado && <p className={styles.estado}>Cargando…</p>}
 
       {paginacion?.paginas > 1 && (
         <div className={styles.paginas}>

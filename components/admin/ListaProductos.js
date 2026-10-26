@@ -97,11 +97,13 @@ export default function ListaProductos({ categorias }) {
         {aviso}
       </p>
 
-      {error ? (
+      {error && (
         <p className={formulario.error} role="alert">
           {error}
         </p>
-      ) : (
+      )}
+      {/* Sin filas no hay tabla: queda solo el mensaje de abajo */}
+      {!error && productos.length > 0 && (
         <div className={styles.desplazar} aria-busy={cargando}>
           <table className={styles.tabla}>
             <thead>
@@ -177,14 +179,15 @@ export default function ListaProductos({ categorias }) {
               ))}
             </tbody>
           </table>
-          {!cargando && productos.length === 0 && (
-            <p className={styles.vacio}>
-              {busqueda || categoria ? "Ningún producto coincide con la búsqueda." : "Todavía no hay productos."}
-            </p>
-          )}
-          {cargando && !resultado && <p className={styles.estado}>Cargando…</p>}
         </div>
       )}
+      {/* Fuera del scroll de la tabla: así no se corren con él */}
+      {!error && !cargando && productos.length === 0 && (
+        <p className={styles.vacio}>
+          {busqueda || categoria ? "Ningún producto coincide con la búsqueda." : "Todavía no hay productos."}
+        </p>
+      )}
+      {cargando && !resultado && <p className={styles.estado}>Cargando…</p>}
 
       {paginacion?.paginas > 1 && (
         <div className={styles.paginas}>
