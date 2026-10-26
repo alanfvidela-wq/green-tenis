@@ -14,7 +14,9 @@ export default async function PaginaIngresar({ searchParams }) {
       <p className={styles.bajada}>
         {siguiente === "/checkout"
           ? "Para terminar la compra, ingresá con tu cuenta. El carrito queda como está."
-          : "Ingresá con tu email y tu contraseña."}
+          : siguiente.startsWith("/quiz/")
+            ? "Para guardar tu kit en tu cuenta, ingresá con tu email y tu contraseña."
+            : "Ingresá con tu email y tu contraseña."}
       </p>
 
       <FormularioCuenta modo="ingresar" siguiente={siguiente} />

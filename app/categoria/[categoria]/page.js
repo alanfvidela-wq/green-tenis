@@ -36,6 +36,14 @@ export default async function PaginaCategoria({ params }) {
         <p className={`dato ${styles.cuenta}`}>
           {contar(productos.length, "producto", "productos")}
         </p>
+        {slug === "raquetas" && (
+          <div className={styles.quiz}>
+            <p>¿No sabés cuál elegir? Seis preguntas sobre cómo jugás y te recomendamos dos o tres.</p>
+            <Link href="/quiz" className="boton boton-secundario">
+              Hacer el quiz de juego
+            </Link>
+          </div>
+        )}
       </header>
 
       <GrillaProductos productos={productos} foto={celda} />

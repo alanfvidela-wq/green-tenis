@@ -212,8 +212,9 @@ curl "https://<dominio>/api/v1/productos/wilson-blade-98"
 ```
 
 **200**: lo mismo que un ítem de la lista, más `ficha`. Para raquetas y cuerdas
-es un objeto con campos fijos; para lo demás, una lista de pares
-`[rótulo, valor]` o `null`.
+es un objeto con campos fijos (con `nivel` y `perfilJuego`, que usa el quiz);
+para pelotas, `{ superficie, uso, filas }`, con las filas `[rótulo, valor]`;
+para lo demás, una lista de pares `[rótulo, valor]`. O `null`.
 
 ```json
 {
@@ -236,8 +237,10 @@ es un objeto con campos fijos; para lo demás, una lista de pares
       "largoMm": 685,
       "balanceMm": 320,
       "patron": [16, 19],
-      "rigidezRa": null,
-      "tensionKg": [23, 27]
+      "rigidezRa": 62,
+      "tensionKg": [23, 27],
+      "nivel": "avanzado",
+      "perfilJuego": "control"
     }
   }
 }
@@ -622,7 +625,7 @@ sus skus. Es la misma forma que reciben `POST` y `PATCH`.
     "destacado": true, "activo": true,
     "ficha": {
       "cabezaPulg2": 100, "largoMm": 685, "balanceMm": 320, "patron": [16, 19],
-      "rigidezRa": 71, "tensionKg": [23, 26]
+      "rigidezRa": 71, "tensionKg": [23, 26], "nivel": "intermedio", "perfilJuego": "potencia"
     },
     "variantes": [
       { "id": 1, "sku": "BABOLAT-PURE-DRIVE-G1-300", "nombre": "Grip 1 / 300 g",
@@ -648,7 +651,7 @@ Crea un producto con su ficha y sus variantes. El cuerpo pasa por
 | `descripcion` | Hasta 600 caracteres                                                    |
 | `destacado`   | Booleano; por defecto `false` (sale en «Lo que más sale»)               |
 | `activo`      | Booleano; por defecto `true` (sin activar, la tienda no lo muestra)     |
-| `ficha`       | Raqueta: `{ cabezaPulg2, largoMm, balanceMm, patron: [principales, cruzadas], rigidezRa, tensionKg: [mínima, máxima] }`. Cuerda: `{ material, calibreMm, perfil }`. Pelota, grip y bolso: filas `[["Tipo", "Presurizada"], …]`, hasta 12. O `null` |
+| `ficha`       | Raqueta: `{ cabezaPulg2, largoMm, balanceMm, patron: [principales, cruzadas], rigidezRa, tensionKg: [mínima, máxima], nivel, perfilJuego }`, con `nivel` `principiante`, `intermedio` o `avanzado` y `perfilJuego` `potencia`, `control`, `equilibrio` o `confort`. Cuerda: `{ material, calibreMm, perfil, perfilJuego }`, con `perfilJuego` `durabilidad`, `control`, `confort` o `spin`. Pelota: `{ superficie, uso, filas }`, con `superficie` `todas`, `dura` o `polvo`, `uso` `competencia` o `entrenamiento` y las filas como las de grip y bolso. Grip y bolso: filas `[["Espesor", "0,6 mm"], …]`, hasta 12. O `null` |
 | `variantes`   | De 1 a 30, en el orden de la tienda                                     |
 
 Cada variante: `sku` (mayúsculas, números y guiones; único), `nombre` (hasta 60;
@@ -657,7 +660,8 @@ no se repite en el producto), `precio` (entero en ARS, mayor que 0), `stock`
 Las raquetas llevan además `grip` (0 a 5) y `pesoG` (220 a 360); las cuerdas,
 `largoM`.
 
-Lo guarda `admin_guardar_producto` (`0004_admin.sql`), una función de la base
+Lo guarda `admin_guardar_producto` (`0004_admin.sql`, con las fichas de
+`0005_quiz.sql`), una función de la base
 que hace todo en una sola transacción: si algo falla (un slug repetido, por
 ejemplo), no queda un producto a medias. Corre con los permisos de quien la
 llama (`security invoker`), así que RLS aplica igual.
@@ -1285,11 +1289,13 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
 ### Supabase
 
 1. Correr `supabase/migrations/0002_pagos.sql`, después
-   `0003_reactivar_pagados_a_tiempo.sql` y después `0004_admin.sql`, cada una
-   entera, en el SQL Editor, **antes** de publicar el código que las usa (son
-   compatibles con el código anterior). Sin `0004`, la tienda anda igual y la
-   administración responde `500 falta_migracion` o `403 sin_permiso` al
-   guardar.
+   `0003_reactivar_pagados_a_tiempo.sql`, `0004_admin.sql` y `0005_quiz.sql`,
+   cada una entera, en el SQL Editor, **antes** de publicar el código que las
+   usa (son compatibles con el código anterior). Sin `0004`, la tienda anda
+   igual y la administración responde `500 falta_migracion` o
+   `403 sin_permiso` al guardar. Sin `0005`, la página de producto, el quiz y
+   «Tu kit» fallan: leen `fichas_pelota` y `kits_quiz`. En una base nueva, el
+   catálogo (`supabase/seed.sql`) va después de todas.
 2. Copiar una Secret key a `SUPABASE_SECRET_KEY`.
 
 ### Mercado Pago

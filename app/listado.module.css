@@ -22,6 +22,20 @@
   color: var(--grafito);
 }
 
+/* En raquetas, el acceso al quiz de juego */
+.quiz {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3) var(--espacio-5);
+  margin-top: var(--espacio-2);
+}
+
+.quiz p {
+  max-width: 44ch;
+  color: var(--grafito);
+}
+
 /* El bloque de foto de la categoría, al final */
 .bloque {
   padding-top: var(--seccion);

@@ -1,0 +1,49 @@
+/* El quiz y su resultado */
+
+/* El quiz ocupa al menos la pantalla: las preguntas no miden lo mismo y el
+   footer no salta al pasar de una a otra */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-6);
+  min-height: calc(100svh - var(--alto-header));
+}
+
+/* El nombre del quiz va chico, como la marca de un producto: lo grande es la
+   pregunta */
+.nombre {
+  margin-top: var(--espacio-4);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+/* ---------- El resultado ---------- */
+
+/* Las respuestas, en una línea en mono */
+.respuestas {
+  max-width: 60ch;
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+  line-height: 1.7;
+}
+
+/* Si quedó guardado en la cuenta, o cómo guardarlo, y rehacer el quiz */
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3) var(--espacio-6);
+}
+
+.guardado {
+  color: var(--grafito);
+  font-size: var(--t-chico);
+}
+
+.guardado a {
+  color: var(--negro);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

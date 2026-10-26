@@ -1,0 +1,195 @@
+/* El quiz: la barra de progreso, una pregunta por pantalla y, abajo, «Atrás»
+   y «Ver mi kit». Solo transform y opacity en lo que se mueve. */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-10);
+}
+
+/* ---------- Progreso: el número en mono y la barra del acento ---------- */
+
+.progreso {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-4);
+}
+
+.cuenta {
+  flex-shrink: 0;
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+  font-variant-numeric: tabular-nums;
+}
+
+/* La barra es una píldora hormigón; el relleno crece con scaleX desde la
+   izquierda */
+.barra {
+  flex: 1;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radio-pildora);
+  background: var(--hormigon);
+}
+
+.relleno {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radio-pildora);
+  background: var(--acento);
+  transform-origin: left center;
+  transition: transform 0.5s var(--deslizar);
+}
+
+/* ---------- La pregunta ---------- */
+
+.pregunta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-8);
+}
+
+/* Cada pregunta entra desde el costado al que se va: desde la derecha al
+   avanzar y desde la izquierda al volver */
+@media (prefers-reduced-motion: no-preference) {
+  .pregunta {
+    animation: entrar 0.45s var(--deslizar) both;
+  }
+
+  .pregunta[data-direccion="atras"] {
+    animation-name: volver;
+  }
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+
+@keyframes volver {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+}
+
+.titulo {
+  max-width: 14em;
+  font-size: var(--t-display-3);
+}
+
+.titulo:focus {
+  outline: none;
+}
+
+.titulo:focus-visible {
+  outline: 3px solid var(--foco);
+  outline-offset: 6px;
+}
+
+/* ---------- Las opciones: píldoras grandes, la elegida en el acento ---------- */
+
+.opciones {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-3);
+  max-width: 56rem;
+}
+
+@media (min-width: 700px) {
+  .opciones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Tres opciones van en una fila */
+  .opciones[data-cantidad="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--espacio-1);
+  min-height: 72px;
+  padding: var(--espacio-4) var(--espacio-6);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  line-height: 1.25;
+  text-align: left;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    color var(--transicion),
+    transform 0.1s ease;
+}
+
+.opcion:hover {
+  background: var(--hormigon);
+}
+
+/* Apretada se hunde un poco, como el selector de cantidad */
+.opcion:active {
+  transform: scale(0.97);
+}
+
+.opcion[aria-pressed="true"],
+.opcion[aria-pressed="true"]:hover {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: var(--blanco);
+}
+
+/* Al elegirla, salta un poco con el resorte y vuelve */
+@media (prefers-reduced-motion: no-preference) {
+  .opcion[aria-pressed="true"] {
+    animation: elegir 0.35s var(--resorte);
+  }
+}
+
+@keyframes elegir {
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.opcionTexto {
+  font-size: var(--t-entrada);
+}
+
+.opcionDetalle {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+.opcion[aria-pressed="true"] .opcionDetalle {
+  color: var(--blanco);
+}
+
+/* ---------- Abajo: «Atrás» y lo que sigue ---------- */
+
+.pie {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.ver {
+  min-width: 12rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .relleno,
+  .opcion {
+    transition: none;
+  }
+
+  .opcion:active {
+    transform: none;
+  }
+}

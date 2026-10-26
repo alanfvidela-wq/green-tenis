@@ -14,7 +14,9 @@ export default async function PaginaRegistrarme({ searchParams }) {
       <p className={styles.bajada}>
         {siguiente === "/checkout"
           ? "Con una cuenta podés terminar la compra y seguir tus pedidos. El carrito queda como está."
-          : "Con una cuenta podés comprar y seguir tus pedidos."}
+          : siguiente.startsWith("/quiz/")
+            ? "Con una cuenta guardás tu kit, podés comprar y seguir tus pedidos."
+            : "Con una cuenta podés comprar y seguir tus pedidos."}
       </p>
 
       <FormularioCuenta modo="registrarme" siguiente={siguiente} />

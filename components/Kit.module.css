@@ -1,0 +1,165 @@
+/* El kit del quiz: grupos con su título y celdas como las de la vitrina, con
+   el motivo y la compra debajo (ver «Quiz» en DESIGN.md) */
+.kit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-16);
+}
+
+.grupo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-8);
+}
+
+.titulo {
+  font-size: var(--t-display-4);
+}
+
+/* Una por fila en mobile, dos en tablet y tres desde 1000px */
+.grilla {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-12) var(--espacio-5);
+  list-style: none;
+}
+
+@media (min-width: 700px) {
+  .grilla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1000px) {
+  .grilla {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Las celdas que entran al scrollear (VitrinaEscalonada), como en la
+   vitrina: suben 14px y aparecen, de a una.
+   Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
+   https://kinetics.colorion.co/effects/stagger-entrance/ */
+.grilla > [data-escalonar] {
+  transition:
+    opacity 0.45s var(--deslizar),
+    transform 0.45s var(--deslizar);
+}
+
+.grilla > [data-oculta] {
+  opacity: 0;
+  transform: translateY(14px);
+}
+
+/* ---------- Cada producto ---------- */
+
+.producto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  min-width: 0;
+}
+
+/* La foto: 4:5, sobre estudio, sin borde y con radio de 16px */
+.marco {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radio);
+  background: var(--estudio);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .foto {
+    transition: transform 400ms var(--suave);
+  }
+
+  .producto:has(.nombre a:hover, .nombre a:focus-visible) .foto,
+  .marco:hover .foto {
+    transform: scale(1.03);
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.marca {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+/* El nombre subrayado a la izquierda y el precio a la derecha */
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--espacio-1) var(--espacio-3);
+}
+
+.nombre {
+  min-width: 0;
+  font-size: var(--t-titulo);
+  line-height: 1.2;
+}
+
+.nombre a {
+  text-decoration: underline 1px;
+  text-underline-offset: 4px;
+}
+
+.precio {
+  flex-shrink: 0;
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+  white-space: nowrap;
+}
+
+.motivo {
+  max-width: 46ch;
+  line-height: 1.5;
+}
+
+/* La compra queda abajo de todo, alineada entre celdas de una fila */
+.compra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  margin-top: auto;
+  padding-top: var(--espacio-2);
+}
+
+/* Sin stock: solo la etiqueta, de su ancho */
+.agotado {
+  align-items: flex-start;
+}
+
+.presentacion {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.agregar {
+  width: 100%;
+}
+
+.nota {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grilla > [data-escalonar] {
+    transition: none;
+  }
+
+  .grilla > [data-oculta] {
+    opacity: 1;
+    transform: none;
+  }
+}

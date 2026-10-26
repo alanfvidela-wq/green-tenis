@@ -3,11 +3,11 @@ import { salir } from "@/lib/cuenta";
 import { getUsuario, usuarioEsAdmin } from "@/lib/sesion";
 import styles from "../seccion.module.css";
 
-// Las páginas de la cuenta (mis pedidos, cada pedido y la contraseña nueva):
-// arriba, la navegación de la cuenta, con quién se ingresó y «Cerrar sesión».
-// Al admin le suma el link a la administración. El layout solo muestra: cada
-// página vuelve a verificar la sesión, porque un layout no se vuelve a
-// renderizar al navegar entre sus páginas.
+// Las páginas de la cuenta (mis pedidos, cada pedido, tu kit y la contraseña
+// nueva): arriba, la navegación de la cuenta, con quién se ingresó y «Cerrar
+// sesión». Al admin le suma el link a la administración. El layout solo
+// muestra: cada página vuelve a verificar la sesión, porque un layout no se
+// vuelve a renderizar al navegar entre sus páginas.
 export default async function LayoutCuenta({ children }) {
   const usuario = await getUsuario();
 
@@ -18,6 +18,9 @@ export default async function LayoutCuenta({ children }) {
           <nav className={styles.nav} aria-label="Tu cuenta">
             <LinkNav href="/mis-pedidos" className={styles.link}>
               Mis pedidos
+            </LinkNav>
+            <LinkNav href="/tu-kit" className={styles.link}>
+              Tu kit
             </LinkNav>
             <LinkNav href="/nueva-contrasena" className={styles.link}>
               Cambiar contraseña

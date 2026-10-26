@@ -4,13 +4,18 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { erroresPorCampo, pedirApi } from "@/lib/clienteApi";
-import { MATERIALES } from "@/lib/fichas";
+import { MATERIALES, SUPERFICIES, USOS, mayuscula } from "@/lib/fichas";
 import {
+  JUEGOS_CUERDA,
+  JUEGOS_RAQUETA,
   MATERIALES_CUERDA,
+  NIVELES,
   NOMBRES_TIPO,
   PERFILES_CUERDA,
+  SUPERFICIES_PELOTA,
   TIPOS_CON_FICHA_LIBRE,
   TIPOS_POR_CATEGORIA,
+  USOS_PELOTA,
 } from "@/lib/tipos";
 import styles from "@/app/admin/admin.module.css";
 import formulario from "@/app/formulario.module.css";
@@ -49,8 +54,11 @@ const CAMPOS_RAQUETA = [
   "rigidezRa",
   "tensionMin",
   "tensionMax",
+  "nivel",
+  "perfilJuego",
 ];
-const CAMPOS_CUERDA = ["material", "calibreMm", "perfil"];
+const CAMPOS_CUERDA = ["material", "calibreMm", "perfil", "perfilJuego"];
+const CAMPOS_PELOTA = ["superficie", "uso"];
 
 function fichaVacia(tipo) {
   if (tipo === "raqueta") {
@@ -63,11 +71,17 @@ function fichaVacia(tipo) {
       rigidezRa: "",
       tensionMin: "",
       tensionMax: "",
+      nivel: "",
+      perfilJuego: "",
     };
   }
-  if (tipo === "cuerda") return { material: "", calibreMm: "", perfil: "" };
+  if (tipo === "cuerda") return { material: "", calibreMm: "", perfil: "", perfilJuego: "" };
+  if (tipo === "pelota") return { superficie: "", uso: "", filas: [] };
   return { filas: [] };
 }
+
+// Las filas de rótulo y valor, como las edita el formulario
+const aFilas = (filas) => filas.map(([rotulo, valor]) => ({ clave: nuevaClave(), rotulo, valor }));
 
 function varianteVacia() {
   return {
@@ -114,17 +128,24 @@ function aFormulario(producto) {
       rigidezRa: aTexto(ficha.rigidezRa),
       tensionMin: aTexto(ficha.tensionKg?.[0]),
       tensionMax: aTexto(ficha.tensionKg?.[1]),
+      nivel: aTexto(ficha.nivel),
+      perfilJuego: aTexto(ficha.perfilJuego),
     };
   } else if (ficha && tipo === "cuerda") {
     fichaFormulario = {
       material: ficha.material,
       calibreMm: aTexto(ficha.calibreMm),
       perfil: ficha.perfil,
+      perfilJuego: aTexto(ficha.perfilJuego),
+    };
+  } else if (ficha && tipo === "pelota") {
+    fichaFormulario = {
+      superficie: aTexto(ficha.superficie),
+      uso: aTexto(ficha.uso),
+      filas: aFilas(ficha.filas),
     };
   } else if (ficha) {
-    fichaFormulario = {
-      filas: ficha.map(([rotulo, valor]) => ({ clave: nuevaClave(), rotulo, valor })),
-    };
+    fichaFormulario = { filas: aFilas(ficha) };
   }
   return {
     categoria: producto.categoria,
@@ -165,6 +186,8 @@ function aCuerpo(producto) {
         patron: [aNumero(ficha.principales), aNumero(ficha.cruzadas)],
         rigidezRa: aNumero(ficha.rigidezRa),
         tensionKg: [aNumero(ficha.tensionMin), aNumero(ficha.tensionMax)],
+        nivel: ficha.nivel,
+        perfilJuego: ficha.perfilJuego,
       };
     }
   } else if (tipo === "cuerda") {
@@ -173,11 +196,17 @@ function aCuerpo(producto) {
         material: ficha.material,
         calibreMm: aNumero(ficha.calibreMm),
         perfil: ficha.perfil,
+        perfilJuego: ficha.perfilJuego,
       };
     }
   } else {
-    const filas = ficha.filas.filter((fila) => fila.rotulo.trim() || fila.valor.trim());
-    fichaCuerpo = filas.length ? filas.map((fila) => [fila.rotulo, fila.valor]) : null;
+    const filas = ficha.filas
+      .filter((fila) => fila.rotulo.trim() || fila.valor.trim())
+      .map((fila) => [fila.rotulo, fila.valor]);
+    if (tipo !== "pelota") fichaCuerpo = filas.length ? filas : null;
+    else if (filas.length || algunoLleno(ficha, CAMPOS_PELOTA)) {
+      fichaCuerpo = { superficie: ficha.superficie, uso: ficha.uso, filas };
+    }
   }
 
   return {
@@ -328,6 +357,30 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
         />
       );
     };
+
+  // Un select de una lista de valores para campo(), con «Elegí uno» primero.
+  // `nombres` dice cómo se ve cada valor; sin él, va con mayúscula.
+  const seleccion = (valor, alCambiar, valores, nombres = {}) =>
+    function Seleccion(props) {
+      return (
+        <select
+          className={formulario.entrada}
+          value={valor}
+          onChange={(evento) => alCambiar(evento.target.value)}
+          {...props}
+        >
+          <option value="">Elegí uno</option>
+          {valores.map((v) => (
+            <option key={v} value={v}>
+              {nombres[v] ?? mayuscula(v)}
+            </option>
+          ))}
+        </select>
+      );
+    };
+
+  // Las filas libres son la ficha (grip y bolso) o ficha.filas (pelota)
+  const rutaFilas = tipo === "pelota" ? "ficha.filas" : "ficha";
 
   return (
     <form className={styles.formulario} onSubmit={guardar} noValidate>
@@ -501,6 +554,22 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
                 inputMode: "decimal",
               }),
             })}
+            {campo({
+              etiqueta: "Nivel",
+              ruta: "ficha.nivel",
+              ayuda: "Lo usa el quiz para recomendar.",
+              children: seleccion(producto.ficha.nivel, (v) => cambiarFicha({ nivel: v }), NIVELES),
+            })}
+            {campo({
+              etiqueta: "Perfil de juego",
+              ruta: "ficha.perfilJuego",
+              ayuda: "Lo usa el quiz para recomendar.",
+              children: seleccion(
+                producto.ficha.perfilJuego,
+                (v) => cambiarFicha({ perfilJuego: v }),
+                JUEGOS_RAQUETA,
+              ),
+            })}
           </div>
         )}
 
@@ -534,23 +603,41 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
               }),
             })}
             {campo({
-              etiqueta: "Perfil",
+              etiqueta: "Perfil (la forma)",
               ruta: "ficha.perfil",
-              children: (props) => (
-                <select
-                  className={formulario.entrada}
-                  value={producto.ficha.perfil}
-                  onChange={(evento) => cambiarFicha({ perfil: evento.target.value })}
-                  {...props}
-                >
-                  <option value="">Elegí uno</option>
-                  {PERFILES_CUERDA.map((p) => (
-                    <option key={p} value={p}>
-                      {p.charAt(0).toUpperCase() + p.slice(1)}
-                    </option>
-                  ))}
-                </select>
+              children: seleccion(producto.ficha.perfil, (v) => cambiarFicha({ perfil: v }), PERFILES_CUERDA),
+            })}
+            {campo({
+              etiqueta: "Perfil de juego",
+              ruta: "ficha.perfilJuego",
+              ayuda: "Lo usa el quiz para recomendar.",
+              children: seleccion(
+                producto.ficha.perfilJuego,
+                (v) => cambiarFicha({ perfilJuego: v }),
+                JUEGOS_CUERDA,
               ),
+            })}
+          </div>
+        )}
+
+        {tipo === "pelota" && (
+          <div className={styles.campos}>
+            {campo({
+              etiqueta: "Superficie",
+              ruta: "ficha.superficie",
+              ayuda: "Lo usa el quiz para recomendar.",
+              children: seleccion(
+                producto.ficha.superficie,
+                (v) => cambiarFicha({ superficie: v }),
+                SUPERFICIES_PELOTA,
+                SUPERFICIES,
+              ),
+            })}
+            {campo({
+              etiqueta: "Uso",
+              ruta: "ficha.uso",
+              ayuda: "Lo usa el quiz para recomendar.",
+              children: seleccion(producto.ficha.uso, (v) => cambiarFicha({ uso: v }), USOS_PELOTA, USOS),
             })}
           </div>
         )}
@@ -561,7 +648,7 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
               <div key={fila.clave} className={styles.fila}>
                 {campo({
                   etiqueta: "Rótulo",
-                  ruta: `ficha.${i}.0`,
+                  ruta: `${rutaFilas}.${i}.0`,
                   children: entrada(fila.rotulo, (rotulo) =>
                     cambiarFicha({
                       filas: producto.ficha.filas.map((f) => (f.clave === fila.clave ? { ...f, rotulo } : f)),
@@ -570,7 +657,7 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
                 })}
                 {campo({
                   etiqueta: "Valor",
-                  ruta: `ficha.${i}.1`,
+                  ruta: `${rutaFilas}.${i}.1`,
                   children: entrada(fila.valor, (valor) =>
                     cambiarFicha({
                       filas: producto.ficha.filas.map((f) => (f.clave === fila.clave ? { ...f, valor } : f)),
@@ -589,7 +676,7 @@ export default function FormularioProducto({ id = null, categorias, recienCreado
                 </button>
               </div>
             ))}
-            {errores.ficha && <p className={formulario.error}>{errores.ficha}</p>}
+            {errores[rutaFilas] && <p className={formulario.error}>{errores[rutaFilas]}</p>}
             <button
               type="button"
               className={`boton boton-secundario ${styles.chico} ${styles.agregar}`}

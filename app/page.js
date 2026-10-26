@@ -48,6 +48,24 @@ export default async function Home() {
 
       <BloqueFoto lugar={bloqueDos} className={claseBloque} />
 
+      {/* El quiz de juego: el bloque de foto de arriba ya deja el espacio */}
+      <section aria-labelledby="titulo-quiz">
+        <div className={`${styles.contenido} ${styles.seccion} ${styles.quiz}`}>
+          <h2 id="titulo-quiz" className={`display ${styles.subtitulo}`}>
+            Tu kit en seis preguntas
+          </h2>
+          <div className={styles.quizTexto}>
+            <p className={styles.quizBajada}>
+              Contanos cómo jugás y te recomendamos dos o tres raquetas, una cuerda y una pelota
+              del catálogo, con el porqué de cada una.
+            </p>
+            <Link href="/quiz" className={`boton ${styles.quizBoton}`}>
+              Hacer el quiz
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="titulo-categorias" className={styles.hormigon}>
         <div className={`${styles.contenido} ${styles.seccion}`}>
           <h2 id="titulo-categorias" className={`display ${styles.subtitulo}`}>

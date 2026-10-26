@@ -8,8 +8,8 @@ import { rutaSiguiente } from "./lib/siguiente";
 
 // Corre antes de las rutas de cuenta y de compra (ver `matcher`). Renueva la
 // sesión de Supabase si venció y redirige:
-// - sin sesión, /checkout, /mis-pedidos, /nueva-contrasena y /admin llevan a
-//   /ingresar, con la ruta en «siguiente» para volver después;
+// - sin sesión, /checkout, /mis-pedidos, /tu-kit, /nueva-contrasena y /admin
+//   llevan a /ingresar, con la ruta en «siguiente» para volver después;
 // - con sesión pero sin el rol de admin, /admin lleva a la home;
 // - con sesión, /ingresar y /registrarme llevan a «siguiente».
 // Es un control optimista (lee la sesión de la cookie): cada página y cada
@@ -21,7 +21,7 @@ import { rutaSiguiente } from "./lib/siguiente";
 // ya salió (solo le queda el noindex). Acá se pregunta antes si existe, con el
 // mismo criterio que la página, y si no se reescribe a una ruta que no existe.
 
-const PROTEGIDAS = ["/checkout", "/mis-pedidos", "/nueva-contrasena", "/admin"];
+const PROTEGIDAS = ["/checkout", "/mis-pedidos", "/tu-kit", "/nueva-contrasena", "/admin"];
 const ADMIN = "/admin";
 const DE_CUENTA = ["/ingresar", "/registrarme"];
 
@@ -135,6 +135,7 @@ export const config = {
   matcher: [
     "/checkout/:path*",
     "/mis-pedidos/:path*",
+    "/tu-kit",
     "/nueva-contrasena",
     "/admin/:path*",
     "/ingresar",

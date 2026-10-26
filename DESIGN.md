@@ -374,8 +374,12 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
 3. **Bloque de foto** (`pelota-polvo-01`).
 4. **Anatomía de una raqueta** (banda negra). Ver esa sección.
 5. **Bloque de foto** (`raqueta-cancha-01`).
-6. **Categorías** (hormigón): el título y las cuatro tarjetas.
-7. **Footer** (negro).
+6. **Quiz de juego** (blanco): «Tu kit en seis preguntas» en `--t-display-2`
+   y, al lado (debajo en mobile), qué recomienda y el botón del acento «Hacer
+   el quiz», de 60px. Sin espacio arriba propio: ya lo deja el bloque de foto.
+   Ver «Quiz».
+7. **Categorías** (hormigón): el título y las cuatro tarjetas.
+8. **Footer** (negro).
 
 Sin cintas con leyendas ni bloques de slogan.
 
@@ -434,6 +438,56 @@ venden como un producto más, con las mismas piezas.
     que por separado» y, bajo el botón, qué falta elegir;
   - «Agregar al carrito», apagado hasta que no falte nada.
 
+## Quiz
+
+Seis preguntas sobre cómo se juega que terminan en un kit del catálogo: dos o
+tres raquetas, una cuerda y una pelota, cada una con por qué encaja. Se llega
+desde la home y desde la categoría raquetas («¿No sabés cuál elegir?» y el
+botón secundario «Hacer el quiz de juego», debajo de la cantidad).
+
+- **Las preguntas** (`PREGUNTAS` en `lib/quiz.js`): nivel, cuántas veces por
+  semana, desde dónde (fondo, red o toda la cancha), potencia o control, si
+  quiere algo cómodo para el brazo y la superficie (polvo de ladrillo, cancha
+  dura, sintético o varias).
+- **`/quiz`**: una pregunta por pantalla. Arriba, el número en mono («02 /
+  06») y la barra de progreso, una píldora hormigón de 8px con el relleno del
+  acento. «Quiz de juego» va chico, en mayúsculas: lo grande es la pregunta,
+  en la display a `--t-display-3`. Las opciones son píldoras grandes con borde
+  de 1px (el texto y, debajo, en grafito, qué quiere decir), en una columna en
+  mobile y en dos o tres desde 700px; la elegida, en el acento con texto
+  blanco. Elegir pasa sola a la siguiente; «Atrás» vuelve sin perder lo
+  elegido (y entonces aparece «Siguiente»). En la última, «Ver mi kit», el
+  botón del acento. La página mide al menos una pantalla.
+- **La recomendación** (`lib/quiz.js`): reglas de puntaje, nada de IA. Cada
+  respuesta suma (o resta) puntos a atributos del producto: el nivel (el
+  mismo suma todo; el de al lado, la mitad), el perfil de juego, y el peso, la
+  rigidez, la cabeza y el balance **relativos al catálogo** (la más liviana
+  suma más para quien empieza o quiere cuidar el brazo). La superficie es lo
+  que más pesa en la pelota (sintético y varias van con las de todas). Lo que
+  no tiene stock baja en el ranking, pero no sale. El motivo de cada producto
+  son las frases de las dos reglas que más le sumaron.
+- **El resultado** (`/quiz/resultado`, con las respuestas en la URL): migas,
+  «Tu kit» a `--t-display-3`, las respuestas en una línea en mono (separadas
+  por «·»), «Volver a hacer el quiz» (secundario) y si quedó guardado en la
+  cuenta (o «Guardar en mi cuenta», o «Ingresá para guardarlo»). Debajo,
+  «Raquetas» y «Cuerda y pelota» en la display a `--t-display-4`, cada uno con
+  sus celdas: la foto 4:5 sobre estudio, la marca en mayúsculas, el nombre
+  subrayado y el precio en mono, el motivo y «Agregar al carrito» a lo ancho.
+  En las raquetas se elige grip y peso con las píldoras del producto; la
+  cuerda y la pelota van con la presentación que sugiere el quiz, escrita en
+  mono. Sin stock, la etiqueta «Sin stock» y ningún botón. Una celda por fila
+  en mobile, dos en tablet y tres desde 1000px.
+- **Tu kit** (`/tu-kit`, en la cuenta): con sesión, el quiz guarda el kit (el
+  último reemplaza al anterior, en `kits_quiz`, que cada usuario ve solo suyo).
+  La página lo muestra igual que el resultado, con la fecha del quiz y los
+  precios y el stock de hoy. Sin kit, «Hacer el quiz».
+- **Movimiento**: la pregunta nueva entra desde el costado al que se va (32px
+  y opacidad, 0,45s con `--deslizar`); la barra crece con `scaleX` (0,5s,
+  `--deslizar`); la opción apretada se hunde a 0,97 y, al elegirla, salta a
+  1,03 con `--resorte`. Las celdas del kit entran escalonadas como la vitrina
+  y «Agregar al carrito» muestra el aviso «Agregado al carrito». Al pasar de
+  pregunta, el foco va a la pregunta nueva.
+
 ## Carrito
 
 - **Dónde vive**: en el navegador (`localStorage`), con solo ids y cantidades:
@@ -476,7 +530,7 @@ venden como un producto más, con las mismas piezas.
   al pasar el mouse. Es un `type="button"` que no saca el foco del campo, con
   «Mostrar contraseña» u «Ocultar contraseña» y `aria-pressed`. Al enviar, el
   campo vuelve a ocultarse, así el navegador ofrece guardar la contraseña.
-- **Rutas protegidas**: `/checkout`, `/mis-pedidos` y `/nueva-contrasena`. Sin
+- **Rutas protegidas**: `/checkout`, `/mis-pedidos`, `/tu-kit` y `/nueva-contrasena`. Sin
   sesión, llevan a `/ingresar?siguiente=<ruta>` y, al ingresar o crear la
   cuenta, se vuelve ahí. El carrito no se toca: vive en el navegador.
 - **Recuperar la contraseña**: «¿Olvidaste tu contraseña?» en `/ingresar` lleva

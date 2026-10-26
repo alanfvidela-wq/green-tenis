@@ -1,5 +1,6 @@
 -- green.: el catálogo inicial. Generado desde lib/productos.js y lib/fichas.js
--- (sin zapatillas ni ropa). Se corre una sola vez, después de 0001_esquema.sql.
+-- (sin zapatillas ni ropa). Se corre una sola vez, después de todas las
+-- migraciones (supabase/migrations/, de 0001 a la última).
 
 begin;
 
@@ -30,19 +31,19 @@ insert into public.productos (slug, categoria, tipo, marca, nombre, descripcion,
    null, false, 5),
   ('head-tour-xt', 'pelotas', 'pelota', 'Head', 'Tour XT',
    'Pelota presurizada para todas las superficies, con pique parejo.',
-   '[["Tipo","Presurizada"],["Superficie","Todas"],["Felpa","Regular"]]'::jsonb, true, 6),
+   '[["Tipo","Presurizada"],["Felpa","Regular"]]'::jsonb, true, 6),
   ('wilson-us-open', 'pelotas', 'pelota', 'Wilson', 'US Open Extra Duty',
    'Pelota presurizada para cancha dura, con felpa extra duty.',
-   '[["Tipo","Presurizada"],["Superficie","Cancha dura"],["Felpa","Extra duty"]]'::jsonb, false, 7),
+   '[["Tipo","Presurizada"],["Felpa","Extra duty"]]'::jsonb, false, 7),
   ('dunlop-fort-clay-court', 'pelotas', 'pelota', 'Dunlop', 'Fort Clay Court',
    'Pelota presurizada para polvo de ladrillo.',
-   '[["Tipo","Presurizada"],["Superficie","Polvo de ladrillo"],["Felpa","Regular"]]'::jsonb, false, 8),
+   '[["Tipo","Presurizada"],["Felpa","Regular"]]'::jsonb, false, 8),
   ('babolat-gold-all-court', 'pelotas', 'pelota', 'Babolat', 'Gold All Court',
    'Pelota presurizada para todas las superficies, en tubos de cuatro.',
-   '[["Tipo","Presurizada"],["Superficie","Todas"],["Pelotas por tubo","4"]]'::jsonb, false, 9),
+   '[["Tipo","Presurizada"],["Pelotas por tubo","4"]]'::jsonb, false, 9),
   ('penn-championship', 'pelotas', 'pelota', 'Penn', 'Championship',
    'Pelota presurizada para entrenamiento y peloteo.',
-   '[["Tipo","Presurizada"],["Superficie","Todas"],["Uso","Entrenamiento y peloteo"]]'::jsonb, false, 10),
+   '[["Tipo","Presurizada"]]'::jsonb, false, 10),
   ('luxilon-alu-power-125', 'cuerdas-y-grips', 'cuerda', 'Luxilon', 'ALU Power 1.25',
    'Cuerda de copoliéster de 1,25 mm, para control con golpes fuertes.',
    null, true, 11),
@@ -51,6 +52,9 @@ insert into public.productos (slug, categoria, tipo, marca, nombre, descripcion,
    null, false, 12),
   ('solinco-hyper-g-125', 'cuerdas-y-grips', 'cuerda', 'Solinco', 'Hyper-G 1.25',
    'Cuerda de copoliéster de 1,25 mm, para control y efecto.',
+   null, false, 13),
+  ('tecnifibre-x-one-biphase-130', 'cuerdas-y-grips', 'cuerda', 'Tecnifibre', 'X-One Biphase 1.30',
+   'Cuerda multifilamento de 1,30 mm, blanda y elástica. Cuida el brazo y suma potencia.',
    null, false, 13),
   ('wilson-pro-overgrip', 'cuerdas-y-grips', 'grip', 'Wilson', 'Pro Overgrip',
    'Overgrip fino de tacto pegajoso.',
@@ -114,6 +118,7 @@ insert into public.variantes (producto_id, sku, nombre, precio, stock, orden) va
   ((select id from public.productos where slug = 'babolat-rpm-blast-125'), 'BABOLAT-RPM-BLAST-125-ROLLO', 'Rollo 200 m', 399000, 0, 2),
   ((select id from public.productos where slug = 'solinco-hyper-g-125'), 'SOLINCO-HYPER-G-125-SET', 'Set 12 m', 31900, 18, 1),
   ((select id from public.productos where slug = 'solinco-hyper-g-125'), 'SOLINCO-HYPER-G-125-ROLLO', 'Rollo 200 m', 349000, 1, 2),
+  ((select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'TECNIFIBRE-X-ONE-BIPHASE-130-SET', 'Set 12 m', 36900, 20, 1),
   ((select id from public.productos where slug = 'wilson-pro-overgrip'), 'WILSON-PRO-OVERGRIP-PACK-3', 'Pack x3', 12900, 40, 1),
   ((select id from public.productos where slug = 'wilson-pro-overgrip'), 'WILSON-PRO-OVERGRIP-PACK-12', 'Pack x12', 44900, 9, 2),
   ((select id from public.productos where slug = 'tourna-grip-original'), 'TOURNA-GRIP-ORIGINAL-PACK-3', 'Pack x3', 14900, 22, 1),
@@ -128,15 +133,17 @@ insert into public.variantes (producto_id, sku, nombre, precio, stock, orden) va
   ((select id from public.productos where slug = 'yonex-pro-backpack'), 'YONEX-PRO-BACKPACK-AZUL', 'Azul marino', 119000, 3, 2),
   ((select id from public.productos where slug = 'encordado'), 'ENCORDADO', 'Encordado', 15000, null, 1);
 
--- Fichas de raqueta (sin encordar). La rigidez queda para completar.
+-- Fichas de raqueta (sin encordar), con el nivel y el perfil de juego que usa
+-- el quiz. La rigidez es la publicada para cada modelo, aproximada.
 insert into public.fichas_raqueta
-  (producto_id, cabeza_pulg2, largo_mm, balance_mm, patron_principales, patron_cruzadas, tension_min_kg, tension_max_kg)
+  (producto_id, cabeza_pulg2, largo_mm, balance_mm, patron_principales, patron_cruzadas,
+   rigidez_ra, tension_min_kg, tension_max_kg, nivel, perfil_juego)
 values
-  ((select id from public.productos where slug = 'babolat-pure-drive'), 100, 685, 320, 16, 19, 23, 26),
-  ((select id from public.productos where slug = 'wilson-blade-98'), 98, 685, 320, 16, 19, 23, 27),
-  ((select id from public.productos where slug = 'head-speed-mp'), 100, 685, 320, 16, 19, 22, 26),
-  ((select id from public.productos where slug = 'yonex-ezone-100'), 100, 685, 320, 16, 19, 20, 27),
-  ((select id from public.productos where slug = 'wilson-clash-100'), 100, 685, 310, 16, 19, 22, 26);
+  ((select id from public.productos where slug = 'babolat-pure-drive'), 100, 685, 320, 16, 19, 71, 23, 26, 'intermedio', 'potencia'),
+  ((select id from public.productos where slug = 'wilson-blade-98'), 98, 685, 320, 16, 19, 62, 23, 27, 'avanzado', 'control'),
+  ((select id from public.productos where slug = 'head-speed-mp'), 100, 685, 320, 16, 19, 64, 22, 26, 'intermedio', 'equilibrio'),
+  ((select id from public.productos where slug = 'yonex-ezone-100'), 100, 685, 320, 16, 19, 66, 20, 27, 'principiante', 'potencia'),
+  ((select id from public.productos where slug = 'wilson-clash-100'), 100, 685, 310, 16, 19, 55, 22, 26, 'intermedio', 'confort');
 
 -- Grip y peso de cada variante de raqueta
 insert into public.variantes_raqueta (variante_id, grip, peso_g) values
@@ -160,11 +167,12 @@ insert into public.variantes_raqueta (variante_id, grip, peso_g) values
   ((select id from public.variantes where sku = 'WILSON-CLASH-100-G2-295'), 2, 295),
   ((select id from public.variantes where sku = 'WILSON-CLASH-100-G3-295'), 3, 295);
 
--- Fichas de cuerda
-insert into public.fichas_cuerda (producto_id, material, calibre_mm, perfil) values
-  ((select id from public.productos where slug = 'luxilon-alu-power-125'), 'copoliester', 1.25, 'redondo'),
-  ((select id from public.productos where slug = 'babolat-rpm-blast-125'), 'copoliester', 1.25, 'octogonal'),
-  ((select id from public.productos where slug = 'solinco-hyper-g-125'), 'copoliester', 1.25, 'cuadrado');
+-- Fichas de cuerda, con el perfil de juego que usa el quiz
+insert into public.fichas_cuerda (producto_id, material, calibre_mm, perfil, perfil_juego) values
+  ((select id from public.productos where slug = 'luxilon-alu-power-125'), 'copoliester', 1.25, 'redondo', 'control'),
+  ((select id from public.productos where slug = 'babolat-rpm-blast-125'), 'copoliester', 1.25, 'octogonal', 'spin'),
+  ((select id from public.productos where slug = 'solinco-hyper-g-125'), 'copoliester', 1.25, 'cuadrado', 'durabilidad'),
+  ((select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'multifilamento', 1.30, 'redondo', 'confort');
 
 -- Largo de cada variante de cuerda: 12 m el set, 200 m el rollo
 insert into public.variantes_cuerda (variante_id, largo_m) values
@@ -173,7 +181,16 @@ insert into public.variantes_cuerda (variante_id, largo_m) values
   ((select id from public.variantes where sku = 'BABOLAT-RPM-BLAST-125-SET'), 12),
   ((select id from public.variantes where sku = 'BABOLAT-RPM-BLAST-125-ROLLO'), 200),
   ((select id from public.variantes where sku = 'SOLINCO-HYPER-G-125-SET'), 12),
-  ((select id from public.variantes where sku = 'SOLINCO-HYPER-G-125-ROLLO'), 200);
+  ((select id from public.variantes where sku = 'SOLINCO-HYPER-G-125-ROLLO'), 200),
+  ((select id from public.variantes where sku = 'TECNIFIBRE-X-ONE-BIPHASE-130-SET'), 12);
+
+-- Fichas de pelota: superficie y uso, que usa el quiz
+insert into public.fichas_pelota (producto_id, superficie, uso) values
+  ((select id from public.productos where slug = 'head-tour-xt'), 'todas', 'competencia'),
+  ((select id from public.productos where slug = 'wilson-us-open'), 'dura', 'competencia'),
+  ((select id from public.productos where slug = 'dunlop-fort-clay-court'), 'polvo', 'competencia'),
+  ((select id from public.productos where slug = 'babolat-gold-all-court'), 'todas', 'competencia'),
+  ((select id from public.productos where slug = 'penn-championship'), 'todas', 'entrenamiento');
 
 -- Compatibilidades para el armador: todas las cuerdas y grips, con una cuerda y
 -- un grip recomendados por raqueta
@@ -202,7 +219,12 @@ insert into public.compatibilidades (raqueta_id, accesorio_id, accesorio_tipo, r
   ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'babolat-rpm-blast-125'), 'cuerda', false),
   ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'solinco-hyper-g-125'), 'cuerda', true),
   ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'wilson-pro-overgrip'), 'grip', false),
-  ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'tourna-grip-original'), 'grip', true);
+  ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'tourna-grip-original'), 'grip', true),
+  ((select id from public.productos where slug = 'babolat-pure-drive'), (select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'cuerda', false),
+  ((select id from public.productos where slug = 'wilson-blade-98'), (select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'cuerda', false),
+  ((select id from public.productos where slug = 'head-speed-mp'), (select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'cuerda', false),
+  ((select id from public.productos where slug = 'yonex-ezone-100'), (select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'cuerda', false),
+  ((select id from public.productos where slug = 'wilson-clash-100'), (select id from public.productos where slug = 'tecnifibre-x-one-biphase-130'), 'cuerda', false);
 
 -- Combos
 insert into public.combos (slug, nombre, descripcion, descuento_pct, orden) values
