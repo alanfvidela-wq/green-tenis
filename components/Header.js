@@ -26,6 +26,9 @@ export default function Header() {
           <LinkNav href="/combos" tambien="/combo/" className={styles.link}>
             Combos
           </LinkNav>
+          <LinkNav href="/quiz" className={styles.link}>
+            Quiz
+          </LinkNav>
         </nav>
 
         <div className={styles.acciones}>

@@ -35,20 +35,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <BloqueFoto lugar={bloqueUno} className={claseBloque} />
-
-      {/* Anatomía de una raqueta: la banda negra, con la raqueta fija y los
-          pasos con el scroll (ver DESIGN.md) */}
-      <AnatomiaRaqueta
-        titulo={TITULO_ANATOMIA}
-        bajada={BAJADA_ANATOMIA}
-        cierre={CIERRE_ANATOMIA}
-        pasos={PASOS_ANATOMIA}
-      />
-
-      <BloqueFoto lugar={bloqueDos} className={claseBloque} />
-
-      {/* El quiz de juego: el bloque de foto de arriba ya deja el espacio */}
+      {/* El quiz de juego: la sección de arriba ya deja el espacio */}
       <section aria-labelledby="titulo-quiz">
         <div className={`${styles.contenido} ${styles.seccion} ${styles.quiz}`}>
           <h2 id="titulo-quiz" className={`display ${styles.subtitulo}`}>
@@ -65,6 +52,19 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <BloqueFoto lugar={bloqueUno} className={claseBloque} />
+
+      {/* Anatomía de una raqueta: la banda negra, con la raqueta fija y los
+          pasos con el scroll (ver DESIGN.md) */}
+      <AnatomiaRaqueta
+        titulo={TITULO_ANATOMIA}
+        bajada={BAJADA_ANATOMIA}
+        cierre={CIERRE_ANATOMIA}
+        pasos={PASOS_ANATOMIA}
+      />
+
+      <BloqueFoto lugar={bloqueDos} className={claseBloque} />
 
       <section aria-labelledby="titulo-categorias" className={styles.hormigon}>
         <div className={`${styles.contenido} ${styles.seccion}`}>

@@ -180,14 +180,15 @@ cualquier acento.
 ### Header
 
 - **El wordmark a la izquierda; al lado, los links de texto; a la derecha,
-  «Mi cuenta» y el carrito.** Los links (las cuatro categorías y «Combos») van
-  en mayúsculas a 13px, con tracking 0,06em y 44px de alto; con el mouse se
-  subrayan. Sin píldoras en los links.
+  «Mi cuenta» y el carrito.** Los links (las cuatro categorías, «Combos» y
+  «Quiz») van en mayúsculas a 13px, con tracking 0,06em y 44px de alto; con el
+  mouse se subrayan. Sin píldoras en los links.
 - **El carrito** es la única píldora: el acento con texto blanco («Carrito
   (0)», con `BotonCarrito`); hover, negro (blanco sobre el video).
 - **El link activo** queda subrayado y lleva `aria-current="page"`, solo en la
-  página que corresponde (la categoría abierta, los combos o la cuenta): el
-  header lo saca de la ruta (`usePathname`). En la home no hay ninguno.
+  página que corresponde (la categoría abierta, los combos, el quiz o la
+  cuenta): el header lo saca de la ruta (`usePathname`). En la home no hay
+  ninguno.
 - **Sobre el video**: en la home el header va adentro del contenedor del hero,
   sin fondo, con el wordmark y los links en blanco y foco blanco.
 - **Fijo**. Al scrollear (un poco antes de terminar el hero) pasa a banda
@@ -371,13 +372,14 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
 1. **Hero**: el video en un contenedor, con el header adentro. Ver «Hero».
 2. **Lo que más sale** (blanco): el título en `--t-display-2` y la vitrina, con
    una celda de foto entre los productos. Sin bajada: el título ya dice qué hay.
-3. **Bloque de foto** (`pelota-polvo-01`).
-4. **Anatomía de una raqueta** (banda negra). Ver esa sección.
-5. **Bloque de foto** (`raqueta-cancha-01`).
-6. **Quiz de juego** (blanco): «Tu kit en seis preguntas» en `--t-display-2`
+3. **Quiz de juego** (blanco): «Tu kit en seis preguntas» en `--t-display-2`
    y, al lado (debajo en mobile), qué recomienda y el botón del acento «Hacer
-   el quiz», de 60px. Sin espacio arriba propio: ya lo deja el bloque de foto.
+   el quiz», de 60px. Sin espacio arriba propio: ya lo deja «Lo que más sale».
+   Va antes de la anatomía, que es larga, para que se vea sin scrollear tanto.
    Ver «Quiz».
+4. **Bloque de foto** (`pelota-polvo-01`).
+5. **Anatomía de una raqueta** (banda negra). Ver esa sección.
+6. **Bloque de foto** (`raqueta-cancha-01`).
 7. **Categorías** (hormigón): el título y las cuatro tarjetas.
 8. **Footer** (negro).
 
@@ -442,8 +444,9 @@ venden como un producto más, con las mismas piezas.
 
 Seis preguntas sobre cómo se juega que terminan en un kit del catálogo: dos o
 tres raquetas, una cuerda y una pelota, cada una con por qué encaja. Se llega
-desde la home y desde la categoría raquetas («¿No sabés cuál elegir?» y el
-botón secundario «Hacer el quiz de juego», debajo de la cantidad).
+desde «Quiz» en el header, desde la home y desde la categoría raquetas («¿No
+sabés cuál elegir?» y el botón secundario «Hacer el quiz de juego», debajo de
+la cantidad).
 
 - **Las preguntas** (`PREGUNTAS` en `lib/quiz.js`): nivel, cuántas veces por
   semana, desde dónde (fondo, red o toda la cancha), potencia o control, si
