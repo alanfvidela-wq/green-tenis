@@ -1,4 +1,176 @@
 {
-  "fotos": {},
-  "creditos": []
+  "fotos": {
+    "partido-polvo-01": {
+      "ancho": 1600,
+      "alto": 2000,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAACwBACdASoQABQAPu1iqU2ppaOiMAgBMB2JbACdMoRwN5BvALD/ATSvfd+1rIYAAP6vmojaH0muiMYS0tTTjXKJSfSYNSD5ZtOh6X/jPObcL8IBPO6tTxY1BL6I0FzX5szUslaWZqmoNjWN1MA2QYAA"
+    },
+    "saque-cancha-01": {
+      "ancho": 1600,
+      "alto": 2000,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAACQAwCdASoQABQAPu1iqk4ppaQiMAgBMB2JQBWAA1rq4cfAjMmAAP5UaKR2XN+haASgHjegUjSdpe3YYdwJPfudCFsQbTswhr5WAG4lFbbUkcqaBEw241R1961vemfaouAAAA=="
+    },
+    "volea-cesped-01": {
+      "ancho": 1600,
+      "alto": 2000,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAACwBACdASoQABQAPu1iqU2ppaOiMAgBMB2JbACsMoAvXJmoPUdpkYAPC0aAtwLgAP68hhPKXb9fcP0Otv6r4dH24MHsT8lbMmyamSZcyJfQmMseSKXQxkrdEdhg160XniRxFQyalAoED5EAz/TYGra0jbM4SeFW0eO79p0KnkDu+Z7bHgzTvFYIgmoLW4DhYTZUrCWu0UquBFPAAAA="
+    },
+    "grip-banco-01": {
+      "ancho": 1600,
+      "alto": 2000,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABwBACdASoQABQAPu1iqU2ppaOiMAgBMB2JaACdMoADTovTwyW7FTUFkIR2AAD7spOdtYCKWGsLlpr1zpNMbzPM4LiFHAk6zYAp9ycs8EYOzdje5D/IIu+OmCp+jgcUAih52yrz9py+tKSc6/DPsJBfamC7/gs7yL9IOZHWpwAAAA=="
+    },
+    "bolso-polvo-01": {
+      "ancho": 1600,
+      "alto": 2000,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADwAwCdASoQABQAPu1iqU2ppaOiMAgBMB2JZACsAYxYa6yhzmZcPmfIAP7p6+dGPJlQbEKAjalgemvFIM6gfTMpN0y3jT6nECbQRkVExgKIXOmD8T5egs/QI5/2C6yqqyFByRzRt5JsS5M5LoK8LHXwfe8pgCmPxBoF+UddSvSqDrO16HbeLWn3MjM3Vsu3utPUbT2Bkk9Fu7doAAA="
+    },
+    "pelota-polvo-01": {
+      "ancho": 1600,
+      "alto": 900,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRkAAAABXRUJQVlA4IDQAAACQAQCdASoQAAkAA4BaJbACdADBCAAA/tAj/HgajU1M7UB9ZTOVJ69dPX43fmpvUnuMGgAA"
+    },
+    "raqueta-cancha-01": {
+      "ancho": 1600,
+      "alto": 900,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAAAQAgCdASoQAAkAA4BaJbACdLoAAvngkykAAP6djvCmbiDULc1dJSCaJvZHxG21Xn8Zi3s3OsLkmBsBYeXJj9/5IurODyh+dX5Ov5FgAAA="
+    },
+    "raquetas-red-01": {
+      "ancho": 1600,
+      "alto": 900,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRkwAAABXRUJQVlA4IEAAAADwAQCdASoQAAkAA4BaJYwCdAEQUD7TZIAA+GNc7UKYtTMPns11XiaROU9C1r4Ef/K9RDwBcA2xlAWwIYBAAAAA"
+    },
+    "pelota-linea-01": {
+      "ancho": 1600,
+      "alto": 900,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRlAAAABXRUJQVlA4IEQAAACQAQCdASoQAAkAA4BaJYgCdABV8gAAzZUR/+hvsziL/bqtmYqSc+cVBp5MJ4Wl/q8JDZsec6TEh96S6XIbe9LK6AAAAA=="
+    },
+    "bolso-banco-01": {
+      "ancho": 1600,
+      "alto": 900,
+      "anchos": [
+        480,
+        800,
+        1200,
+        1600
+      ],
+      "blur": "data:image/webp;base64,UklGRlYAAABXRUJQVlA4IEoAAADwAQCdASoQAAkAA4BaJZgCdAD1k+EnTCAA/Z0XrIsDh7bCXydUjVjE2K7EwMJ71tDT17jYfJIy9fOfGmDXH60iWps8CTOSw2AAAA=="
+    }
+  },
+  "creditos": [
+    {
+      "archivo": "partido-polvo-01",
+      "autor": "Segi Waktu",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/a-woman-in-a-white-dress-is-holding-a-tennis-racket-NYGS6ZCadSw"
+    },
+    {
+      "archivo": "saque-cancha-01",
+      "autor": "Andrew Heald",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/a-man-swinging-a-tennis-racquet-on-a-tennis-court-q-lz1KZw640"
+    },
+    {
+      "archivo": "volea-cesped-01",
+      "autor": "Laura Marks",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/a-woman-holding-a-tennis-racquet-on-a-tennis-court-NnqkCCsM-O4"
+    },
+    {
+      "archivo": "grip-banco-01",
+      "autor": "Julia Kuzenkov",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/woman-fixing-white-tape-on-tennis-rocket-MGJSW4aMkkY"
+    },
+    {
+      "archivo": "bolso-polvo-01",
+      "autor": "Abdul Basit",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/a-man-sitting-on-a-bench-with-a-bag-C9RqVpD9lmo"
+    },
+    {
+      "archivo": "pelota-polvo-01",
+      "autor": "Daniel Neves Cotta",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/photo/solitary-tennis-ball-on-clay-court-38377403/"
+    },
+    {
+      "archivo": "raqueta-cancha-01",
+      "autor": "Josephine Gasser",
+      "fuente": "Unsplash",
+      "url": "https://unsplash.com/photos/yellow-wilson-tennis-racket-cv83wpGtFtg"
+    },
+    {
+      "archivo": "raquetas-red-01",
+      "autor": "RDNE Stock project",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/photo/tennis-rackets-on-tennis-net-8224721/"
+    },
+    {
+      "archivo": "pelota-linea-01",
+      "autor": "Sami Abdullah",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/photo/tennis-ball-on-outdoor-court-in-miami-32832525/"
+    },
+    {
+      "archivo": "bolso-banco-01",
+      "autor": "Nenyasha Manzvera",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/photo/a-red-tennis-bag-11312132/"
+    }
+  ]
 }
