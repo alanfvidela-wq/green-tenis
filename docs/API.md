@@ -1297,6 +1297,13 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
    «Tu kit» fallan: leen `fichas_pelota` y `kits_quiz`. En una base nueva, el
    catálogo (`supabase/seed.sql`) va después de todas.
 2. Copiar una Secret key a `SUPABASE_SECRET_KEY`.
+3. **Las URLs de Auth**: en Authentication › URL Configuration, el **Site
+   URL** es `https://<dominio de producción>` y las **Redirect URLs** son
+   `https://<dominio de producción>/auth/confirmar` y
+   `http://localhost:3000/auth/confirmar`. Es adonde vuelve el link del mail de
+   recuperación: `pedirRecuperacion` lo pide con el dominio desde donde llegó
+   el pedido y, si no está en la lista, Supabase manda al Site URL, donde el
+   link no inicia la sesión.
 
 ### Mercado Pago
 
@@ -1365,3 +1372,24 @@ En Settings › Environment Variables, cargar `MP_ACCESS_TOKEN`,
 Production y, si se prueba en previews, para Preview. Las previews con
 Deployment Protection responden 401 a Mercado Pago: el webhook se prueba en
 producción. Después de cargarlas, volver a publicar.
+
+### Cambiar el dominio
+
+El código no tiene el dominio escrito: `origenDelSitio()` (`lib/sitio.js`) lo
+saca del request, así que las `back_urls` y el link del mail de recuperación
+salen con el dominio desde donde se navega, y ninguna variable de entorno lo
+lleva. Lo que sí lo guarda está en los paneles:
+
+1. **Supabase**: el Site URL y la Redirect URL de `/auth/confirmar` con el
+   dominio nuevo (ver «Supabase», paso 3). La del viejo puede quedar hasta que
+   venzan los mails de recuperación ya mandados (una hora, por defecto).
+2. **Mercado Pago**: la URL del webhook en las dos pestañas, y en la de la
+   vendedora de prueba si se usa (ver «Mercado Pago», paso 3). El aviso no
+   puede depender de que Mercado Pago siga la redirección del dominio viejo.
+   Después, «Simular» tiene que dar 200; si da `401 hash distinto`, la clave
+   cambió al guardar: revelarla y actualizar `MP_WEBHOOK_SECRET`.
+
+La sesión (cookies) y el carrito (`localStorage`) son de cada dominio: en el
+nuevo hay que volver a ingresar y el carrito empieza vacío. Las preferencias
+creadas antes del cambio vuelven al dominio viejo, que redirige al nuevo, y
+piden ingresar antes de mostrar el pedido.
