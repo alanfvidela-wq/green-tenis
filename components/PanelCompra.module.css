@@ -186,7 +186,8 @@
   animation: subir 0.35s var(--deslizar);
 }
 
-/* Una cuerda por fila: el nombre a la izquierda y el precio del set a la
+/* Una cuerda por fila: el nombre a la izquierda (con «Recomendada» en su
+   propia línea debajo, así nunca queda partida) y el precio del set a la
    derecha */
 .cuerdas {
   display: grid;
@@ -206,9 +207,18 @@
   font-size: var(--t-dato);
 }
 
+.cuerdaNombre {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .recomendada {
   color: var(--grafito);
-  font-size: var(--t-dato);
+  font-family: var(--fuente-datos);
+  font-size: 0.75rem;
+  white-space: nowrap;
 }
 
 .opcion[data-activa] .recomendada {

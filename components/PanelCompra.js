@@ -84,9 +84,11 @@ function Encordado({ encordado, activo, onActivo, cuerdaId, onCuerda, tension, o
                     aria-pressed={activa}
                     onClick={() => onCuerda(cuerda.id)}
                   >
-                    <span className={styles.etiqueta}>
-                      {cuerda.marca} {cuerda.nombre}
-                      {cuerda.recomendada && <span className={styles.recomendada}> · Recomendada</span>}
+                    <span className={styles.cuerdaNombre}>
+                      <span className={styles.etiqueta}>
+                        {cuerda.marca} {cuerda.nombre}
+                      </span>
+                      {cuerda.recomendada && <span className={styles.recomendada}>Recomendada</span>}
                     </span>
                     <span className={styles.detalle}>{formatearPrecio(cuerda.precio)}</span>
                   </button>
