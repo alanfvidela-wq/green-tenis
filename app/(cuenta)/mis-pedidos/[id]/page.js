@@ -46,9 +46,13 @@ function Linea({ linea }) {
   return (
     <li className={styles.linea}>
       <div>
-        <Link href={linea.href} className={styles.nombre}>
-          {linea.nombre}
-        </Link>
+        {linea.href ? (
+          <Link href={linea.href} className={styles.nombre}>
+            {linea.nombre}
+          </Link>
+        ) : (
+          <p className={styles.nombre}>{linea.nombre}</p>
+        )}
         <p className={styles.dato}>
           {linea.variante} · {linea.cantidad} × {formatearPrecio(linea.precioUnitario)}
         </p>

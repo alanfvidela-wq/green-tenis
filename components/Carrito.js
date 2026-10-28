@@ -19,10 +19,12 @@ function Barra({ ancho }) {
   return <span className={styles.barra} style={{ "--ancho": ancho }} />;
 }
 
-// Un producto trae una línea de detalle (la opción); un combo, una por
-// producto (el carrito no sabe cuántos son: se toman tres, como el kit)
-function EsqueletoLinea({ tipo, listo }) {
-  const combo = tipo === "combo";
+// Un producto trae una línea de detalle (la opción), dos si va encordado; un
+// combo, una por producto (el carrito no sabe cuántos son: se toman tres, como
+// el kit)
+function EsqueletoLinea({ linea, listo }) {
+  const combo = linea.tipo === "combo";
+  const detalles = combo ? 3 : linea.encordado ? 2 : 1;
   return (
     <div className={styles.esqueleto} data-listo={listo || undefined} aria-hidden="true">
       <p className={styles.marca}>
@@ -31,7 +33,7 @@ function EsqueletoLinea({ tipo, listo }) {
       <p className={styles.titulo}>
         <Barra ancho="55%" />
       </p>
-      {Array.from({ length: combo ? 3 : 1 }, (_, i) => (
+      {Array.from({ length: detalles }, (_, i) => (
         <p key={i} className={styles.detalle}>
           <Barra ancho={combo ? `${80 - i * 8}%` : "35%"} />
         </p>
@@ -114,7 +116,7 @@ function Linea({ linea, cotizada, listo, onCantidad, onQuitar }) {
       </div>
 
       <div className={`${styles.info} ${styles.capas}`}>
-        <EsqueletoLinea tipo={linea.tipo} listo={listo} />
+        <EsqueletoLinea linea={linea} listo={listo} />
         <div className={styles.real} data-listo={listo || undefined}>
           {cotizada?.marca && <p className={styles.marca}>{cotizada.marca}</p>}
           <h3 className={styles.titulo}>{titulo}</h3>

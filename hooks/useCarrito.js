@@ -88,8 +88,13 @@ export function useCarrito() {
     lineas,
     cargado,
     cantidadTotal: lineas.reduce((suma, l) => suma + l.cantidad, 0),
-    agregarProducto: (varianteId, cantidad = 1) =>
-      agregar({ tipo: "producto", varianteId, cantidad }),
+    // `encordado` ({ cuerdaId, tensionKg }), solo para una raqueta encordada
+    agregarProducto: (varianteId, cantidad = 1, encordado) =>
+      agregar(
+        encordado
+          ? { tipo: "producto", varianteId, cantidad, encordado }
+          : { tipo: "producto", varianteId, cantidad },
+      ),
     agregarCombo: (comboId, elecciones, cantidad = 1) =>
       agregar({ tipo: "combo", comboId, elecciones, cantidad }),
     cambiarCantidad,
