@@ -6,13 +6,15 @@
 //
 // Lee public/productos/fuente/<slug>-<n>.(png|jpg|jpeg|webp) (fuera de git),
 // donde <slug> es el de un producto o un combo y <n> el orden de la foto (1 es
-// la de la vitrina). A cada una le saca el fondo, borra los restos sueltos, la
-// recorta al contorno del producto y la centra en un cuadrado transparente con
-// el mismo margen que las demás. Exporta AVIF y WebP con transparencia en
+// la de la vitrina). A cada una le saca el fondo (si ya venía sin fondo, lo
+// transparente se respeta), borra los restos sueltos, la recorta al contorno
+// del producto y la centra en un cuadrado transparente con el mismo margen que
+// las demás. Exporta AVIF y WebP con transparencia en
 // public/productos/fuente/procesadas/ (para revisarlas) y los sube al bucket
-// «productos» de Supabase Storage como recortes/<slug>-<n>.(webp|avif), con su
-// fila en la tabla fotos (la ruta del WebP y el orden). Volver a correrlo
-// reemplaza la foto y la fila de ese orden.
+// «productos» de Supabase Storage como recortes/<slug>-<n>.(webp|avif). La
+// fila en la tabla fotos (la ruta del WebP y el orden) la escribe la función
+// guardar_foto (0006_guardar_foto.sql): la clave secreta no tiene permisos
+// sobre las tablas. Volver a correrlo reemplaza la foto y la fila de ese orden.
 //
 // Viene del script de fotos de la época de Amargo (en el historial de git).
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
@@ -103,6 +105,24 @@ async function contorno(png) {
   return { left: x0, top: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 };
 }
 
+// Lo que en el original ya era transparente sigue transparente. Con una foto
+// que viene sin fondo, el modelo vuelve opacas zonas como el hueco entre las
+// cuerdas y deja ver el color que el original tenía escondido ahí. Con una foto
+// con fondo (sin transparencia), no cambia nada.
+async function respetarAlfa(png, original) {
+  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+  const alfa = await sharp(original)
+    .ensureAlpha()
+    .resize(info.width, info.height, { fit: "fill" })
+    .extractChannel(3)
+    .raw()
+    .toBuffer();
+  for (let i = 0; i < alfa.length; i++) {
+    if (alfa[i] < data[i * 4 + 3]) data[i * 4 + 3] = alfa[i];
+  }
+  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
+}
+
 // La foto lista: sin fondo, recortada y centrada en el cuadrado transparente
 async function recortar(ruta) {
   const entrada = await sharp(ruta).rotate().png().toBuffer();
@@ -110,7 +130,7 @@ async function recortar(ruta) {
     model: "medium",
     output: { format: "image/png" },
   });
-  const png = await limpiar(Buffer.from(await sinFondo.arrayBuffer()));
+  const png = await respetarAlfa(await limpiar(Buffer.from(await sinFondo.arrayBuffer())), entrada);
   const recortada = await sharp(png)
     .extract(await contorno(png))
     .resize(CAJA, CAJA, { fit: "inside", withoutEnlargement: false })
@@ -130,40 +150,31 @@ async function recortar(ruta) {
     .toBuffer();
 }
 
-// Los productos y combos, para pasar de slug a id
-async function leerCatalogo(supabase) {
-  const [productos, combos] = await Promise.all([
-    supabase.from("productos").select("id,slug"),
-    supabase.from("combos").select("id,slug"),
-  ]);
-  if (productos.error) throw productos.error;
-  if (combos.error) throw combos.error;
-  return {
-    productos: new Map(productos.data.map((p) => [p.slug, p.id])),
-    combos: new Map(combos.data.map((c) => [c.slug, c.id])),
-  };
-}
-
-async function subir(supabase, catalogo, { slug, orden, webp, avif }) {
-  const productoId = catalogo.productos.get(slug);
-  const comboId = catalogo.combos.get(slug);
+// Sube el WebP y el AVIF y anota la foto con guardar_foto, que busca el
+// producto o combo por el slug y crea o reemplaza la fila de ese orden.
+// Devuelve false si no hay producto ni combo con ese slug: entonces borra lo
+// que acaba de subir.
+async function subir(supabase, { slug, orden, webp, avif }) {
   const ruta = `${CARPETA}/${slug}-${orden}.webp`;
-  for (const [archivo, datos, tipo] of [
+  const archivos = [
     [ruta, webp, "image/webp"],
     [`${CARPETA}/${slug}-${orden}.avif`, avif, "image/avif"],
-  ]) {
+  ];
+  for (const [archivo, datos, tipo] of archivos) {
     const { error } = await supabase.storage
       .from(BUCKET)
       .upload(archivo, datos, { contentType: tipo, upsert: true, cacheControl: "3600" });
     if (error) throw new Error(`no se pudo subir ${archivo}: ${error.message}`);
   }
-  // Una fila por foto y orden: la de antes con ese orden se reemplaza
-  const dueno = productoId ? { producto_id: productoId } : { combo_id: comboId };
-  const columna = productoId ? "producto_id" : "combo_id";
-  const borrado = await supabase.from("fotos").delete().eq(columna, productoId ?? comboId).eq("orden", orden);
-  if (borrado.error) throw borrado.error;
-  const alta = await supabase.from("fotos").insert({ ...dueno, ruta, orden });
-  if (alta.error) throw alta.error;
+  const { data: guardada, error } = await supabase.rpc("guardar_foto", { slug, orden });
+  if (error) throw new Error(`no se pudo guardar la foto ${slug}-${orden}: ${error.message}`);
+  if (guardada === null) {
+    await supabase.storage.from(BUCKET).remove(archivos.map(([archivo]) => archivo));
+    return false;
+  }
+  // La ruta la arma la base; si no es la del archivo subido, la tienda no lo encontraría
+  if (guardada !== ruta) throw new Error(`guardar_foto guardó ${guardada} en vez de ${ruta}`);
+  return true;
 }
 
 if (!existsSync(FUENTE)) {
@@ -183,7 +194,6 @@ const fotos = readdirSync(FUENTE)
   .filter(({ partes }) => !pedidos.length || pedidos.includes(partes.slug));
 
 let supabase = null;
-let catalogo = null;
 if (!sinSubir && fotos.length) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const clave = process.env.SUPABASE_SECRET_KEY;
@@ -191,24 +201,22 @@ if (!sinSubir && fotos.length) {
     throw new Error("Faltan NEXT_PUBLIC_SUPABASE_URL o SUPABASE_SECRET_KEY (en .env.local)");
   }
   supabase = createClient(url, clave, { auth: { persistSession: false, autoRefreshToken: false } });
-  catalogo = await leerCatalogo(supabase);
 }
 
 let hechas = 0;
 for (const { nombre, partes } of fotos) {
   const slug = partes.slug;
   const orden = Number(partes.orden);
-  if (catalogo && !catalogo.productos.has(slug) && !catalogo.combos.has(slug)) {
-    console.warn(`Aviso: ${nombre}: no hay producto ni combo «${slug}»; se saltea.`);
-    continue;
-  }
   process.stdout.write(`${nombre}… `);
   const png = await recortar(path.join(FUENTE, nombre));
   const webp = await sharp(png).webp({ quality: 82, alphaQuality: 90, effort: 5 }).toBuffer();
   const avif = await sharp(png).avif({ quality: 60, effort: 4 }).toBuffer();
   writeFileSync(path.join(PROCESADAS, `${slug}-${orden}.webp`), webp);
   writeFileSync(path.join(PROCESADAS, `${slug}-${orden}.avif`), avif);
-  if (supabase) await subir(supabase, catalogo, { slug, orden, webp, avif });
+  if (supabase && !(await subir(supabase, { slug, orden, webp, avif }))) {
+    console.log(`no hay producto ni combo «${slug}»: no se subió`);
+    continue;
+  }
   hechas++;
   console.log(sinSubir ? "lista (sin subir)" : "subida");
 }
