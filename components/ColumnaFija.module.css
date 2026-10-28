@@ -1,0 +1,9 @@
+/* En escritorio, pegada mientras se scrollea la otra columna; --tope lo
+   calcula ColumnaFija según su alto */
+@media (min-width: 860px) {
+  .columna {
+    position: sticky;
+    top: var(--tope, calc(var(--alto-header) + var(--espacio-5)));
+    align-self: start;
+  }
+}

@@ -15,8 +15,9 @@ function textoStock(stock) {
 }
 
 // Las opciones de un producto en píldoras: la elegida en el acento y las que no
-// alcanzan, en hormigón. Va dentro de SelectorVariante y de SelectorCombo, que
-// son los que guardan la elección.
+// alcanzan, en hormigón. Va dentro de SelectorCombo y de ProductoKit, que son
+// los que guardan la elección (la página de producto tiene sus grillas, en
+// PanelCompra).
 export default function OpcionesVariante({
   leyenda,
   variantes,

@@ -1,0 +1,79 @@
+/* La página de un producto: la galería a la izquierda (más ancha) y el panel
+   a la derecha; las dos acompañan el scroll (ColumnaFija). En mobile, una
+   debajo de la otra. */
+
+.ficha {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--espacio-10);
+  padding-top: var(--espacio-6);
+  padding-bottom: var(--espacio-16);
+}
+
+@media (min-width: 860px) {
+  .ficha {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: start;
+    gap: var(--espacio-10);
+  }
+}
+
+@media (min-width: 1100px) {
+  .ficha {
+    gap: var(--espacio-16);
+  }
+}
+
+.columnaPanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-10);
+}
+
+.descripcion {
+  max-width: 60ch;
+}
+
+/* La ficha técnica: filas separadas por líneas de 1px, el dato en mono */
+.filas {
+  border-top: 1px solid var(--hormigon);
+}
+
+.fila {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.45fr) 1fr;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) 0;
+  border-bottom: 1px solid var(--hormigon);
+}
+
+.fila:last-child {
+  border-bottom: none;
+}
+
+.fila dt {
+  color: var(--grafito);
+}
+
+.fila dd {
+  font-family: var(--fuente-datos);
+  font-size: 0.875rem;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  max-width: 60ch;
+  padding-left: 1.1em;
+}
+
+/* «Combina con»: la vitrina, con su título en la display */
+.combina {
+  padding-bottom: clamp(4rem, 10vw, 8rem);
+}
+
+.tituloCombina {
+  margin-bottom: var(--espacio-8);
+  font-size: var(--t-display-3);
+}

@@ -1,0 +1,340 @@
+/* El panel de compra de la página de producto (ver «Producto» en DESIGN.md) */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.marca,
+.rotulo {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.marca {
+  margin-bottom: calc(var(--espacio-3) * -1);
+}
+
+.nombre {
+  font-size: var(--t-display-4);
+}
+
+.frase {
+  max-width: 46ch;
+  color: var(--grafito);
+  font-size: var(--t-entrada);
+  line-height: 1.5;
+}
+
+/* El precio en mono; cuando cambia, sube 6px y aparece */
+.precios {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-2);
+}
+
+.precio {
+  font-family: var(--fuente-datos);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.precio[data-cambio] {
+  animation: subir 0.3s var(--deslizar);
+}
+
+.desde {
+  color: var(--grafito);
+  font-family: var(--fuente-texto);
+  font-size: var(--t-entrada);
+}
+
+.desglose {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+/* Las opciones: una grilla de botones por dimensión */
+.zonaOpciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  scroll-margin: var(--espacio-24);
+}
+
+.grupo {
+  border: none;
+}
+
+.rotulo {
+  display: block;
+  margin-bottom: var(--espacio-3);
+}
+
+.opciones {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+  gap: var(--espacio-2);
+}
+
+.opciones[data-clave="variante"] {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+
+/* Cada opción es una píldora con borde de 1px; la elegida, en el acento con
+   texto blanco. Al apretarla se hunde un poco. */
+.opcion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: var(--espacio-2) var(--espacio-4);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  line-height: 1.2;
+  text-align: center;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion),
+    transform 0.1s ease;
+}
+
+.opcion:hover:not(:disabled) {
+  background: var(--hormigon);
+}
+
+.opcion:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.opcion[data-activa],
+.opcion[data-activa]:hover:not(:disabled) {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: var(--blanco);
+}
+
+/* Sin stock con lo ya elegido: hormigón, tachada y deshabilitada */
+.opcion:disabled {
+  border-color: var(--hormigon);
+  background: var(--hormigon);
+  color: var(--grafito);
+  cursor: not-allowed;
+}
+
+.opcion:disabled .etiqueta {
+  text-decoration: line-through;
+}
+
+.detalle {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: 0.75rem;
+}
+
+.opcion[data-activa] .detalle {
+  color: var(--blanco);
+}
+
+.stock {
+  margin-top: calc(var(--espacio-2) * -1);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+/* «Llevala encordada»: el check y, al marcarlo, la cuerda y la tensión, que
+   entran subiendo 8px */
+.encordado {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+}
+
+.check {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-3);
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.check input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--acento);
+  cursor: pointer;
+}
+
+.suma {
+  color: var(--grafito);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.encordadoOpciones {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-5);
+  animation: subir 0.35s var(--deslizar);
+}
+
+/* Una cuerda por fila: el nombre a la izquierda y el precio del set a la
+   derecha */
+.cuerdas {
+  display: grid;
+  gap: var(--espacio-2);
+}
+
+.cuerda {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding-inline: var(--espacio-5);
+  text-align: left;
+}
+
+.cuerda .detalle {
+  flex: none;
+  font-size: var(--t-dato);
+}
+
+.recomendada {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+.opcion[data-activa] .recomendada {
+  color: var(--blanco);
+}
+
+.tension {
+  display: flex;
+  flex-direction: column;
+}
+
+/* La tensión, con el estilo de los campos: píldora de 48px con borde */
+.tension select {
+  width: min(100%, 12rem);
+  min-height: 48px;
+  padding: 0 var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  font-family: var(--fuente-datos);
+  font-size: var(--t-texto);
+}
+
+/* La cantidad y «Agregar al carrito», en una fila */
+.compra {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+}
+
+.agregar {
+  flex: 1;
+}
+
+.nota {
+  margin-top: calc(var(--espacio-3) * -1);
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
+/* La barra fija de abajo: una píldora blanca con borde de 1px, al centro, que
+   entra desde abajo cuando el botón principal sale de la pantalla */
+.barra {
+  position: fixed;
+  z-index: 25;
+  right: var(--gutter);
+  bottom: calc(var(--espacio-3) + env(safe-area-inset-bottom, 0px));
+  left: var(--gutter);
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--espacio-2);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  opacity: 0;
+  transform: translateY(calc(100% + var(--espacio-6)));
+  transition:
+    transform 0.4s var(--deslizar),
+    opacity 0.25s ease;
+}
+
+.barra[data-visible] {
+  opacity: 1;
+  transform: none;
+}
+
+.barraFoto {
+  position: relative;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  overflow: hidden;
+  border-radius: var(--radio);
+  background: var(--estudio);
+}
+
+.barraTexto {
+  flex: 1;
+  min-width: 0;
+}
+
+.barraNombre {
+  overflow: hidden;
+  font-size: var(--t-chico);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.barraPrecio {
+  font-family: var(--fuente-datos);
+  font-size: var(--t-dato);
+}
+
+.barraBoton {
+  flex: none;
+  padding-inline: var(--espacio-6);
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .precio[data-cambio],
+  .encordadoOpciones {
+    animation: none;
+  }
+
+  .opcion {
+    transition:
+      background-color var(--transicion),
+      border-color var(--transicion);
+  }
+
+  .opcion:active:not(:disabled) {
+    transform: none;
+  }
+
+  .barra {
+    transform: none;
+    transition: opacity 0.01s;
+  }
+}

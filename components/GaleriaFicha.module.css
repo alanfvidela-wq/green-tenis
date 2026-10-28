@@ -1,0 +1,122 @@
+/* La galería de la página de producto: cada foto sobre estudio, con 16px de
+   radio y el producto centrado (FotoVitrina). En mobile es un carrusel; en
+   escritorio, una grilla de dos columnas. */
+
+.vistas {
+  display: flex;
+  gap: var(--espacio-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.vistas::-webkit-scrollbar {
+  display: none;
+}
+
+.vista {
+  position: relative;
+  flex: 0 0 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radio);
+  background: var(--estudio);
+  scroll-snap-align: start;
+}
+
+/* Los puntos del carrusel: el de la foto que se ve, más ancho y en negro.
+   Solo transform: el punto se estira desde el centro */
+.puntos {
+  display: flex;
+  justify-content: center;
+  gap: var(--espacio-3);
+  margin-top: var(--espacio-4);
+}
+
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radio-pildora);
+  background: var(--hormigon);
+  transition:
+    transform 0.35s var(--deslizar),
+    background-color 0.35s var(--deslizar);
+}
+
+.punto[data-actual] {
+  background: var(--negro);
+  transform: scaleX(2.25);
+}
+
+.verTodas {
+  display: none;
+}
+
+@media (min-width: 860px) {
+  .vistas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+    scroll-snap-type: none;
+  }
+
+  /* Una sola foto, o la primera de tres, va a lo ancho */
+  .galeria[data-fotos="1"] .vista,
+  .galeria[data-fotos="3"] .vista:first-child {
+    grid-column: 1 / -1;
+  }
+
+  /* Con una sola, ocupa todo el ancho de la columna y nunca es más alta que
+     la pantalla: la celda se acorta y el producto sigue centrado. El alto va
+     explícito (con el ancho de la galería, en cqw): un max-height sobre el
+     aspect-ratio también achicaría el ancho. */
+  .galeria[data-fotos="1"] {
+    container-type: inline-size;
+  }
+
+  .galeria[data-fotos="1"] .vista {
+    aspect-ratio: auto;
+    height: min(100svh - var(--alto-header) - var(--espacio-10), 125cqw);
+  }
+
+  .puntos {
+    display: none;
+  }
+
+  /* Más de cuatro: las demás esperan a «Ver todas» y entran de a una,
+     subiendo 14px (como la vitrina) */
+  .vista[data-extra] {
+    display: none;
+  }
+
+  .galeria[data-todas] .vista[data-extra] {
+    display: block;
+    animation: entrar 0.45s var(--deslizar) both;
+    animation-delay: calc(var(--orden) * 90ms);
+  }
+
+  .verTodas {
+    display: flex;
+    width: 100%;
+    margin-top: var(--espacio-4);
+  }
+}
+
+@keyframes entrar {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .punto {
+    transition: none;
+  }
+
+  .galeria[data-todas] .vista[data-extra] {
+    animation: none;
+  }
+}

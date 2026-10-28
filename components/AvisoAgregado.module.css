@@ -1,12 +1,13 @@
 /* El aviso, abajo y al centro de la pantalla: entra desde abajo achicado y se
    pasa un poco de su lugar antes de quedarse. El punto es el de la marca, la
-   pelota del wordmark.
+   pelota del wordmark. Si se ve la barra fija de la página de producto
+   (--alto-barra-compra, que publica PanelCompra), queda encima.
    Inspirado en Kinetics (kinetics.colorion.co) por Csaba Kissi:
    https://kinetics.colorion.co/effects/toast-overshoot/ */
 .aviso {
   position: fixed;
   z-index: 30;
-  bottom: calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--gutter) + var(--alto-barra-compra, 0px) + env(safe-area-inset-bottom, 0px));
   left: 50%;
   display: inline-flex;
   align-items: center;

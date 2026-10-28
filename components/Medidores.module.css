@@ -1,0 +1,75 @@
+/* Tres semicírculos en fila. Los trazos usan pathLength="1": el valor es un
+   guion de largo --valor (0,1 a 1) que, mientras el bloque espera entrar en
+   pantalla ([data-oculto], de Aparecer), está corrido hasta no verse. Como el
+   aro del pago aprobado, es un trazo que se dibuja. */
+.medidores {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--espacio-4);
+  list-style: none;
+}
+
+.medidor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--espacio-2);
+}
+
+.dibujo {
+  position: relative;
+  width: 100%;
+  max-width: 112px;
+}
+
+.dibujo svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.fondo,
+.arco {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.fondo {
+  stroke: var(--hormigon);
+}
+
+.arco {
+  stroke: var(--negro);
+  stroke-dasharray: var(--valor) 2;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s var(--deslizar) 0.15s;
+}
+
+/* Un poco más atrás que el valor (y con un hueco de 2): así la punta
+   redondeada no asoma al principio del arco antes de tiempo */
+[data-oculto] .arco {
+  stroke-dashoffset: calc(var(--valor) + 0.05);
+}
+
+.valor {
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  font-family: var(--fuente-datos);
+  font-size: 1.25rem;
+  line-height: 1;
+  transform: translateX(-50%);
+}
+
+.rotulo {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arco {
+    transition: none;
+  }
+}
