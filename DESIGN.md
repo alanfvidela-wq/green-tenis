@@ -270,12 +270,20 @@ baja; y la barra de acción a lo ancho.
 
 ### La galería del producto
 
-En `/producto/[slug]` y `/combo/[slug]` las fotos van sobre estudio, con radio
-de 16px y el producto centrado con el mismo margen, sin texto encima. La
-primera vista va grande; si hay más, van de a dos debajo. En escritorio queda
-fija mientras se lee la ficha y nunca es más alta que la pantalla. Acá el
-producto no se apaga aunque no haya stock: eso lo dice el selector de opciones,
-al lado.
+Las fotos van sobre estudio, con radio de 16px y el producto centrado con el
+mismo margen, sin texto encima. Acá el producto no se apaga aunque no haya
+stock: eso lo dicen las opciones, al lado.
+
+- **`/producto/[slug]`** (`GaleriaFicha`): en escritorio, una grilla de dos
+  columnas con las fotos grandes. Una sola foto (o la primera de tres) va a lo
+  ancho, y una sola nunca es más alta que la pantalla: la celda se acorta y el
+  producto sigue centrado. Con más de cuatro se ven cuatro y abajo «Ver todas
+  (n)», un botón secundario; las demás entran de a una, subiendo 14px. En
+  mobile es un carrusel que se desliza de a una foto (scroll snap), con puntos
+  abajo: el de la foto que se ve, negro y estirado. Con una sola foto no hay
+  puntos.
+- **`/combo/[slug]`** (`GaleriaProducto`): la primera vista grande y las demás
+  de a dos debajo; en escritorio queda fija mientras se lee la ficha.
 
 ## Fotos
 
@@ -361,6 +369,14 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
   - **Vitrina**: las tarjetas que están debajo de la pantalla al cargar suben
     14px y aparecen en 0,45s (`--deslizar`), cada una 90ms después de la
     anterior. La celda de foto mantiene su propia aparición.
+  - **Página de producto** (ver «Páginas»): el precio sube 6px y aparece en
+    0,3s cuando cambia; los botones de opción se hunden a 0,96 en 0,1s; la
+    cuerda y la tensión del encordado suben 6px al aparecer (0,35s); la barra
+    fija entra desde abajo en 0,4s (`--deslizar`); el punto del carrusel se
+    estira (escala 2,25 en x) en 0,35s; las fotos de «Ver todas» suben 14px de
+    a una, como la vitrina; el acordeón baja 8px su contenido en 0,35s y el
+    signo achica su barra vertical; el arco de los medidores se dibuja en 0,9s
+    (un trazo, como el aro del pago aprobado).
 - **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
   se ven desde el principio, la anatomía muestra la raqueta entera y quieta con
   los nombres de sus partes, y no hay animaciones ni transiciones (tampoco
@@ -806,18 +822,22 @@ mismo margen, sobre el estudio de la celda.
 
 - **Originales**: `public/productos/fuente/<slug>-<n>.(png|jpg|jpeg|webp)`
   (fuera de git), donde `<slug>` es el de un producto o un combo y `<n>` el
-  orden (1 es la de la vitrina). Mejor fotos del producto solo, de frente,
+  orden: la 1 es la principal (la de la vitrina, el carrito y la barra fija) y
+  2, 3… son las extras, que suma la galería del producto en ese orden. Mejor
+  fotos del producto solo, de frente,
   sobre un fondo liso y con buena luz. Las raquetas, verticales y con la cabeza
   arriba; las pelotas, el tubo parado; los bolsos, parados y cerrados.
 - **`npm run fotos:productos`** (`scripts/fotos-productos.mjs`, el script de la
   época de Amargo adaptado, con `@imgly/background-removal-node`): saca el
   fondo, borra los restos sueltos (una sombra, un pedazo de cartel), recorta al
   contorno del producto y lo centra en un cuadrado transparente de 1600px con
-  un 5% de margen por lado. Exporta AVIF y WebP con transparencia.
+  un 5% de margen por lado. Exporta AVIF y WebP con transparencia. Si la foto
+  ya viene sin fondo, respeta su transparencia (el hueco entre las cuerdas).
 - **Dónde quedan**: en `public/productos/fuente/procesadas/` para revisarlas, y
   en el bucket `productos` de Supabase Storage como
   `recortes/<slug>-<n>.webp` y `.avif`, con su fila en la tabla `fotos` (la
-  ruta del WebP y el orden; si ya había una con ese orden, se reemplaza). El
+  ruta del WebP y el orden; si ya había una con ese orden, se reemplaza), que
+  escribe la función `guardar_foto` de `0006_guardar_foto.sql`. El
   AVIF queda al lado, con la misma ruta. `--sin-subir` procesa sin tocar
   Supabase; con slugs, procesa solo esos.
 - En la celda, `FotoVitrina` muestra el recorte con `object-fit: contain` y un
@@ -848,17 +868,50 @@ sobre sus cuadros (ver «Hero»).
 - **Categoría**: migas en mayúsculas, el nombre en `--t-display-3`, la bajada
   y la cantidad en mono. Debajo, la vitrina, con su celda de foto, y al final
   el bloque de foto de la categoría.
-- **Producto**: la galería a la izquierda y, a la derecha, la marca en
-  mayúsculas, el nombre en la display a `--t-display-4`, la descripción, la
-  **ficha técnica** (filas separadas por líneas de 1px, el dato en mono), el
-  precio y el selector: opciones en píldora con borde de 1px, la activa en el
-  acento con texto blanco y las que no tienen stock en hormigón. «Agregar al
-  carrito» es el botón del acento. En las raquetas no hay grip ni peso elegidos
-  de entrada: hasta que el cliente elige, el precio es el «desde» (sin «desde»
-  si todas las opciones valen lo mismo), el botón está apagado y debajo dice
-  «Falta elegir grip y peso». Los demás productos arrancan con la primera
-  opción con stock. El stock va en singular o plural: «¡Queda 1!», «¡Quedan
-  3!».
+- **Producto** (`app/producto/[slug]`): dos columnas desde 860px, la galería
+  (más ancha) a la izquierda y el panel a la derecha; las dos acompañan el
+  scroll (`ColumnaFija`): la más corta queda pegada, arriba si entra en la
+  pantalla y por abajo si es más alta, así nunca queda una parte escondida. En
+  mobile, el carrusel arriba y el panel debajo.
+  - **El panel** (`PanelCompra`): la marca en mayúsculas, el nombre en la
+    display a `--t-display-4`, la primera oración de la descripción en
+    grafito, el precio en mono (cuando cambia, sube 6px y aparece) y las
+    opciones como **grillas de botones**, una por dimensión: en las raquetas,
+    «Grip» (el número y, chico, las pulgadas: «4 1/4″») y «Peso»; en lo demás,
+    una sola con el nombre de cada opción. El botón elegido va en el acento con
+    texto blanco; lo que no tiene stock con lo ya elegido, en hormigón, tachado
+    y deshabilitado. Al apretar un botón se hunde a 0,96. Debajo, el stock de la
+    opción elegida («En stock», «¡Queda 1!», «¡Quedan 3!»).
+  - En las raquetas no hay grip ni peso elegidos de entrada (salvo una
+    dimensión con un solo valor, como el peso de la Blade): hasta que el
+    cliente elige, el precio es el «desde» (sin «desde» si todas valen lo
+    mismo), el botón está apagado y debajo dice «Falta elegir grip y peso».
+    Los demás productos arrancan con la primera opción con stock.
+  - **«Llevala encordada»** (raquetas): un check con el precio del servicio
+    («+ $ 15.000 y la cuerda»). Marcado, aparecen las cuerdas compatibles (las
+    de `compatibilidades`, en set de 12 m, una por fila con su precio; la
+    recomendada primero y marcada «Recomendada») y la tensión, de a medio kilo
+    dentro del rango de la raqueta, empezando por la del medio. El precio
+    suma la cuerda y el servicio, con el desglose debajo en mono.
+  - La cantidad y «Agregar al carrito», en una fila; el botón es el del acento.
+  - **Medidores** (raquetas y cuerdas): Potencia, Control y Confort de 1 a 10,
+    en tres semicírculos: el fondo en hormigón, el valor en negro y el número
+    en mono en el medio. Salen de la ficha con `lib/medidores.js`, donde está
+    la regla. El arco se dibuja hasta su valor al entrar en pantalla.
+  - **El acordeón** (`Acordeon`, con `<details>`): Descripción (abierta),
+    Ficha técnica (filas con líneas de 1px en hormigón, adentro de las negras
+    del acordeón, y el dato en mono) y Envíos y devoluciones (los textos están
+    en `lib/envio.js`). El signo pasa de + a − y el contenido baja 8px y
+    aparece.
+  - **La barra fija**: cuando «Agregar al carrito» queda arriba, fuera de la
+    pantalla o debajo del header, entra desde abajo una píldora blanca con
+    borde de 1px, centrada (hasta 640px): la foto chica sobre estudio, el
+    nombre, el precio y «Agregar». Sin todo elegido, «Agregar» lleva a las
+    opciones y deja el foco en la primera que falta. El aviso «Agregado al
+    carrito» sube encima de la barra.
+  - **«Combina con»**, al final, a todo el ancho: la vitrina con las cuerdas
+    compatibles (en las raquetas) y los combos que llevan el producto. Si no
+    hay ninguno, no aparece.
 - **Combos y combo**: el listado y la página de un combo, con las piezas de la
   categoría y del producto. Ver «Combos».
 - **Carga**: un bloque blanco del alto de la pantalla, con «Cargando…» para

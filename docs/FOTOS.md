@@ -77,8 +77,20 @@ vuelve el placeholder.
 
 Las de la vitrina, del producto solo, sin fondo. Van en
 `public/productos/fuente/<slug>-<n>.(png|jpg|jpeg|webp)` (fuera de git), donde
-`<slug>` es el de un producto o un combo y `<n>` el orden (1 es la de la
-vitrina). Mejor fotos de frente, sobre un fondo liso y con buena luz.
+`<slug>` es el de un producto o un combo y `<n>` el orden. Mejor fotos de
+frente, sobre un fondo liso y con buena luz.
+
+- **La principal** es la 1 (`wilson-blade-98-1.jpg`): la de la vitrina, el
+  carrito y la barra fija de la página de producto.
+- **Las extras** son la 2, la 3… (`wilson-blade-98-2.jpg`,
+  `wilson-blade-98-3.jpg`), otros ángulos o un detalle, y la galería del
+  producto las suma en ese orden. En escritorio se ven cuatro y el resto con
+  «Ver todas»; en mobile, todas en el carrusel. Con una sola foto, la galería
+  la muestra sola, a lo ancho.
+- El número va siempre: sin él, `wilson-blade-98.jpg` se leería como el slug
+  `wilson-blade` con orden 98. Un cero adelante (`-02`) da lo mismo que `-2`.
+- Las extras pasan por el mismo recorte: un detalle que toca los bordes de la
+  foto queda centrado y con margen, como las demás.
 
 ```bash
 npm run fotos:productos -- --sin-subir
@@ -86,7 +98,13 @@ npm run fotos:productos -- --sin-subir
 
 Saca el fondo, recorta al producto y lo centra con el mismo margen en un
 cuadrado transparente, y deja AVIF y WebP en `public/productos/fuente/procesadas/`
-para revisarlas. Sin `--sin-subir`, además las sube al bucket `productos` de
-Supabase Storage (`recortes/<slug>-<n>.webp` y `.avif`) y escribe su fila en la
-tabla `fotos`; necesita `SUPABASE_SECRET_KEY` en `.env.local`. Con slugs
+para revisarlas. Si el original ya viene sin fondo (un PNG o WebP con
+transparencia, como los de las marcas), lo que era transparente sigue
+transparente: si no, el hueco entre las cuerdas de una raqueta se llenaría de
+gris. Sin `--sin-subir`, además las sube al bucket `productos` de
+Supabase Storage (`recortes/<slug>-<n>.webp` y `.avif`) y anota la foto en la
+tabla `fotos` con la función `guardar_foto` (`0006_guardar_foto.sql`), que es
+lo único que la clave secreta puede escribir ahí; necesita
+`SUPABASE_SECRET_KEY` en `.env.local`. Si el slug no es de ningún producto ni
+combo, no anota nada y borra lo que subió. Con slugs
 (`npm run fotos:productos -- babolat-pure-drive`) procesa solo esos.

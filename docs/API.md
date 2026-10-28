@@ -784,6 +784,15 @@ castellano para el formulario.
   y cantidades de 1 a 99. Las repetidas se unen en una. El carrito del
   navegador limpia lo guardado en localStorage con `limpiarLineas`
   (`lib/lineas.js`), con los mismos límites.
+- **Raqueta encordada**: la línea de producto lleva además
+  `encordado: { cuerdaId, tensionKg }`, la variante del set de cuerda y la
+  tensión, de a medio kilo (de 15 a 35). `cotizarCarrito` cobra por unidad la
+  raqueta, el set y el servicio de encordado, y marca la línea con «Revisá el
+  encordado» si la cuerda no es un set de 12 m compatible con la raqueta
+  (`compatibilidades`) o la tensión no entra en su rango. `argumentosDePedido`
+  le pasa a `crear_pedido` la raqueta y el set como ítems con `ref` (`r1`,
+  `c1`…) y un encordado por unidad que los nombra; la base vuelve a revisar el
+  set y la tensión.
 - **`Envio`**: los campos de `CAMPOS_ENVIO` (`lib/envio.js`), sin espacios de
   más y con su largo máximo; el código postal, en mayúsculas y sin espacios.
 - **Email**: sin espacios de más, en minúsculas y con el mismo criterio que el
@@ -843,8 +852,11 @@ aunque el código se equivoque:
 - **Funciones**: las que escriben con privilegios (`security definer`, con
   `search_path` vacío) tienen el `execute` restringido. `crear_pedido` es solo
   para `authenticated` y toma al usuario de `auth.uid()`, no de un argumento.
-  `conciliar_pago`, `guardar_preferencia` y `liberar_pedidos_vencidos` son solo
-  para `service_role`, con `SUPABASE_SECRET_KEY`, que nunca sale del servidor.
+  `conciliar_pago`, `guardar_preferencia`, `liberar_pedidos_vencidos` y
+  `guardar_foto` (la de `npm run fotos:productos`) son solo para
+  `service_role`, con `SUPABASE_SECRET_KEY`, que nunca sale del servidor. Ese
+  rol no tiene permisos sobre ninguna tabla: con la clave secreta solo se
+  ejecutan esas funciones.
 
 ### Lo demás
 
@@ -1254,7 +1266,7 @@ al navegador. `lib/mercadopago.js`, `lib/supabaseServicio.js` y
 | ---------------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | `MP_ACCESS_TOKEN`      | Crear preferencias y consultar pagos                        | Mercado Pago › Tus integraciones › la aplicación › Credenciales de prueba (después, de producción) |
 | `MP_WEBHOOK_SECRET`    | Validar la firma de los avisos. Puede traer varias claves separadas por comas (la de prueba y la productiva) | Mercado Pago › la aplicación › Webhooks › Configurar notificaciones › la clave secreta de cada pestaña |
-| `SUPABASE_SECRET_KEY`  | Llamar a `conciliar_pago` y `guardar_preferencia`           | Supabase › Project Settings › API Keys › Secret keys (`sb_secret_…`)                             |
+| `SUPABASE_SECRET_KEY`  | Llamar a `conciliar_pago` y `guardar_preferencia` (y, en local, a `guardar_foto` desde `npm run fotos:productos`) | Supabase › Project Settings › API Keys › Secret keys (`sb_secret_…`)                             |
 
 Las de Supabase que ya estaban (`NEXT_PUBLIC_SUPABASE_URL` y
 `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`) siguen igual. Los nombres de todas
@@ -1289,12 +1301,14 @@ en Vercel y volver a publicar (Deployments › Redeploy), sin tocar código.
 ### Supabase
 
 1. Correr `supabase/migrations/0002_pagos.sql`, después
-   `0003_reactivar_pagados_a_tiempo.sql`, `0004_admin.sql` y `0005_quiz.sql`,
-   cada una entera, en el SQL Editor, **antes** de publicar el código que las
-   usa (son compatibles con el código anterior). Sin `0004`, la tienda anda
-   igual y la administración responde `500 falta_migracion` o
-   `403 sin_permiso` al guardar. Sin `0005`, la página de producto, el quiz y
-   «Tu kit» fallan: leen `fichas_pelota` y `kits_quiz`. En una base nueva, el
+   `0003_reactivar_pagados_a_tiempo.sql`, `0004_admin.sql`, `0005_quiz.sql` y
+   `0006_guardar_foto.sql`, cada una entera, en el SQL Editor, **antes** de
+   publicar el código que las usa (son compatibles con el código anterior). Sin
+   `0004`, la tienda anda igual y la administración responde
+   `500 falta_migracion` o `403 sin_permiso` al guardar. Sin `0005`, la página
+   de producto, el quiz y «Tu kit» fallan: leen `fichas_pelota` y `kits_quiz`.
+   Sin `0006`, la tienda anda igual y `npm run fotos:productos` no puede subir
+   las fotos (sí procesarlas, con `--sin-subir`). En una base nueva, el
    catálogo (`supabase/seed.sql`) va después de todas.
 2. Copiar una Secret key a `SUPABASE_SECRET_KEY`.
 3. **Las URLs de Auth**: en Authentication › URL Configuration, el **Site
