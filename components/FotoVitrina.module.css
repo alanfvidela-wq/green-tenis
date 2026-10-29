@@ -15,11 +15,13 @@
   height: 88%;
 }
 
-/* La foto: un recorte sin fondo (npm run fotos:productos), entero y centrado
-   con el mismo margen */
+/* La foto: un recorte sin fondo en un lienzo de 4:5 (npm run fotos:productos)
+   que ya trae su margen: entero y centrado, o pegado al borde si es un
+   detalle. Todas las celdas son de 4:5 o más anchas (la barra fija, la
+   galería con una sola foto), así que cubrir solo recorta margen arriba y
+   abajo, y el detalle sigue tocando el borde. */
 .estudio {
-  padding: 5%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 /* Placeholder: la silueta de la categoría, plana y apenas más oscura que el

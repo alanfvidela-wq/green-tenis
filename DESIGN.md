@@ -250,8 +250,8 @@ baja; y la barra de acción a lo ancho.
 
 - **La foto**: proporción 4:5, sobre `--estudio`, **sin borde, con radio de
   16px**. El producto ocupa casi toda la celda: la foto recortada sin fondo
-  entra con `object-fit: contain` y un margen interno de 5%; el placeholder
-  centra la silueta igual.
+  viene en un lienzo de 4:5 con su margen y entra con `object-fit: cover`; el
+  placeholder centra la silueta igual.
 - **Debajo, una fila**: el nombre a la izquierda (Inter Tight a 16px,
   subrayado) y el precio a la derecha, en mono a 13px («desde» si cambia con
   las opciones). En celdas de menos de 260px, el precio baja debajo del nombre.
@@ -830,9 +830,15 @@ mismo margen, sobre el estudio de la celda.
 - **`npm run fotos:productos`** (`scripts/fotos-productos.mjs`, el script de la
   época de Amargo adaptado, con `@imgly/background-removal-node`): saca el
   fondo, borra los restos sueltos (una sombra, un pedazo de cartel), recorta al
-  contorno del producto y lo centra en un cuadrado transparente de 1600px con
-  un 5% de margen por lado. Exporta AVIF y WebP con transparencia. Si la foto
+  contorno del producto y lo pone en un lienzo transparente de 1600 × 2000
+  (4:5, como las celdas). Exporta AVIF y WebP con transparencia. Si la foto
   ya viene sin fondo, respeta su transparencia (el hueco entre las cuerdas).
+  - **El producto entero** entra en el cuadrado del medio, de 1296px (el 81%
+    del ancho): todos a la misma escala y con el mismo margen.
+  - **Un detalle** (el producto toca un borde de la foto original, como la
+    cabeza de una raqueta con el grip cortado) se pega a ese borde y deja un
+    5% en los demás: en la celda, el corte llega al borde, como si la foto
+    siguiera.
 - **Dónde quedan**: en `public/productos/fuente/procesadas/` para revisarlas, y
   en el bucket `productos` de Supabase Storage como
   `recortes/<slug>-<n>.webp` y `.avif`, con su fila en la tabla `fotos` (la
@@ -840,8 +846,14 @@ mismo margen, sobre el estudio de la celda.
   escribe la función `guardar_foto` de `0006_guardar_foto.sql`. El
   AVIF queda al lado, con la misma ruta. `--sin-subir` procesa sin tocar
   Supabase; con slugs, procesa solo esos.
-- En la celda, `FotoVitrina` muestra el recorte con `object-fit: contain` y un
-  margen interno de 5%.
+- En la celda, `FotoVitrina` muestra el recorte con `object-fit: cover`, sin
+  margen propio: todas las celdas son de 4:5 o más anchas (la barra fija, la
+  galería con una sola foto), así que solo se recorta margen arriba y abajo y
+  un detalle sigue tocando el borde.
+- **La URL lleva la versión del formato** (`?v=2`, en `lib/versionFotos.mjs`):
+  next/image guarda cada foto 4 horas por URL y el script reemplaza los
+  archivos con el mismo nombre. Si cambia el formato de todas, se sube el
+  número y se vuelven a procesar.
 
 ### Mientras tanto: placeholder
 

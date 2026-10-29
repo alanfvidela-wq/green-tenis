@@ -8,8 +8,10 @@
 // donde <slug> es el de un producto o un combo y <n> el orden de la foto (1 es
 // la de la vitrina). A cada una le saca el fondo (si ya venía sin fondo, lo
 // transparente se respeta), borra los restos sueltos, la recorta al contorno
-// del producto y la centra en un cuadrado transparente con el mismo margen que
-// las demás. Exporta AVIF y WebP con transparencia en
+// del producto y la pone en un lienzo transparente de 4:5, el de las celdas:
+// entera y centrada con el mismo margen que las demás, o, si es un detalle que
+// el original corta (el producto toca un borde de la foto), pegada a ese
+// borde. Exporta AVIF y WebP con transparencia en
 // public/productos/fuente/procesadas/ (para revisarlas) y los sube al bucket
 // «productos» de Supabase Storage como recortes/<slug>-<n>.(webp|avif). La
 // fila en la tabla fotos (la ruta del WebP y el orden) la escribe la función
@@ -34,10 +36,18 @@ const PROCESADAS = path.join(FUENTE, "procesadas");
 const BUCKET = "productos";
 const CARPETA = "recortes";
 
-// Un cuadrado de 1600px; el producto entra en la caja del medio, con el mismo
-// margen transparente (5% por lado) en todas
-const LADO = 1600;
-const CAJA = 1440;
+// Un lienzo de 1600 × 2000 (4:5, como las celdas de la vitrina y la galería,
+// que lo muestran sin margen propio). El producto entero entra en el cuadrado
+// del medio, de 1296 (el 81% del ancho, el tamaño que tenía con el lienzo
+// cuadrado y el margen de la celda).
+const ANCHO = 1600;
+const ALTO = 2000;
+const CAJA = 1296;
+// Un detalle se pega a los bordes que toca y deja este margen en los demás
+const MARGEN_DETALLE = 80;
+// Cuánto puede faltar para que el producto «toque» un borde del original: el
+// 0,3% del lado mayor (y nunca menos de 2px)
+const TOLERANCIA_BORDE = 0.003;
 
 const EXTENSIONES = [".png", ".jpg", ".jpeg", ".webp"];
 const NOMBRE = /^(?<slug>[a-z0-9]+(?:-[a-z0-9]+)*)-(?<orden>\d+)$/;
@@ -123,7 +133,43 @@ async function respetarAlfa(png, original) {
   return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
 }
 
-// La foto lista: sin fondo, recortada y centrada en el cuadrado transparente
+// Qué bordes de la foto toca el producto: un detalle que el original corta
+// (la cabeza de una raqueta con el grip cortado abajo)
+function bordesQueToca(caja, ancho, alto) {
+  const tolerancia = Math.max(2, Math.round(Math.max(ancho, alto) * TOLERANCIA_BORDE));
+  return {
+    arriba: caja.top <= tolerancia,
+    abajo: caja.top + caja.height >= alto - tolerancia,
+    izquierda: caja.left <= tolerancia,
+    derecha: caja.left + caja.width >= ancho - tolerancia,
+  };
+}
+
+// Dónde entra el producto en el lienzo. Entero: en el cuadrado del medio. Un
+// detalle: hasta los bordes que toca, con MARGEN_DETALLE en los demás.
+function lugarEnElLienzo(toca) {
+  if (!Object.values(toca).some(Boolean)) {
+    return { left: (ANCHO - CAJA) / 2, top: (ALTO - CAJA) / 2, width: CAJA, height: CAJA };
+  }
+  const margen = (borde) => (toca[borde] ? 0 : MARGEN_DETALLE);
+  return {
+    left: margen("izquierda"),
+    top: margen("arriba"),
+    width: ANCHO - margen("izquierda") - margen("derecha"),
+    height: ALTO - margen("arriba") - margen("abajo"),
+  };
+}
+
+// Dentro de su lugar, el producto va pegado al borde que toca (si toca uno
+// solo de los dos de ese eje) o centrado
+function posicion(inicio, libre, medida, tocaInicio, tocaFin) {
+  if (tocaInicio && !tocaFin) return inicio;
+  if (tocaFin && !tocaInicio) return inicio + libre - medida;
+  return inicio + Math.round((libre - medida) / 2);
+}
+
+// La foto lista: sin fondo, recortada y en el lienzo transparente de 4:5.
+// Devuelve el PNG y los bordes que toca (para el aviso de la consola).
 async function recortar(ruta) {
   const entrada = await sharp(ruta).rotate().png().toBuffer();
   const sinFondo = await removeBackground(new Blob([entrada], { type: "image/png" }), {
@@ -131,23 +177,28 @@ async function recortar(ruta) {
     output: { format: "image/png" },
   });
   const png = await respetarAlfa(await limpiar(Buffer.from(await sinFondo.arrayBuffer())), entrada);
+  const { width: anchoOriginal, height: altoOriginal } = await sharp(png).metadata();
+  const caja = await contorno(png);
+  const toca = bordesQueToca(caja, anchoOriginal, altoOriginal);
+  const lugar = lugarEnElLienzo(toca);
   const recortada = await sharp(png)
-    .extract(await contorno(png))
-    .resize(CAJA, CAJA, { fit: "inside", withoutEnlargement: false })
+    .extract(caja)
+    .resize(lugar.width, lugar.height, { fit: "inside", withoutEnlargement: false })
     .toBuffer({ resolveWithObject: true });
   const { width, height } = recortada.info;
-  return sharp({
-    create: { width: LADO, height: LADO, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
+  const lienzo = await sharp({
+    create: { width: ANCHO, height: ALTO, channels: 4, background: { r: 0, g: 0, b: 0, alpha: 0 } },
   })
     .composite([
       {
         input: recortada.data,
-        left: Math.round((LADO - width) / 2),
-        top: Math.round((LADO - height) / 2),
+        left: posicion(lugar.left, lugar.width, width, toca.izquierda, toca.derecha),
+        top: posicion(lugar.top, lugar.height, height, toca.arriba, toca.abajo),
       },
     ])
     .png()
     .toBuffer();
+  return { png: lienzo, toca };
 }
 
 // Sube el WebP y el AVIF y anota la foto con guardar_foto, que busca el
@@ -208,7 +259,9 @@ for (const { nombre, partes } of fotos) {
   const slug = partes.slug;
   const orden = Number(partes.orden);
   process.stdout.write(`${nombre}… `);
-  const png = await recortar(path.join(FUENTE, nombre));
+  const { png, toca } = await recortar(path.join(FUENTE, nombre));
+  const bordes = Object.keys(toca).filter((borde) => toca[borde]);
+  if (bordes.length) process.stdout.write(`detalle, pegado ${bordes.join(" y ")}… `);
   const webp = await sharp(png).webp({ quality: 82, alphaQuality: 90, effort: 5 }).toBuffer();
   const avif = await sharp(png).avif({ quality: 60, effort: 4 }).toBuffer();
   writeFileSync(path.join(PROCESADAS, `${slug}-${orden}.webp`), webp);

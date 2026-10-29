@@ -89,16 +89,21 @@ frente, sobre un fondo liso y con buena luz.
   la muestra sola, a lo ancho.
 - El número va siempre: sin él, `wilson-blade-98.jpg` se leería como el slug
   `wilson-blade` con orden 98. Un cero adelante (`-02`) da lo mismo que `-2`.
-- Las extras pasan por el mismo recorte: un detalle que toca los bordes de la
-  foto queda centrado y con margen, como las demás.
+- Las extras pasan por el mismo recorte. Un detalle que toca un borde de la
+  foto (la cabeza con el grip cortado) queda pegado a ese borde de la celda,
+  como en las fichas de las marcas.
 
 ```bash
 npm run fotos:productos -- --sin-subir
 ```
 
 Saca el fondo, recorta al producto y lo centra con el mismo margen en un
-cuadrado transparente, y deja AVIF y WebP en `public/productos/fuente/procesadas/`
-para revisarlas. Si el original ya viene sin fondo (un PNG o WebP con
+lienzo transparente de 4:5, y deja AVIF y WebP en
+`public/productos/fuente/procesadas/` para revisarlas. Si el producto toca un
+borde de la foto (un detalle cortado, como la cabeza de la raqueta con el grip
+cortado abajo), lo pega a ese borde y la consola dice «detalle, pegado abajo»:
+en la tienda, el corte llega al borde de la celda. Una foto entera tiene que
+dejar algo de fondo alrededor del producto; si no, se toma como detalle. Si el original ya viene sin fondo (un PNG o WebP con
 transparencia, como los de las marcas), lo que era transparente sigue
 transparente: si no, el hueco entre las cuerdas de una raqueta se llenaría de
 gris. Sin `--sin-subir`, además las sube al bucket `productos` de
