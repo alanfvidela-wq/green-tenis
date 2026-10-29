@@ -434,11 +434,12 @@ Sin cintas con leyendas ni bloques de slogan.
   video: en el cuadro más claro, el blanco del titular da 5,58:1 (percentil 99
   de la zona del texto). Con la capa al 40% de antes no llegaba a AA.
 - **Titular** centrado, **en blanco**, en Archivo: «GAME, SET, MATCH», en una
-  sola línea de borde a borde del texto (con `lang="en"`, para que los lectores
-  de pantalla lo pronuncien bien). Mide 6,9em, así que su tamaño es el ancho
-  del texto dividido 7: el de la caja del hero (en `cqi`) hasta el ancho máximo
-  del contenido, menos el gutter de cada lado (165px en 1280, 44px en 375). Es
-  la única display que se calcula así. El acento no se lee sobre el video
+  sola línea (con `lang="en"`, para que los lectores de pantalla lo
+  pronuncien bien). Mide 6,9em: en pantallas angostas su tamaño es el ancho
+  del texto dividido 7 (la caja del hero en `cqi`, menos el gutter de cada
+  lado), así va de borde a borde (44px en 375); en desktop se frena en 8,5rem
+  (136px, lo que medía el titular de antes en 1280): grande, sin ocupar todo
+  el ancho. Es la única display que se calcula así. El acento no se lee sobre el video
   (1,02:1). Debajo, qué se vende, en blanco y
   en minúscula («raquetas, pelotas, cuerdas, grips y bolsos de las marcas que
   ya conocés.»), y el botón del acento, grande (60px de alto). El `<title>`

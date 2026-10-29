@@ -54,13 +54,14 @@
   text-align: center;
 }
 
-/* En una línea, «GAME, SET, MATCH», de borde a borde del texto: mide 6,9em,
-   así que el tamaño es el ancho del texto (el de la caja, hasta el ancho
-   máximo del contenido, menos el gutter de cada lado) dividido 7. En blanco:
-   el acento no se lee sobre el video. */
+/* En una línea, «GAME, SET, MATCH»: mide 6,9em, así que en pantallas
+   angostas el tamaño es el ancho del texto (el de la caja menos el gutter de
+   cada lado) dividido 7, de borde a borde. En desktop se frena en 8,5rem
+   (136px, lo que medía el titular de antes en 1280): grande, sin ocupar todo
+   el ancho. En blanco: el acento no se lee sobre el video. */
 .titulo {
   color: var(--blanco);
-  font-size: calc((min(100cqi, var(--ancho-max)) - 2 * var(--gutter)) / 7);
+  font-size: min(calc((min(100cqi, var(--ancho-max)) - 2 * var(--gutter)) / 7), 8.5rem);
   white-space: nowrap;
 }
 
