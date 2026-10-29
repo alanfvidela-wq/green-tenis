@@ -155,3 +155,10 @@
 .envio dt {
   color: var(--grafito);
 }
+
+/* Un email (o una calle) largo y sin espacios se corta donde haga falta, en
+   vez de estirar la columna y abrir un scroll horizontal */
+.envio dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}

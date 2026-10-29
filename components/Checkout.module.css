@@ -19,8 +19,10 @@
   margin-top: 0;
 }
 
+/* Un email largo se corta donde haga falta, sin scroll horizontal */
 .email {
   color: var(--negro);
+  overflow-wrap: anywhere;
 }
 
 .lineas {

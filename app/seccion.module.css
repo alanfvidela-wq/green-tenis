@@ -74,8 +74,10 @@
   font-size: var(--t-chico);
 }
 
+/* Un email largo se corta donde haga falta, sin scroll horizontal */
 .email {
   color: var(--negro);
+  overflow-wrap: anywhere;
 }
 
 .salir {
