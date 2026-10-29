@@ -47,6 +47,31 @@ const ANTIVIBRADOR = { y: 34.8, blanco: new Color("#ffffff"), acento: new Color(
 const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
 const suavizar = (t) => t * t * (3 - 2 * t);
 
+// El ancho de la raqueta a cada altura, en cm (la mitad, desde el centro): la
+// cabeza es una elipse (marco hasta x = ±14, de y = 30,5 a la punta), la
+// garganta se abre en V desde la empuñadura y la empuñadura con el tapón mide
+// unos 4,4 cm. Alcanza con aproximarlo: es para que la cámara no se acerque
+// tanto que la raqueta se salga por los costados del lienzo.
+const CABEZA = { centro: 50.5, alto: 20, ancho: 14 };
+const GARGANTA = { desde: 19, hasta: 31, ancho: 9 };
+const EMPUNADURA = 2.2;
+function medioAncho(y) {
+  if (y < 0 || y > LARGO) return 0;
+  const dy = (y - CABEZA.centro) / CABEZA.alto;
+  const cabeza = Math.abs(dy) <= 1 ? CABEZA.ancho * Math.sqrt(1 - dy * dy) : 0;
+  const t = limitar((y - GARGANTA.desde) / (GARGANTA.hasta - GARGANTA.desde), 0, 1);
+  const garganta = y >= GARGANTA.desde && y <= GARGANTA.hasta + 2 ? MathUtils.lerp(EMPUNADURA, GARGANTA.ancho, t) : 0;
+  return Math.max(cabeza, garganta, y < GARGANTA.hasta ? EMPUNADURA : 0);
+}
+// El más ancho entre dos alturas (de a medio centímetro)
+function medioAnchoMaximo(desde, hasta) {
+  let maximo = 0;
+  for (let y = Math.max(0, desde); y <= Math.min(LARGO, hasta); y += 0.5) maximo = Math.max(maximo, medioAncho(y));
+  return maximo;
+}
+// Aire a los costados: la raqueta ocupa como mucho el 84% del ancho del lienzo
+const AIRE_LATERAL = 1.19;
+
 function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   const { scene } = useGLTF(URL_RAQUETA, false, true);
   const grupo = useRef(null);
@@ -108,9 +133,21 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     const zoom = MathUtils.lerp(focos[k].zoom, focos[k + 1].zoom, t);
 
     // Distancia para que la raqueta entera ocupe el alto de la escena
-    const completa =
-      (LARGO * 1.06) / 2 / Math.tan((FOV * Math.PI) / 360) / medidas.current.fraccion;
-    const distancia = completa / zoom;
+    const tangente = Math.tan((FOV * Math.PI) / 360);
+    const completa = (LARGO * 1.06) / 2 / tangente / medidas.current.fraccion;
+    let distancia = completa / zoom;
+    // Pero nunca tan cerca que la parte que entra en cuadro se salga por los
+    // costados del lienzo (en desktop, la columna de la raqueta): si la cabeza
+    // es más ancha que el lienzo, la cámara se aleja hasta que entre, con aire.
+    // En las partes angostas (empuñadura, grip, tapón) el acercamiento queda.
+    const aspecto = size.width / size.height;
+    for (let i = 0; i < 3; i++) {
+      const mitadAlto = distancia * tangente;
+      const ancho = medioAnchoMaximo(y - mitadAlto, y + mitadAlto) * 2 * AIRE_LATERAL;
+      const minima = ancho / 2 / (tangente * aspecto);
+      if (distancia >= minima) break;
+      distancia = minima;
+    }
 
     // Con un poco de inercia
     const m = mirada.current ?? (mirada.current = { y, distancia });

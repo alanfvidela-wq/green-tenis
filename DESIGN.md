@@ -788,7 +788,12 @@ vista.
   raqueta) decide adónde mira, con entrada y salida suaves y un poco de
   inercia. Es continuo: entre un paso y otro está en el medio. Antes del
   primer paso y después del último se ve la raqueta entera. Mira de frente, un
-  poco desde la derecha y desde arriba. Los focos y las anclas de cada paso
+  poco desde la derecha y desde arriba. **Nunca se acerca tanto que la raqueta
+  se salga por los costados del lienzo** (en desktop, la columna de la
+  raqueta): si la parte que entra en cuadro es más ancha, se aleja hasta que
+  entre con aire (como mucho el 84% del ancho). Así la cabeza no queda cortada
+  en el protector o el antivibrador; en las partes angostas (empuñadura, grip,
+  tapón) el acercamiento no cambia. Los focos y las anclas de cada paso
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
 - **Al activarse un paso**: la parte pasa al acento (el encordado brilla,
   aparece el disco del punto dulce o el antivibrador pasa al acento), el nombre
