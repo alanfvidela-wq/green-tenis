@@ -9,7 +9,15 @@
   color: var(--negro);
   transition:
     background-color 300ms ease,
-    color 300ms ease;
+    color 300ms ease,
+    transform 400ms var(--deslizar);
+}
+
+/* Escondido mientras la anatomía de la raqueta ocupa la pantalla (la marca
+   AnatomiaRaqueta en <html>): se desliza para arriba. Si algo de adentro toma
+   el foco (con Tab), vuelve. */
+:global(html[data-sin-header]) .header:not(:focus-within) {
+  transform: translateY(-100%);
 }
 
 /* Sobre el hero: sin fondo, en blanco y metido adentro del contenedor del

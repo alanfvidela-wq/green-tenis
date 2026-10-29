@@ -38,7 +38,8 @@ baja, con mucho aire. **Pocas cosas, grandes y con aire.**
 5. **Dos radios y nada más**: 16px para lo que se mira (contenedores, celdas,
    fotos) y píldora para lo que se toca (botones, barras, campos, etiquetas).
 6. **Sin adornos**: sin superficies de color, sin grano, sin marcas de agua,
-   sin stickers, sin punteados, sin sombras ni degradados.
+   sin stickers, sin punteados, sin sombras ni degradados. La única sombra es
+   la suave de la raqueta de la anatomía.
 7. **Ningún elemento repite lo que ya dice el título.** Ni bajadas que lo
    reformulan, ni etiquetas que lo anuncian. Textos que describen, sin slogans
    (ver «Voz»).
@@ -51,9 +52,9 @@ baja, con mucho aire. **Pocas cosas, grandes y con aire.**
 | --- | --- | --- | --- |
 | `--blanco` | Blanco | `#FFFFFF` | El fondo de las páginas y de las tarjetas |
 | `--hormigon` | Hormigón | `#E6E6E6` | El gris claro de fondo: secciones alternas, placeholders de fotos, botones apagados, etiquetas neutras |
-| `--estudio` | Estudio | `#F4F5F2` | Solo el fondo de las fotos de producto en la vitrina y la galería |
-| `--negro` | Negro | `#000000` | Texto, bordes de 1px, las bandas del footer y de la anatomía |
-| `--grafito` | Grafito | `#333333` | Texto secundario sobre blanco, hormigón y estudio; la palabra gigante de la anatomía |
+| `--estudio` | Estudio | `#F4F5F2` | El fondo de las fotos de producto en la vitrina y la galería, y la banda de la anatomía de la raqueta |
+| `--negro` | Negro | `#000000` | Texto, bordes de 1px, la banda del footer |
+| `--grafito` | Grafito | `#333333` | Texto secundario sobre blanco, hormigón y estudio; la raqueta 3D de la anatomía |
 | `--acento` | Naranja polvo | `#B3471C` | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
 | `--lima` | Amarillo pelota | `#DCF900` | Solo la pelota del wordmark y del favicon |
 
@@ -72,8 +73,9 @@ encima. Se eligió en la muestra del rediseño entre tres opciones, medidas igua
 - **«Con blanco»** vale en los dos sentidos: texto blanco sobre el acento (en
   botones, barras y el carrito) y el acento como texto sobre blanco: 5,48:1,
   AA.
-- **Contra el negro** da 3,83:1, más que el 3:1 de un componente: alcanza para
-  la parte activa de la raqueta sobre la banda negra.
+- **Contra el negro** da 3,83:1 y **contra el estudio**, 5,00:1: más que el 3:1
+  de un componente. Alcanza para la parte activa de la raqueta sobre la banda
+  de la anatomía.
 - **Sobre el video no se lee** (1,02:1 en el cuadro más claro): el titular del
   hero va en blanco y el acento queda en el botón.
 - El lima de antes ya no es acento: es el amarillo de la pelota del wordmark.
@@ -89,14 +91,14 @@ encima. Se eligió en la muestra del rediseño entre tres opciones, medidas igua
 | Video del hero, con la capa negra al 55% | — | — | **5,58** |
 
 **En negrita, las combinaciones permitidas como texto.** El grafito sobre negro
-(1,66) solo se usa en la palabra gigante de la anatomía, que es decorativa y va
-oculta para lectores de pantalla. El lima nunca es texto.
+(1,66) no se usa. El lima nunca es texto.
 
 ### Superficies
 
 - **Las secciones van sobre blanco o hormigón**, alternadas cuando hace falta
   separar, con mucho espacio arriba y abajo.
-- **Bandas negras**: el footer y la anatomía de la raqueta.
+- **Banda negra**: el footer.
+- **Banda de estudio**: la anatomía de la raqueta, con la raqueta en grafito.
 - No hay más fondos: ni colores de superficie, ni texturas, ni dibujos de fondo.
 
 ### Foco
@@ -129,8 +131,7 @@ debajo de 2rem ni en párrafos. A la izquierda; solo el hero y los estados se
 centran.
 
 **Interlineado: 0,92.** Con menos, las tildes de las mayúsculas (Á É Í Ó Ú Ñ,
-que en Archivo suben hasta 0,89em) tocan la línea de arriba. En títulos de una
-sola línea (la palabra gigante de la anatomía) puede bajar a 0,8.
+que en Archivo suben hasta 0,89em) tocan la línea de arriba.
 
 ### Escala
 
@@ -211,6 +212,9 @@ cualquier acento.
   blanca, con el texto en negro. En las demás páginas es blanco desde el
   principio. La lógica de `CabeceraFlotante` no cambia: mide su alto y lo
   publica en `--alto-header`.
+- **Se esconde en la anatomía**: mientras la raqueta queda fija y la sección
+  ocupa la pantalla, el header se desliza para arriba; vuelve al salir de la
+  sección o al scrollear para arriba (ver «Anatomía de una raqueta»).
 - Por debajo de 1024px los links de las secciones bajan a una segunda fila con
   scroll horizontal; arriba quedan el wordmark, «Mi cuenta» y el carrito.
 
@@ -361,7 +365,8 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
   barra pasa a negro.
 - **Categorías**: la tarjeta se pinta del acento y la flecha avanza 6px.
 - **Fotos**: la aparición suave al entrar en pantalla.
-- **Anatomía de una raqueta**: la cámara sigue al scroll (ver esa sección).
+- **Anatomía de una raqueta**: la cámara sigue al scroll y el header se
+  esconde mientras la sección ocupa la pantalla (ver esa sección).
 - **Header**: pasa de transparente a blanco con una transición de 300ms.
 - **Microanimaciones** (inspiradas en Kinetics, de Csaba Kissi; ver
   «Créditos» en el README). Dos curvas en `globals.css`: `--deslizar`
@@ -410,7 +415,7 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
    Va antes de la anatomía, que es larga, para que se vea sin scrollear tanto.
    Ver «Quiz».
 4. **Bloque de foto** (`pelota-polvo-01`).
-5. **Anatomía de una raqueta** (banda negra). Ver esa sección.
+5. **Anatomía de una raqueta** (banda de estudio). Ver esa sección.
 6. **Bloque de foto** (`raqueta-cancha-01`).
 7. **Categorías** (hormigón): el título y las cuatro tarjetas.
 8. **Footer** (negro).
@@ -677,7 +682,7 @@ sin 3D y la va a usar «Armá tu raqueta».
 - **Estilo `inflada`** (el de la anatomía): cada parte con cuerpo, **relleno
   blanco plano** y contorno negro; **la parte activa en el acento**. Sin
   degradados ni brillos, y las demás partes no se apagan: la raqueta se lee
-  entera contra la banda negra.
+  entera contra el estudio de la banda.
 
 ## Anatomía de una raqueta
 
@@ -686,14 +691,16 @@ parte por parte. Lo que sigue es lo propio de la sección.
 
 ### Color y fondo
 
-- **Banda negra** de borde a borde, sin texturas ni dibujos. Entra y sale con
-  un borde recto.
-- Blanco para el texto, las líneas guía y el relleno de la raqueta; el acento
-  para la parte activa (3,83:1 contra el negro, y bien distinta del
-  blanco del resto); grafito para la palabra gigante.
-- **La raqueta contrasta con la banda**: relleno blanco, contorno negro y la
-  parte activa en el acento, tanto la dibujada como la 3D (en el modelo, el
-  material del marco pasa a blanco y el de la parte activa, al acento).
+- **Banda de estudio** (`--estudio`) de borde a borde, el mismo tono de las
+  fotos de producto, sin texturas ni dibujos. Entra y sale con un borde recto.
+- Negro para el texto, los títulos, las líneas guía y el contorno de los
+  puntos; grafito para la bajada, el número y el dato de cada paso; el acento
+  para la parte activa (5,00:1 contra el estudio).
+- **La raqueta contrasta con la banda**: la 3D va en grafito satinado, con las
+  cuerdas claras; la dibujada, en relleno blanco con contorno negro. Las dos
+  llevan una **sombra suave** (un `drop-shadow` de CSS, negro al 20%, 22px de
+  desenfoque y 18px hacia abajo): la única sombra del sitio. La parte activa
+  va en el acento.
 - Sin la pelota flotante de antes: pocas cosas.
 
 ### La raqueta 3D
@@ -704,7 +711,8 @@ parte por parte. Lo que sigue es lo propio de la sección.
   texturas WebP de 2048px como máximo, de 19 MB a 364 KB. Trae tres mallas: la
   raqueta (marco con sus ojales, garganta, empuñadura con el grip y tapón) y el
   encordado en dos mallas. Viene acostado y se endereza en el código. El
-  material del marco se aclara (blanco) para que se lea contra el negro.
+  material del marco pasa a grafito (`#333`, rugosidad 0,42 y un poco de
+  metal) para que se lea contra el estudio y la luz le marque el contorno.
 - **Resaltar**: lo que es una malla aparte se pone del acento con un emissive
   suave (el encordado). Lo que no lo es (marco, protector, ojales, garganta,
   empuñadura, grip, overgrip y tapón) se marca con su nombre anclado a su
@@ -721,42 +729,48 @@ parte por parte. Lo que sigue es lo propio de la sección.
 Es `Raqueta` con `estilo="inflada"` y se ve cuando no va el 3D: con
 `prefers-reduced-motion`, sin WebGL, sin JavaScript y mientras carga el modelo.
 Ocupa la misma caja que el 3D, así que el cambio de una a otra no mueve el
-layout. Relleno blanco plano, contorno negro y la parte activa en el acento;
-quieta y completa, con los nombres de las partes a la vista.
+layout. Relleno blanco plano, contorno negro, la parte activa en el acento y
+la misma sombra suave; quieta y completa, con los nombres de las partes a la
+vista.
 
 ### Nombres de las partes y tipografía
 
 - **Cada parte se nombra con texto y una línea guía**, sin cápsula: el nombre
-  en mayúsculas a 13px, en blanco, y una línea blanca de 2px que sale de un
-  punto blanco sobre la parte. **El nombre va afuera de la silueta** (a la
+  en mayúsculas a 13px, en negro, y una línea negra de 2px que sale de un
+  punto blanco con borde negro sobre la parte (se ve sobre la raqueta grafito
+  y sobre el estudio). **El nombre va afuera de la silueta** (a la
   izquierda o a la derecha de la raqueta): nunca sobre la raqueta, y nunca se
-  sale del escenario. El nombre lleva el fondo negro de la banda (no se ve
-  como recuadro): si en el 3D llega a rozar el marco, se sigue leyendo. Con el
+  sale del escenario. El nombre lleva el fondo de estudio de la banda (no se
+  ve como recuadro): si en el 3D llega a rozar el marco, se sigue leyendo. Con el
   3D se ve solo el del paso activo; en la versión dibujada, todos.
-- **Palabra gigante**: el nombre de la parte activa en la display, enorme
-  (17cqi) y en una línea (interlineado 0,8), en grafito, **detrás de la
-  raqueta, nunca encima**: va a la altura de la cabeza, donde el encordado y el
-  marco le pasan por delante y no cae ningún nombre de parte.
+- **Sin palabra gigante detrás de la raqueta**: el nombre ya está en el título
+  del paso y en la etiqueta de la parte.
 - **Titular y pasos**: el titular de la sección en la display a
-  `--t-display-2`; los títulos de los pasos en la display a `--t-display-4`. El
-  dato técnico y el texto van separados por espacio.
+  `--t-display-2`; los títulos de los pasos en la display a `--t-display-4`.
+  Debajo del título va primero la frase, grande (`--t-titulo`), y después el
+  dato técnico, chico (0,875rem, en grafito), separados por espacio.
 
 ### Estructura
 
 - **Desktop**: la raqueta queda fija (sticky) a la izquierda, en un escenario
-  del alto de la pantalla, y los pasos van pasando a la derecha, uno por
-  pantalla. **Mobile**: la raqueta fija arriba (46% del alto, de borde a
-  borde) y los pasos abajo.
+  de toda la pantalla (100dvh), y los pasos van pasando a la derecha, uno por
+  pantalla. **Mobile**: la raqueta fija arriba (55dvh, de borde a borde) y los
+  pasos abajo. En dvh, así en mobile no la tapa la barra del navegador.
+- **Pantalla completa**: el escenario se pega arriba de todo y, mientras está
+  fijo, el header se esconde (AnatomiaRaqueta marca `data-sin-header` en
+  `<html>`). Vuelve al salir de la sección, para arriba o para abajo, y
+  apenas se scrollea para arriba adentro, para poder navegar. Si algo del
+  header toma el foco (con Tab), también vuelve.
 - **Un paso por parte, de arriba hacia abajo**, con la terminología técnica
   en castellano: marco, protector, ojales, encordado, punto dulce,
   antivibrador, garganta, empuñadura, grip, overgrip y tapón. Cada paso tiene
-  el número, el nombre de la parte (`h3`), un dato técnico concreto
-  (tamaño de la cabeza en pulgadas², patrón 16×19 contra 18×20, grips del 0 al
-  5, largo de 27″) y una frase corta que dice qué cambia en el juego. Los
+  el número, el nombre de la parte (`h3`), una frase corta que dice qué es o
+  qué cambia en el juego y un dato técnico concreto (tamaño de la cabeza en
+  pulgadas², patrón 16×19 contra 18×20, grips del 0 al 5, largo de 27″). Los
   pasos están en `lib/anatomia.js`.
 - **Todo el texto es HTML** (títulos y párrafos), nunca texto dentro del SVG.
-  Los nombres de las partes y la palabra gigante también son HTML y repiten el
-  título del paso, por eso van ocultos para lectores de pantalla.
+  Los nombres de las partes también son HTML y repiten el título del paso,
+  por eso van ocultos para lectores de pantalla.
 
 ### Movimiento
 
@@ -770,12 +784,12 @@ quieta y completa, con los nombres de las partes a la vista.
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
 - **Al activarse un paso**: la parte pasa al acento (el encordado brilla,
   aparece el disco del punto dulce o el antivibrador pasa al acento), el nombre
-  de la parte aparece con su línea guía (un fundido corto) y la palabra
-  gigante aparece detrás. El paso activo se lee entero y los demás bajan al
-  35%.
-- **Flotación**: la raqueta sube y baja medio centímetro y gira apenas (±8°);
-  la palabra gigante se queda un poco atrás de la raqueta. Los nombres de las
-  partes no flotan.
+  de la parte aparece con su línea guía (un fundido corto). El paso activo se
+  lee entero y los demás bajan al 35%.
+- **Flotación**: la raqueta sube y baja medio centímetro y gira apenas (±8°).
+  Los nombres de las partes no flotan.
+- **El header**: se desliza para arriba en 0,4s (`--deslizar`) cuando el
+  escenario queda fijo, y vuelve igual. Solo `transform`.
 
 ### El final
 
@@ -812,8 +826,9 @@ texto HTML del bloque de cierre, el mismo con y sin 3D.
   una sola vez, no en tiempo real.
 - **En la página, solo `transform` y `opacity`**: los nombres de las partes y
   sus líneas (posicionados en unidades del contenedor, `cqw`/`cqh`, a partir de
-  la proyección de su ancla 3D), el parallax de la palabra gigante y las
-  apariciones. Nada de `left`, `top` ni filtros SVG en elementos que se mueven.
+  la proyección de su ancla 3D), el header y las apariciones. Nada de `left`,
+  `top` ni filtros SVG en elementos que se mueven. La sombra de la raqueta es
+  un `drop-shadow` de CSS sobre el contenedor del lienzo, que no se mueve.
 - **Funciona igual en Chrome, Safari y Firefox**: el scroll se mide con
   `requestAnimationFrame`, sin `animation-timeline`.
 
@@ -825,7 +840,8 @@ vista, cada uno con su línea guía. El final es la raqueta quieta con la frase
 de cierre (en la display) y el botón del acento, fijos al lado (debajo en
 mobile) mientras dura el tramo de cierre, que mide lo mismo con y sin 3D.
 Mientras carga el modelo se ve lo mismo, y cuando está listo la raqueta 3D
-aparece encima con un fundido.
+aparece encima con un fundido. La pantalla completa sigue igual: el header se
+esconde y vuelve, pero sin deslizarse.
 
 ## Fotos de producto
 
@@ -994,8 +1010,7 @@ dos oraciones.
   contenido.
 - `prefers-reduced-motion` respetado en todo (ver «Movimiento»).
 - Lo decorativo va oculto para lectores de pantalla: las fotos de juego y de
-  objetos, la palabra gigante y los nombres de las partes de la anatomía
-  (repiten el paso).
+  objetos y los nombres de las partes de la anatomía (repiten el paso).
 - Layout fluido desde 320px, sin scroll horizontal.
 
 ## Evitar
@@ -1016,8 +1031,8 @@ dos oraciones.
 | Radios fuera de los dos | 16px para lo que se mira, píldora para lo que se toca |
 | Negritas para jerarquizar el texto | Inter Tight en un solo peso; la jerarquía sale del tamaño y de la display |
 | Interlineado de 0,8 con mayúsculas acentuadas | 0,92 en la display |
-| Sombras, resplandores, degradados | Fondos planos y bordes de 1px donde hacen falta; la raqueta dibujada, en relleno plano |
-| La palabra gigante encima de la raqueta | Detrás, a la altura de la cabeza |
+| Sombras, resplandores, degradados | Fondos planos y bordes de 1px donde hacen falta; la única sombra es la suave de la raqueta de la anatomía |
+| Una palabra gigante detrás de la raqueta | El nombre va en el título del paso y en la etiqueta de la parte |
 | Nombres de partes en cápsulas o sobre la raqueta | Texto y línea guía, afuera de la silueta |
 | Texto sobre las fotos | La foto sola; el nombre y el precio van debajo |
 | Movimiento con `top`, `left`, `width` o filtros | Solo `transform` y `opacity` |

@@ -6,13 +6,15 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "
 import Raqueta, { ANCLAS, LIENZO } from "./Raqueta";
 import styles from "./AnatomiaRaqueta.module.css";
 
-// Sección «Anatomía de una raqueta» (ver DESIGN.md), sobre una banda negra.
-// La raqueta queda fija y los pasos pasan al lado (abajo en mobile).
+// Sección «Anatomía de una raqueta» (ver DESIGN.md), sobre una banda de
+// estudio. La raqueta queda fija y los pasos pasan al lado (abajo en mobile).
+// Mientras está fija, la sección ocupa toda la pantalla y el header se
+// esconde; vuelve al salir de la sección o si se scrollea para arriba.
 //
 // - Con WebGL y movimiento permitido: la raqueta 3D (Raqueta3D, cargada sin
 //   SSR). Con el scroll, la cámara la recorre de arriba hacia abajo y se
 //   acerca a la parte de cada paso; aparece el nombre de la parte, anclado a
-//   la posición 3D de la parte, y el nombre gigante aparece detrás.
+//   la posición 3D de la parte.
 // - Con prefers-reduced-motion, sin WebGL o mientras carga el modelo: la
 //   raqueta dibujada en SVG, quieta, con los nombres de todas las partes.
 //   Ocupa la misma caja que el 3D, así que el cambio no mueve nada.
@@ -24,8 +26,8 @@ import styles from "./AnatomiaRaqueta.module.css";
 // movimiento, el cierre es texto y botón al lado de la
 // raqueta quieta.
 //
-// Lo que se mueve en la página (nombres de las partes, nombre gigante,
-// parallax) es transform u opacity.
+// Lo que se mueve en la página (nombres de las partes, el header) es
+// transform u opacity.
 
 // Tramos del final (fin va de 0 a 1 a lo largo del bloque de cierre): los
 // stickers juntos, y desde dónde se ven la frase (junto con los stickers, y
@@ -45,6 +47,9 @@ const LIMITES = { derecha: [60, 80], izquierda: [20, 40] };
 const LIMITES_ANGOSTOS = { derecha: [56, 72], izquierda: [28, 44] };
 // Aire entre el sticker y el borde del escenario, en px
 const AIRE = 8;
+// Cuánto tiene que moverse el scroll (en px, de un cuadro al otro) para contar
+// como que sube o baja: el header no parpadea con un temblor del touchpad
+const UMBRAL_SCROLL = 2;
 
 const limitar = (n, min, max) => Math.min(max, Math.max(min, n));
 const corto = (n) => Math.round(n * 100) / 100;
@@ -95,7 +100,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   const refRaiz = useRef(null);
   const refEscenario = useRef(null);
   const refEscena = useRef(null);
-  const refNombres = useRef(null);
+  const refAnatomia = useRef(null);
   const refMarcas = useRef([]);
   // Lo que comparte con la escena 3D sin volver a renderizar: el progreso del
   // scroll y dónde está la escena dentro del lienzo
@@ -164,16 +169,49 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     return () => observador.disconnect();
   }, [cargar3d]);
 
+  // Pantalla completa: mientras el escenario está fijo arriba de todo, el
+  // header se esconde (se desliza para arriba). Vuelve al salir de la
+  // sección, para arriba o para abajo, y apenas se scrollea para arriba
+  // adentro, para poder navegar. Se marca en <html> (data-sin-header), que es
+  // lo que mira el header; con prefers-reduced-motion cambia sin deslizarse.
+  useEffect(() => {
+    const anatomia = refAnatomia.current;
+    const escenario = refEscenario.current;
+    const html = document.documentElement;
+    let ultimoY = window.scrollY;
+    let cuadro = 0;
+
+    function mirar() {
+      cuadro = 0;
+      const y = window.scrollY;
+      const { top, bottom } = anatomia.getBoundingClientRect();
+      const fija = top <= 0 && bottom >= escenario.offsetHeight;
+      if (!fija || y < ultimoY - UMBRAL_SCROLL) html.removeAttribute("data-sin-header");
+      else if (y > ultimoY + UMBRAL_SCROLL) html.setAttribute("data-sin-header", "");
+      ultimoY = y;
+    }
+    function pedir() {
+      if (!cuadro) cuadro = requestAnimationFrame(mirar);
+    }
+
+    window.addEventListener("scroll", pedir, { passive: true });
+    window.addEventListener("resize", pedir);
+    return () => {
+      cancelAnimationFrame(cuadro);
+      window.removeEventListener("scroll", pedir);
+      window.removeEventListener("resize", pedir);
+      html.removeAttribute("data-sin-header");
+    };
+  }, []);
+
   // Con la raqueta 3D en pantalla, el scroll decide el paso activo
   useEffect(() => {
     if (!modo3d) return;
 
     const raiz = refRaiz.current;
     const escena = refEscena.current;
-    const nombresCapa = refNombres.current;
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
-    const nombres = pasos.map((paso) => raiz.querySelector(`[data-nombre="${paso.id}"]`));
     const bloqueCierre = raiz.querySelector("[data-cierre]");
     const escenario = refEscenario.current;
 
@@ -218,7 +256,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     function marcar(indice, todos, final) {
       elementosPasos.forEach((el, i) => el.toggleAttribute("data-activo", i === indice));
       refMarcas.current.forEach((el, i) => el?.toggleAttribute("data-visible", todos || i === indice));
-      nombres.forEach((el, i) => el.toggleAttribute("data-visible", i === indice));
       raiz.toggleAttribute("data-frase", final >= FINAL.frase);
       raiz.toggleAttribute("data-final", final >= FINAL.boton);
     }
@@ -238,10 +275,6 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
         estadoAnterior = clave;
         marcar(indice, todos, final);
       }
-
-      // Parallax: el nombre gigante se queda atrás de la raqueta
-      const resto = p - Math.round(p);
-      nombresCapa.style.transform = `translateY(${corto(resto * -36)}px)`;
     }
 
     function pedir() {
@@ -274,17 +307,8 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
           <p className={styles.bajada}>{bajada}</p>
         </header>
 
-        <div className={styles.anatomia}>
+        <div className={styles.anatomia} ref={refAnatomia}>
           <div className={styles.escenario} ref={refEscenario}>
-            {/* El nombre de la parte activa, gigante, detrás de la raqueta */}
-            <div className={styles.nombres} ref={refNombres} aria-hidden="true">
-              {pasos.map((paso) => (
-                <span key={paso.id} className={styles.nombre} data-nombre={paso.id}>
-                  {paso.titulo}
-                </span>
-              ))}
-            </div>
-
             {cargar3d && (
               <div className={styles.capa3d}>
                 <Raqueta3D
@@ -344,8 +368,8 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <h3 className={styles.titulo}>{paso.titulo}</h3>
-                <p className={styles.dato}>{paso.dato}</p>
                 <p className={styles.frase}>{paso.frase}</p>
+                <p className={styles.dato}>{paso.dato}</p>
               </li>
             ))}
           </ol>

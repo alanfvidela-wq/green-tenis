@@ -15,7 +15,8 @@ import { Color, MathUtils, Vector3 } from "three";
 // el encordado en dos mallas. Por eso el encordado se resalta en el acento y
 // el resto de las partes se marca con su nombre anclado a su posición 3D. El
 // antivibrador no viene en el modelo: es una pieza aparte, que también pasa
-// al acento. La raqueta va en blanco, para que se lea contra la banda negra.
+// al acento. La raqueta va en grafito satinado, para que se lea contra el
+// estudio de la banda, con las cuerdas claras; la sombra suave la pone el CSS.
 
 export const URL_RAQUETA = "/models/raqueta.glb";
 
@@ -36,6 +37,9 @@ const AZIMUT = 0.32;
 const ELEVACION = 0.1;
 // El acento (--acento en globals.css): la parte activa
 const ACENTO = "#b3471c";
+// La raqueta: grafito satinado. Un poco más claro que --grafito (#333): con
+// la luz de estudio, ese se ve negro y se pierde la forma.
+const GRAFITO = "#4a4b48";
 // El antivibrador: entre las dos principales del medio, debajo de la última
 // cruzada (el reglamento no lo deja donde se cruzan las cuerdas)
 const ANTIVIBRADOR = { y: 34.8, blanco: new Color("#ffffff"), acento: new Color(ACENTO) };
@@ -54,7 +58,7 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   // El export viene acostado (una rotación en la raíz): se endereza para que
   // quede vertical, con la cara del encordado hacia la cámara. Las cuerdas
   // llevan su propio material para poder brillar en el acento; el resto de la
-  // raqueta pasa a blanco, sin su textura.
+  // raqueta pasa a grafito, sin su textura.
   useMemo(() => {
     const raiz = scene.children[0];
     raiz.position.set(0, 0, 0);
@@ -69,7 +73,9 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       } else if (objeto.isMesh) {
         objeto.material = objeto.material.clone();
         objeto.material.map = null;
-        objeto.material.color = new Color("#f2f2f2");
+        objeto.material.color = new Color(GRAFITO);
+        objeto.material.roughness = 0.36;
+        objeto.material.metalness = 0.2;
         objeto.material.needsUpdate = true;
       }
     });
