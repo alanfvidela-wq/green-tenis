@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { createPortal } from "react-dom";
 import { useCarrito } from "@/hooks/useCarrito";
 import { formatearKg, formatearPrecio } from "@/lib/formato";
 import { MAX_CANTIDAD } from "@/lib/lineas";
@@ -18,6 +19,11 @@ import AvisoAgregado, { useAvisoAgregado } from "./AvisoAgregado";
 import FotoVitrina from "./FotoVitrina";
 import SelectorCantidad from "./SelectorCantidad";
 import styles from "./PanelCompra.module.css";
+
+// En el servidor (y al hidratar) no hay document.body para el portal
+const sinSuscripcion = () => () => {};
+const enCliente = () => true;
+const enServidor = () => false;
 
 function textoStock(stock) {
   if (stock === null) return "En stock";
@@ -122,6 +128,7 @@ function Encordado({ encordado, activo, onActivo, cuerdaId, onCuerda, tension, o
 export default function PanelCompra({ producto, frase, encordado = null }) {
   const { agregarProducto } = useCarrito();
   const [avisoVisible, mostrarAviso] = useAvisoAgregado();
+  const enNavegador = useSyncExternalStore(sinSuscripcion, enCliente, enServidor);
   const opciones = useMemo(() => dimensionesDe(producto), [producto]);
   const { dimensiones, valoresDe } = opciones;
   const [eleccion, setEleccion] = useState(() => eleccionInicial(producto, opciones));
@@ -281,14 +288,24 @@ export default function PanelCompra({ producto, frase, encordado = null }) {
         </p>
       )}
 
-      <BarraCompra
-        visible={barraVisible && !agotado}
-        producto={producto}
-        precio={precio}
-        desde={desde}
-        onAgregar={agregar}
-      />
-      <AvisoAgregado visible={avisoVisible} />
+      {/* La barra y el aviso van fijos sobre toda la página: con un portal
+          a body, porque adentro de la columna pegada (sticky, que arma su
+          propio apilamiento) las tarjetas de «Combina con» les pasaban por
+          encima */}
+      {enNavegador &&
+        createPortal(
+          <>
+            <BarraCompra
+              visible={barraVisible && !agotado}
+              producto={producto}
+              precio={precio}
+              desde={desde}
+              onAgregar={agregar}
+            />
+            <AvisoAgregado visible={avisoVisible} />
+          </>,
+          document.body,
+        )}
     </div>
   );
 }
