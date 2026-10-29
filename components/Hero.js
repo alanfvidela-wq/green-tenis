@@ -29,11 +29,13 @@ export default function Hero() {
       <div className={styles.capa} aria-hidden="true" />
 
       <div className={styles.texto}>
-        <h1 id="hero-titulo" className={`display ${styles.titulo}`}>
-          Todo para jugar al tenis
+        {/* Una palabra por línea. En inglés, como se dice en la cancha: lang
+            para que los lectores de pantalla lo pronuncien bien */}
+        <h1 id="hero-titulo" className={`display ${styles.titulo}`} lang="en">
+          <span>Game.</span> <span>Set.</span> <span>Match.</span>
         </h1>
         <p className={styles.frase}>
-          Raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
+          raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
           conocés.
         </p>
         <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>

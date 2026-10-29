@@ -31,6 +31,9 @@
   --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
   --t-display-2: clamp(3.5rem, 10vw, 9rem);
   --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
+  /* El titular del hero, «Game. / Set. / Match.»: palabras cortas, así que
+     más grande; el ancho lo limita en mobile y el alto en desktop */
+  --t-hero: clamp(4.5rem, min(28vw, 20svh), 16rem);
   --tracking-nav: 0.06em;
 
   /* Espaciado: múltiplos de 4px */

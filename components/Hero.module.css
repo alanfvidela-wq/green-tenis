@@ -52,12 +52,18 @@
   text-align: center;
 }
 
-/* Tres líneas: «Todo para / jugar al / tenis» mide 4,2em. En blanco: el
-   acento no se lee sobre el video. */
+/* Tres líneas, una palabra en cada una: «Game. / Set. / Match.». Son más
+   cortas que las del titular de antes, así que va más grande que
+   --t-display-1 para llenar el hero igual: lo limita el ancho en mobile y el
+   alto en desktop (con el subtítulo y el botón tiene que entrar en una
+   pantalla). En blanco: el acento no se lee sobre el video. */
 .titulo {
-  max-width: 5.5em;
   color: var(--blanco);
-  font-size: var(--t-display-1);
+  font-size: var(--t-hero);
+}
+
+.titulo span {
+  display: block;
 }
 
 .frase {

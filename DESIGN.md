@@ -146,7 +146,8 @@ que en Archivo suben hasta 0,89em) tocan la línea de arriba.
 | `--t-precio` | clamp(2.25rem, 3.2vw, 2.75rem) | El precio de la página de producto y de un combo, en la display |
 | `--t-display-3` | clamp(2.75rem, 6.5vw, 5.5rem) | Títulos de página |
 | `--t-display-2` | clamp(3.5rem, 10vw, 9rem) | Títulos de sección de la home |
-| `--t-display-1` | clamp(4.5rem, min(15vw, 17svh), 14rem) | Hero, 404 y error. Depende también del alto, así el hero entra en una pantalla |
+| `--t-hero` | clamp(4.5rem, min(28vw, 20svh), 16rem) | El titular del hero, una palabra corta por línea: lo limita el ancho en mobile y el alto en desktop, así entra en una pantalla con la bajada y el botón |
+| `--t-display-1` | clamp(4.5rem, min(15vw, 17svh), 14rem) | 404 y error. Depende también del alto |
 
 Interlineado: 0,92 en la display, 1,2 en subtítulos, 1,5 en bajadas, 1,6 en
 texto. Tracking: 0,06em en las mayúsculas de Inter Tight (links, barras,
@@ -433,10 +434,15 @@ Sin cintas con leyendas ni bloques de slogan.
   degradado). Medida sobre un cuadro cada medio segundo de las dos versiones del
   video: en el cuadro más claro, el blanco del titular da 5,58:1 (percentil 99
   de la zona del texto). Con la capa al 40% de antes no llegaba a AA.
-- **Titular** centrado, **en blanco**, en Archivo a `--t-display-1`, en tres
-  líneas («Todo para / jugar al / tenis»: ancho máximo 5,5em). El acento no se
-  lee sobre el video (1,02:1). Debajo, qué se vende, en blanco, y
-  el botón del acento, grande (60px de alto).
+- **Titular** centrado, **en blanco**, en Archivo a `--t-hero`: «Game. / Set. /
+  Match.», una palabra por línea (con `lang="en"`, para que los lectores de
+  pantalla lo pronuncien bien). En mobile, la palabra más larga llena el ancho
+  del contenedor; en desktop, el alto deja lugar a la bajada y al botón. El
+  acento no se lee sobre el video (1,02:1). Debajo, qué se vende, en blanco y
+  en minúscula («raquetas, pelotas, cuerdas, grips y bolsos de las marcas que
+  ya conocés.»), y el botón del acento, grande (60px de alto). El `<title>`
+  («green. — Todo para el tenis») y la descripción dicen que es una tienda de
+  tenis.
 - **Poster**: el primer cuadro de cada versión en WebP, pintado por el servidor
   en un `<picture>`. El video se monta encima desde un componente cliente
   (`VideoFondo`), que elige la versión según el ancho (corte en 760px).
@@ -980,9 +986,10 @@ blanco. Sin íconos sociales ni separadores.
 ## Voz
 
 Sencilla y descriptiva, en castellano rioplatense (de vos). Los textos dicen
-qué es cada cosa: «Todo para jugar al tenis», «Raquetas de potencia con un
+qué es cada cosa: «Todo para el tenis», «Raquetas de potencia con un
 punto dulce amplio», «Página no encontrada». Sin slogans, leyendas, chistes ni
-frases inventadas. **Ningún texto repite lo que ya dice el título.** Las
+frases inventadas. La única excepción es el titular del hero, «Game. Set.
+Match.», en inglés, como se dice en la cancha. **Ningún texto repite lo que ya dice el título.** Las
 descripciones de producto cuentan para qué sirve y qué lo distingue, en una o
 dos oraciones.
 
