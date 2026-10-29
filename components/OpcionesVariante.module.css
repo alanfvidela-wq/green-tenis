@@ -60,7 +60,7 @@
 
 .opcionStock {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: 0.75rem;
 }
 

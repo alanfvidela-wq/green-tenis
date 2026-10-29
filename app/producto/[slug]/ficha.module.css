@@ -34,7 +34,8 @@
   max-width: 60ch;
 }
 
-/* La ficha técnica: filas separadas por líneas de 1px, el dato en mono */
+/* La ficha técnica: filas separadas por líneas de 1px, el dato con cifras de
+   ancho fijo */
 .filas {
   border-top: 1px solid var(--hormigon);
 }
@@ -56,7 +57,7 @@
 }
 
 .fila dd {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
 }
 

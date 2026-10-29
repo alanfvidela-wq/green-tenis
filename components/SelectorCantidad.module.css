@@ -7,7 +7,7 @@
   align-items: center;
   border: 1px solid var(--negro);
   border-radius: var(--radio-pildora);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
 }
 
 .cantidad button {

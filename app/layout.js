@@ -1,4 +1,4 @@
-import { Archivo, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Archivo, Inter_Tight } from "next/font/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -11,16 +11,11 @@ const display = Archivo({
   axes: ["wdth"],
 });
 
-// El texto: grotesca suiza (alternativa gratuita a Whyte), en un solo peso
+// El texto: grotesca suiza (alternativa gratuita a Whyte), en un solo peso.
+// También los números chicos (precios, contadores, la ficha), con cifras de
+// ancho fijo (tabular-nums)
 const texto = Inter_Tight({
   variable: "--font-texto",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-// Voz técnica para precios, contadores y la ficha
-const datos = JetBrains_Mono({
-  variable: "--font-datos",
   subsets: ["latin"],
   weight: "400",
 });
@@ -36,7 +31,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="es" className={`${display.variable} ${texto.variable} ${datos.variable}`}>
+    <html lang="es" className={`${display.variable} ${texto.variable}`}>
       <body>
         <a href="#contenido" className="saltar">
           Ir al contenido

@@ -20,11 +20,11 @@
 
 /* ---------- El resultado ---------- */
 
-/* Las respuestas, en una línea en mono */
+/* Las respuestas, en una línea */
 .respuestas {
   max-width: 60ch;
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
   line-height: 1.7;
 }

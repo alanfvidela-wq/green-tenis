@@ -31,7 +31,7 @@ baja, con mucho aire. **Pocas cosas, grandes y con aire.**
    sección, nunca de adorno.
 2. **El color lo traen las fotos**: los productos y la gente jugando.
 3. **Titulares enormes** en Archivo extra condensada, en mayúsculas. El resto
-   es Inter Tight en un solo peso, y JetBrains Mono para precios y datos.
+   es Inter Tight en un solo peso, también en los números (ver «Números»).
 4. **Pocas cosas, grandes y con aire.** Las secciones se separan con espacio,
    no con líneas. La línea de 1px queda solo para tablas, resúmenes, campos y
    el botón secundario.
@@ -110,9 +110,8 @@ blanco, hormigón y estudio; blanco sobre negro y sobre el video.
 | --- | --- | --- |
 | Display | **Archivo**, variable, ancho 62 y peso 900 | Titulares, en mayúsculas: hero, secciones, títulos de página, categorías, pasos de la anatomía, códigos de error; y el wordmark, en minúscula |
 | Texto | Inter Tight 400 | Todo lo demás, en un solo peso: texto, nombres de producto, links, botones, etiquetas. La jerarquía sale del tamaño |
-| Datos | JetBrains Mono 400 | Precios, contadores, fechas y la ficha técnica |
 
-Las tres van con `next/font` (Google Fonts, sin archivos propios), que reserva
+Las dos van con `next/font` (Google Fonts, sin archivos propios), que reserva
 el espacio con una fuente de respaldo ajustada: el cambio de fuente no mueve
 nada.
 
@@ -143,6 +142,7 @@ sola línea (la palabra gigante de la anatomía) puede bajar a 0,8.
 | `--t-entrada` | clamp(1.0625rem, 1.3vw, 1.25rem) | Bajadas, el botón del hero |
 | `--t-titulo` | clamp(1.25rem, 2vw, 1.625rem) | Subtítulos |
 | `--t-display-4` | clamp(2rem, 4vw, 3.25rem) | Pasos, categorías, nombres en la página de producto |
+| `--t-precio` | clamp(2.25rem, 3.2vw, 2.75rem) | El precio de la página de producto y de un combo, en la display |
 | `--t-display-3` | clamp(2.75rem, 6.5vw, 5.5rem) | Títulos de página |
 | `--t-display-2` | clamp(3.5rem, 10vw, 9rem) | Títulos de sección de la home |
 | `--t-display-1` | clamp(4.5rem, min(15vw, 17svh), 14rem) | Hero, 404 y error. Depende también del alto, así el hero entra en una pantalla |
@@ -150,6 +150,22 @@ sola línea (la palabra gigante de la anatomía) puede bajar a 0,8.
 Interlineado: 0,92 en la display, 1,2 en subtítulos, 1,5 en bajadas, 1,6 en
 texto. Tracking: 0,06em en las mayúsculas de Inter Tight (links, barras,
 etiquetas).
+
+### Números
+
+No hay tipografía monoespaciada: los números van con las mismas dos fuentes.
+
+- **Precios grandes** (el de la página de producto y el de un combo, a
+  `--t-precio`, y el total destacado del carrito, el checkout y el pedido, a
+  2rem): en la display, con `font-variant-numeric: tabular-nums`. Como toda la
+  display, nunca por debajo de 2rem.
+- **Números chicos y precios secundarios** (los precios de las celdas, del
+  carrito y de la barra fija, los desgloses, las pulgadas del grip, el stock,
+  la cantidad, la insignia del carrito, fechas, contadores, la ficha técnica,
+  los medidores y las tablas de la administración): en Inter Tight con
+  `font-variant-numeric: tabular-nums`, para que las cifras queden alineadas
+  en columnas y no salten cuando cambian (el precio que sube, la cantidad que
+  rebota). La clase global `.dato` lo trae, a 13px.
 
 ### Wordmark
 
@@ -224,7 +240,7 @@ Los campos de contraseña llevan el ojo adentro, a la derecha (ver «Cuenta»).
 
 Una por categoría, en dos columnas (una en mobile), blancas sobre hormigón, con
 radio de 16px. Adentro: el nombre en la display (`--t-display-4`), la bajada
-y, abajo, la cantidad en mono y una flecha. Toda la tarjeta es el link: con el
+y, abajo, la cantidad y una flecha. Toda la tarjeta es el link: con el
 mouse o el foco se pinta del acento, con el texto en blanco, y la flecha avanza
 6px.
 
@@ -253,7 +269,7 @@ baja; y la barra de acción a lo ancho.
   viene en un lienzo de 4:5 con su margen y entra con `object-fit: cover`; el
   placeholder centra la silueta igual.
 - **Debajo, una fila**: el nombre a la izquierda (Inter Tight a 16px,
-  subrayado) y el precio a la derecha, en mono a 13px («desde» si cambia con
+  subrayado) y el precio a la derecha, a 13px con cifras de ancho fijo («desde» si cambia con
   las opciones). En celdas de menos de 260px, el precio baja debajo del nombre.
 - **Debajo, la barra**: una píldora de ancho completo y 48px de alto en el
   acento, con «Ver producto» (en los combos, «Ver combo») en mayúsculas y
@@ -308,7 +324,7 @@ lista para conseguirlas y cómo agregarlas está en `docs/FOTOS.md`.
 ### Placeholder
 
 Hasta que esté la foto, el lugar muestra un bloque **hormigón** del mismo
-tamaño, con el nombre del archivo y la proporción en mono y la descripción en
+tamaño, con el nombre del archivo y la proporción y la descripción en
 texto chico, en grafito. Las fotos reemplazan al placeholder solas, lugar por
 lugar.
 
@@ -437,7 +453,7 @@ venden como un producto más, con las mismas piezas.
   muestra.
 - **La celda** (`TarjetaCombo`): la misma de la vitrina. En la fila, el nombre
   y el precio del combo («desde» si cambia con las opciones); debajo del
-  precio, en mono, el descuento («10 % menos»). Sin foto propia, el placeholder
+  precio, el descuento («10 % menos»). Sin foto propia, el placeholder
   es el de su primer producto.
 - **El listado** (`/combos`): como una categoría. Migas, «Combos» a
   `--t-display-3`, la cantidad y la vitrina. Va en el header y en el footer,
@@ -468,7 +484,7 @@ la cantidad).
   semana, desde dónde (fondo, red o toda la cancha), potencia o control, si
   quiere algo cómodo para el brazo y la superficie (polvo de ladrillo, cancha
   dura, sintético o varias).
-- **`/quiz`**: una pregunta por pantalla. Arriba, el número en mono («02 /
+- **`/quiz`**: una pregunta por pantalla. Arriba, el número («02 /
   06») y la barra de progreso, una píldora hormigón de 8px con el relleno del
   acento. «Quiz de juego» va chico, en mayúsculas: lo grande es la pregunta,
   en la display a `--t-display-3`. Las opciones son píldoras grandes con borde
@@ -486,15 +502,14 @@ la cantidad).
   no tiene stock baja en el ranking, pero no sale. El motivo de cada producto
   son las frases de las dos reglas que más le sumaron.
 - **El resultado** (`/quiz/resultado`, con las respuestas en la URL): migas,
-  «Tu kit» a `--t-display-3`, las respuestas en una línea en mono (separadas
+  «Tu kit» a `--t-display-3`, las respuestas en una línea (separadas
   por «·»), «Volver a hacer el quiz» (secundario) y si quedó guardado en la
   cuenta (o «Guardar en mi cuenta», o «Ingresá para guardarlo»). Debajo,
   «Raquetas» y «Cuerda y pelota» en la display a `--t-display-4`, cada uno con
   sus celdas: la foto 4:5 sobre estudio, la marca en mayúsculas, el nombre
-  subrayado y el precio en mono, el motivo y «Agregar al carrito» a lo ancho.
+  subrayado y el precio, el motivo y «Agregar al carrito» a lo ancho.
   En las raquetas se elige grip y peso con las píldoras del producto; la
-  cuerda y la pelota van con la presentación que sugiere el quiz, escrita en
-  mono. Sin stock, la etiqueta «Sin stock» y ningún botón. Una celda por fila
+  cuerda y la pelota van con la presentación que sugiere el quiz. Sin stock, la etiqueta «Sin stock» y ningún botón. Una celda por fila
   en mobile, dos en tablet y tres desde 1000px.
 - **Tu kit** (`/tu-kit`, en la cuenta): con sesión, el quiz guarda el kit (el
   último reemplaza al anterior, en `kits_quiz`, que cada usuario ve solo suyo).
@@ -527,7 +542,7 @@ la cantidad).
   - lo que impide comprarla, en un recuadro con borde de 1px y radio de 16px,
     como los errores de los campos;
   - la cantidad en una píldora (− n +, con tope por stock) y «Quitar»;
-  - el subtotal en mono y, en los combos, cuánto se ahorra.
+  - el subtotal y, en los combos, cuánto se ahorra.
 - **El resumen**, a la derecha (abajo en mobile), fijo mientras se scrollea:
   sobre hormigón, con radio de 16px, subtotal, descuento de combos, envío
   («Gratis» por ahora) y total en filas de 1px (`Totales`, el mismo en el
@@ -579,8 +594,8 @@ la cantidad).
   número, piso o departamento (opcional), ciudad, provincia (las 24) y código
   postal, con los campos del sistema. A la derecha, «Tu pedido»: una fila por
   línea con la cantidad, **marca y nombre** («Babolat Pure Drive»; los combos,
-  por su nombre), la variante o lo que trae el combo en grafito y el subtotal
-  en mono; después los totales y «Cambiar el carrito».
+  por su nombre), la variante o lo que trae el combo en grafito y el subtotal;
+  después los totales y «Cambiar el carrito».
 - **Confirmar y pagar** (el botón del acento): el servidor vuelve a cotizar el
   carrito, valida el envío y crea el pedido con `crear_pedido`, que recalcula
   todo, reserva el stock y lo deja pendiente de pago. Si la base lo rechaza
@@ -601,8 +616,8 @@ la cantidad).
   «Cerrar sesión», y una fila de 1px por pedido con **columnas de ancho fijo**,
   iguales en todas las filas, para que todo quede alineado:
   - desktop (desde 900px): número (11rem, «Pedido #1001», lleva al detalle),
-    fecha y hora en mono (la única flexible), estado (11rem, la etiqueta de
-    estado) y total en mono, alineado a la derecha (9rem);
+    fecha y hora (la única flexible), estado (11rem, la etiqueta de
+    estado) y total, alineado a la derecha (9rem);
   - mobile: el número y el total arriba, en la misma fila; debajo, la fecha y,
     debajo, la etiqueta del estado. Nada se corta ni desborda.
 - **El detalle** (`/mis-pedidos/[id]`): número, fecha, estado (etiqueta) y qué
@@ -724,7 +739,7 @@ quieta y completa, con los nombres de las partes a la vista.
   marco le pasan por delante y no cae ningún nombre de parte.
 - **Titular y pasos**: el titular de la sección en la display a
   `--t-display-2`; los títulos de los pasos en la display a `--t-display-4`. El
-  dato técnico va en mono y el texto en Inter Tight, separados por espacio.
+  dato técnico y el texto van separados por espacio.
 
 ### Estructura
 
@@ -735,7 +750,7 @@ quieta y completa, con los nombres de las partes a la vista.
 - **Un paso por parte, de arriba hacia abajo**, con la terminología técnica
   en castellano: marco, protector, ojales, encordado, punto dulce,
   antivibrador, garganta, empuñadura, grip, overgrip y tapón. Cada paso tiene
-  el número, el nombre de la parte (`h3`), un dato técnico concreto en mono
+  el número, el nombre de la parte (`h3`), un dato técnico concreto
   (tamaño de la cabeza en pulgadas², patrón 16×19 contra 18×20, grips del 0 al
   5, largo de 27″) y una frase corta que dice qué cambia en el juego. Los
   pasos están en `lib/anatomia.js`.
@@ -878,7 +893,7 @@ sobre sus cuadros (ver «Hero»).
 ## Páginas
 
 - **Categoría**: migas en mayúsculas, el nombre en `--t-display-3`, la bajada
-  y la cantidad en mono. Debajo, la vitrina, con su celda de foto, y al final
+  y la cantidad. Debajo, la vitrina, con su celda de foto, y al final
   el bloque de foto de la categoría.
 - **Producto** (`app/producto/[slug]`): dos columnas desde 860px, la galería
   (más ancha) a la izquierda y el panel a la derecha; las dos acompañan el
@@ -887,7 +902,8 @@ sobre sus cuadros (ver «Hero»).
   mobile, el carrusel arriba y el panel debajo.
   - **El panel** (`PanelCompra`): la marca en mayúsculas, el nombre en la
     display a `--t-display-4`, la primera oración de la descripción en
-    grafito, el precio en mono (cuando cambia, sube 6px y aparece) y las
+    grafito, el precio en la display a `--t-precio` (cuando cambia, sube 6px
+    y aparece) y las
     opciones como **grillas de botones**, una por dimensión: en las raquetas,
     «Grip» (el número y, chico, las pulgadas: «4 1/4″») y «Peso»; en lo demás,
     una sola con el nombre de cada opción. El botón elegido va en el acento con
@@ -904,15 +920,15 @@ sobre sus cuadros (ver «Hero»).
     de `compatibilidades`, en set de 12 m, una por fila con su precio; la
     recomendada primero y marcada «Recomendada») y la tensión, de a medio kilo
     dentro del rango de la raqueta, empezando por la del medio. El precio
-    suma la cuerda y el servicio, con el desglose debajo en mono.
+    suma la cuerda y el servicio, con el desglose debajo.
   - La cantidad y «Agregar al carrito», en una fila; el botón es el del acento.
   - **Medidores** (raquetas y cuerdas): Potencia, Control y Confort de 1 a 10,
     en tres semicírculos: el fondo en hormigón, el valor en negro y el número
-    en mono en el medio. Salen de la ficha con `lib/medidores.js`, donde está
+    en el medio. Salen de la ficha con `lib/medidores.js`, donde está
     la regla. El arco se dibuja hasta su valor al entrar en pantalla.
   - **El acordeón** (`Acordeon`, con `<details>`): Descripción (abierta),
     Ficha técnica (filas con líneas de 1px en hormigón, adentro de las negras
-    del acordeón, y el dato en mono) y Envíos y devoluciones (los textos están
+    del acordeón) y Envíos y devoluciones (los textos están
     en `lib/envio.js`). El signo pasa de + a − y el contenido baja 8px y
     aparece.
   - **La barra fija**: cuando «Agregar al carrito» queda arriba, fuera de la

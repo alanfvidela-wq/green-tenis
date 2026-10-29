@@ -28,7 +28,8 @@
   line-height: 1.5;
 }
 
-/* El precio en mono; cuando cambia, sube 6px y aparece */
+/* El precio en la display, con cifras de ancho fijo; cuando cambia, sube 6px
+   y aparece */
 .precios {
   display: flex;
   flex-direction: column;
@@ -36,8 +37,11 @@
 }
 
 .precio {
-  font-family: var(--fuente-datos);
-  font-size: 2.25rem;
+  font-family: var(--fuente-display);
+  font-size: var(--t-precio);
+  font-stretch: 62%;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
   line-height: 1;
 }
 
@@ -53,7 +57,7 @@
 
 .desglose {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 
@@ -134,7 +138,7 @@
 
 .detalle {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: 0.75rem;
 }
 
@@ -144,7 +148,7 @@
 
 .stock {
   margin-top: calc(var(--espacio-2) * -1);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 
@@ -175,7 +179,7 @@
 
 .suma {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 
@@ -216,7 +220,7 @@
 
 .recomendada {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: 0.75rem;
   white-space: nowrap;
 }
@@ -238,7 +242,8 @@
   border: 1px solid var(--negro);
   border-radius: var(--radio-pildora);
   background: var(--blanco);
-  font-family: var(--fuente-datos);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-texto);
 }
 
@@ -311,7 +316,7 @@
 }
 
 .barraPrecio {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 

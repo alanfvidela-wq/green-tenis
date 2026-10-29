@@ -4,12 +4,12 @@
   gap: var(--espacio-2);
 }
 
-/* Cuánto sale por separado y cuánto se ahorra, en grafito; los montos en mono */
+/* Cuánto sale por separado y cuánto se ahorra, en grafito; los montos con cifras de ancho fijo */
 .ahorro {
   color: var(--grafito);
   font-size: var(--t-dato);
 }
 
 .monto {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
 }

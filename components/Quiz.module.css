@@ -6,7 +6,7 @@
   gap: var(--espacio-10);
 }
 
-/* ---------- Progreso: el número en mono y la barra del acento ---------- */
+/* ---------- Progreso: el número y la barra del acento ---------- */
 
 .progreso {
   display: flex;
@@ -16,7 +16,7 @@
 
 .cuenta {
   flex-shrink: 0;
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
   font-variant-numeric: tabular-nums;
 }

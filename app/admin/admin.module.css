@@ -1,6 +1,6 @@
 /* Las páginas de la administración: más sobrias que la tienda, con la misma
    tipografía y paleta. Títulos en la display a --t-display-4, tablas con
-   filas de 1px, los datos en mono y lo que se toca en píldora. */
+   filas de 1px, los datos con cifras de ancho fijo y lo que se toca en píldora. */
 /* Al menos una pantalla: los listados llegan después (de la API) y así el
    footer no salta */
 .pagina {
@@ -110,7 +110,7 @@
 }
 
 .tabla .numero {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-chico);
   text-align: right;
   white-space: nowrap;
@@ -149,7 +149,7 @@
 
 .secundario {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 

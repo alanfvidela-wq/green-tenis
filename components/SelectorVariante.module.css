@@ -5,9 +5,13 @@
   margin-top: var(--espacio-4);
 }
 
+/* El precio del combo, en la display (como el de la página de producto) */
 .precio {
-  font-family: var(--fuente-datos);
-  font-size: 2.25rem;
+  font-family: var(--fuente-display);
+  font-size: var(--t-precio);
+  font-stretch: 62%;
+  font-variant-numeric: tabular-nums;
+  font-weight: 900;
   line-height: 1;
 }
 

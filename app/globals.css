@@ -18,7 +18,6 @@
   /* Tipografía */
   --fuente-display: var(--font-display), "Arial Narrow", sans-serif;
   --fuente-texto: var(--font-texto), "Helvetica Neue", Arial, sans-serif;
-  --fuente-datos: var(--font-datos), ui-monospace, "Courier New", monospace;
   --t-dato: 0.8125rem;
   --t-chico: 0.875rem;
   --t-texto: 1rem;
@@ -27,6 +26,8 @@
   /* La display. La más grande depende también del alto: el hero entra en una
      pantalla */
   --t-display-4: clamp(2rem, 4vw, 3.25rem);
+  /* El precio de la página de producto y de un combo, en la display */
+  --t-precio: clamp(2.25rem, 3.2vw, 2.75rem);
   --t-display-3: clamp(2.75rem, 6.5vw, 5.5rem);
   --t-display-2: clamp(3.5rem, 10vw, 9rem);
   --t-display-1: clamp(4.5rem, min(15vw, 17svh), 14rem);
@@ -204,9 +205,10 @@ button {
   color: var(--negro);
 }
 
-/* Datos chicos: precios, contadores */
+/* Datos chicos: precios, contadores. Cifras de ancho fijo, para que queden
+   alineadas y no salten al cambiar */
 .dato {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 

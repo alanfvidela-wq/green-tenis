@@ -53,7 +53,7 @@
 
 .precio {
   flex-shrink: 0;
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
   white-space: nowrap;
 }

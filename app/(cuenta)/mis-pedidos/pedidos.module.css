@@ -1,5 +1,5 @@
 /* Mis pedidos: el listado y el detalle de un pedido. Filas separadas por
-   líneas de 1px, los montos y las fechas en mono. */
+   líneas de 1px, los montos y las fechas con cifras de ancho fijo. */
 
 .lista {
   border-top: 1px solid var(--negro);
@@ -44,7 +44,7 @@
 
 .fecha {
   color: var(--grafito);
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 
@@ -62,7 +62,7 @@
 }
 
 .monto {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   text-align: right;
   white-space: nowrap;
 }

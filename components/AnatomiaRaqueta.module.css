@@ -352,7 +352,7 @@
 }
 
 .numero {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
 }
 
@@ -366,9 +366,9 @@
   text-transform: uppercase;
 }
 
-/* El dato técnico, en mono */
+/* El dato técnico, con cifras de ancho fijo */
 .dato {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
   line-height: 1.6;
 }

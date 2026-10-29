@@ -1,6 +1,6 @@
 /* El carrito: las líneas a la izquierda y el resumen, en hormigón, a la
-   derecha (abajo en mobile). Filas separadas por líneas de 1px, los montos en
-   mono. */
+   derecha (abajo en mobile). Filas separadas por líneas de 1px, los montos con
+   cifras de ancho fijo y el total en la display. */
 .carrito {
   display: grid;
   grid-template-columns: 1fr;
@@ -132,7 +132,7 @@
 
 .precio {
   grid-area: precio;
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
@@ -193,15 +193,20 @@
 }
 
 .fila dd {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
 }
 
 .total dt {
   color: var(--negro);
 }
 
+/* El total, en la display (nunca por debajo de 2rem) */
 .total dd {
-  font-size: var(--t-titulo);
+  font-family: var(--fuente-display);
+  font-size: 2rem;
+  font-stretch: 62%;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .pagar {

@@ -52,7 +52,7 @@
 }
 
 .monto {
-  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
