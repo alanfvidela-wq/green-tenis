@@ -1,0 +1,167 @@
+/* Las fotos en grande: a pantalla completa sobre estudio, una por vez. Arriba,
+   el nombre y la cruz; abajo, el contador. Las flechas van a los costados en
+   escritorio y abajo, junto al contador, en mobile. Los botones son círculos
+   blancos de 48px, como la pausa del video. */
+
+.visor {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: var(--estudio);
+  color: var(--negro);
+}
+
+/* Solo abierto: si no, el display le ganaría al display: none del navegador */
+.visor[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  animation: aparecer 0.3s var(--deslizar);
+}
+
+.visor::backdrop {
+  background: var(--estudio);
+}
+
+/* Mientras está abierto, la página de atrás no scrollea */
+:global(html):has(.visor[open]) {
+  overflow: hidden;
+}
+
+.arriba {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-4);
+  padding: var(--espacio-3) var(--gutter);
+}
+
+.titulo,
+.contador {
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.contador {
+  min-width: 4.5em;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.boton {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 50%;
+  background: var(--blanco);
+  color: var(--negro);
+  transition: background-color var(--transicion);
+}
+
+.boton:hover {
+  background: var(--hormigon);
+}
+
+.boton svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* La pista: se desliza de a una foto (scroll snap), como el carrusel */
+.pista {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  list-style: none;
+}
+
+.pista::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cada foto ocupa la pista entera y se agranda hasta tocar el alto o el ancho
+   (en cq, el tamaño de la vista) */
+.vista {
+  display: grid;
+  flex: 0 0 100%;
+  place-items: center;
+  container-type: size;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.marco {
+  position: relative;
+  height: min(100cqh, 125cqw);
+  aspect-ratio: 4 / 5;
+}
+
+/* El lienzo de 4:5 en una caja de 4:5: cubrir no recorta nada */
+.foto {
+  object-fit: cover;
+}
+
+.abajo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--espacio-6);
+  padding: var(--espacio-3) var(--gutter) max(var(--espacio-3), env(safe-area-inset-bottom));
+}
+
+/* En escritorio, las flechas a los costados, a media altura, y la foto deja
+   lugar para ellas */
+@media (min-width: 860px) {
+  .vista {
+    padding-inline: calc(var(--gutter) + 48px + var(--espacio-4));
+  }
+
+  .anterior,
+  .siguiente {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .anterior {
+    left: var(--gutter);
+  }
+
+  .siguiente {
+    right: var(--gutter);
+  }
+
+  .abajo {
+    min-height: 72px;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visor[open] {
+    animation: none;
+  }
+
+  .boton {
+    transition: none;
+  }
+}

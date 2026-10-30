@@ -119,9 +119,7 @@ export default async function PaginaProducto({ params }) {
       </nav>
 
       <div className={styles.ficha}>
-        <ColumnaFija>
-          <GaleriaFicha producto={producto} />
-        </ColumnaFija>
+        <GaleriaFicha producto={producto} />
 
         <ColumnaFija className={styles.columnaPanel}>
           <PanelCompra

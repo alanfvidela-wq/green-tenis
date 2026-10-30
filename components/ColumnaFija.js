@@ -8,8 +8,10 @@ const AIRE_PX = 20;
 // Una columna de la página de producto que acompaña el scroll en escritorio
 // (sticky). Si entra en la pantalla, queda pegada arriba, debajo del header;
 // si es más alta, se pega por abajo cuando se termina de ver, así nunca queda
-// una parte escondida. Las dos columnas la usan: la más corta es la que
-// acompaña (la más alta ocupa toda la fila y no tiene dónde moverse).
+// una parte escondida. La usa el panel, y acompaña cuando es más corto que la
+// galería (si es más alto, ocupa toda la fila y no tiene dónde moverse). La
+// galería no: cuando el acordeón alargaba el panel, se destrababa del final
+// de la fila y saltaba.
 export default function ColumnaFija({ className = "", children }) {
   const ref = useRef(null);
 

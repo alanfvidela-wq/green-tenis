@@ -302,6 +302,16 @@ stock: eso lo dicen las opciones, al lado.
   mobile es un carrusel que se desliza de a una foto (scroll snap), con puntos
   abajo: el de la foto que se ve, negro y estirado. Con una sola foto no hay
   puntos.
+- **En grande** (`VisorFotos`): cada foto es un botón; al tocarla se abre a
+  pantalla completa sobre estudio, en un `<dialog>` modal, tan grande como
+  entra. Arriba, la marca y el nombre en mayúsculas chicas y la cruz; abajo,
+  el contador («2 / 4»). Se pasa de una a otra con las flechas (a los
+  costados en escritorio, abajo junto al contador en mobile), con las del
+  teclado o deslizando, y de la última se vuelve a la primera. Se cierra con
+  la cruz o con Escape, y el carrusel queda en la última foto que se vio. Los
+  botones son círculos blancos de 48px, como la pausa del video. En la
+  galería, con el mouse o el foco, el producto se acerca (1,03), como en la
+  vitrina.
 - **`/combo/[slug]`** (`GaleriaProducto`): la primera vista grande y las demás
   de a dos debajo; en escritorio queda fija mientras se lee la ficha.
 
@@ -395,7 +405,8 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
     cuerda y la tensión del encordado suben 6px al aparecer (0,35s); la barra
     fija entra desde abajo en 0,4s (`--deslizar`); el punto del carrusel se
     estira (escala 2,25 en x) en 0,35s; las fotos de «Ver todas» suben 14px de
-    a una, como la vitrina; el acordeón baja 8px su contenido en 0,35s y el
+    a una, como la vitrina; el visor de fotos aparece en 0,3s y pasa de una
+    foto a otra deslizándose; el acordeón baja 8px su contenido en 0,35s y el
     signo achica su barra vertical; el arco de los medidores se dibuja en 0,9s
     (un trazo, como el aro del pago aprobado).
 - **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
@@ -925,10 +936,12 @@ sobre sus cuadros (ver «Hero»).
   y la cantidad. Debajo, la vitrina, con su celda de foto, y al final
   el bloque de foto de la categoría.
 - **Producto** (`app/producto/[slug]`): dos columnas desde 860px, la galería
-  (más ancha) a la izquierda y el panel a la derecha; las dos acompañan el
-  scroll (`ColumnaFija`): la más corta queda pegada, arriba si entra en la
-  pantalla y por abajo si es más alta, así nunca queda una parte escondida. En
-  mobile, el carrusel arriba y el panel debajo.
+  (más ancha) a la izquierda y el panel a la derecha. El panel acompaña el
+  scroll (`ColumnaFija`) cuando es más corto que la galería: queda pegado,
+  arriba si entra en la pantalla y por abajo si es más alto, así nunca queda
+  una parte escondida. La galería no acompaña: se queda donde está aunque el
+  acordeón alargue el panel (pegada, se destrababa del final de la fila y
+  saltaba). En mobile, el carrusel arriba y el panel debajo.
   - **El panel** (`PanelCompra`): la marca en mayúsculas, el nombre en la
     display a `--t-display-4`, la primera oración de la descripción en
     grafito, el precio en la display a `--t-precio` (cuando cambia, sube 6px

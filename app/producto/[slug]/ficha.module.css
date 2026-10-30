@@ -1,6 +1,7 @@
 /* La página de un producto: la galería a la izquierda (más ancha) y el panel
-   a la derecha; las dos acompañan el scroll (ColumnaFija). En mobile, una
-   debajo de la otra. */
+   a la derecha. El panel acompaña el scroll (ColumnaFija); la galería no, así
+   no salta cuando el acordeón alarga el panel. En mobile, una debajo de la
+   otra. */
 
 .ficha {
   display: grid;

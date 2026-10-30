@@ -1,11 +1,17 @@
 /* La galería de la página de producto: cada foto sobre estudio, con 16px de
    radio y el producto centrado (FotoVitrina). En mobile es un carrusel; en
-   escritorio, una grilla de dos columnas. */
+   escritorio, una grilla de dos columnas. Cada foto es un botón que la abre
+   en grande (VisorFotos). */
 
+/* El carrusel recorta lo que se sale: 6px de relleno (compensados con el
+   margen) dejan lugar al anillo de foco de cada foto */
 .vistas {
   display: flex;
   gap: var(--espacio-3);
+  margin: -6px;
+  padding: 6px;
   overflow-x: auto;
+  scroll-padding-inline: 6px;
   overscroll-behavior-x: contain;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
@@ -20,10 +26,35 @@
   position: relative;
   flex: 0 0 100%;
   aspect-ratio: 4 / 5;
+  scroll-snap-align: start;
+}
+
+/* El recuadro de la foto: el botón que la abre en grande (o, sin fotos, el de
+   la silueta). Con el mouse o el foco, el producto se acerca como en la
+   vitrina. */
+.marco {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
   overflow: hidden;
   border-radius: var(--radio);
   background: var(--estudio);
-  scroll-snap-align: start;
+}
+
+button.marco {
+  cursor: zoom-in;
+}
+
+button.marco img {
+  transition: transform 0.4s var(--deslizar);
+}
+
+button.marco:hover img,
+button.marco:focus-visible img {
+  transform: scale(1.03);
 }
 
 /* Los puntos del carrusel: el de la foto que se ve, más ancho y en negro.
@@ -58,6 +89,8 @@
   .vistas {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 0;
+    padding: 0;
     overflow: visible;
     scroll-snap-type: none;
   }
@@ -112,8 +145,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .punto {
+  .punto,
+  button.marco img {
     transition: none;
+  }
+
+  button.marco:hover img,
+  button.marco:focus-visible img {
+    transform: none;
   }
 
   .galeria[data-todas] .vista[data-extra] {
