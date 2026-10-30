@@ -6,8 +6,8 @@
 //
 // Lee public/productos/fuente/<slug>-<n>.(png|jpg|jpeg|webp) (fuera de git),
 // donde <slug> es el de un producto o un combo y <n> el orden de la foto (1 es
-// la de la vitrina). A cada una le saca el fondo (si ya venía sin fondo, lo
-// transparente se respeta), borra los restos sueltos, la recorta al contorno
+// la de la vitrina). A cada una le saca el fondo (si ya viene sin fondo, la
+// usa como está), borra los restos sueltos, la recorta al contorno
 // del producto y la pone en un lienzo transparente de 4:5, el de las celdas:
 // entera y centrada con el mismo margen que las demás, o, si es un detalle que
 // el original corta (el producto toca un borde de la foto), pegada a ese
@@ -58,13 +58,13 @@ const pedidos = argumentos.filter((a) => !a.startsWith("--"));
 
 // Afirma la máscara y borra los restos sueltos que deja el recorte del fondo
 // (un pedazo de cartel, una sombra): se queda con las piezas de al menos 10%
-// del tamaño de la mayor.
-async function limpiar(png) {
+// del tamaño de la mayor. Con una foto que ya venía sin fondo, solo borra.
+async function limpiar(png, { afirmar = true } = {}) {
   const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
   const { width, height } = info;
   // El modelo deja semitransparentes las zonas claras o lisas del producto (el
   // blanco de un tubo, una manija): se vuelven opacas y el borde queda suave.
-  for (let i = 3; i < data.length; i += 4) {
+  for (let i = 3; afirmar && i < data.length; i += 4) {
     data[i] = data[i] < 24 ? 0 : Math.min(255, (data[i] - 24) * 2.5);
   }
   const etiquetas = new Int32Array(width * height);
@@ -115,22 +115,17 @@ async function contorno(png) {
   return { left: x0, top: y0, width: x1 - x0 + 1, height: y1 - y0 + 1 };
 }
 
-// Lo que en el original ya era transparente sigue transparente. Con una foto
-// que viene sin fondo, el modelo vuelve opacas zonas como el hueco entre las
-// cuerdas y deja ver el color que el original tenía escondido ahí. Con una foto
-// con fondo (sin transparencia), no cambia nada.
-async function respetarAlfa(png, original) {
-  const { data, info } = await sharp(png).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const alfa = await sharp(original)
-    .ensureAlpha()
-    .resize(info.width, info.height, { fit: "fill" })
-    .extractChannel(3)
-    .raw()
-    .toBuffer();
-  for (let i = 0; i < alfa.length; i++) {
-    if (alfa[i] < data[i * 4 + 3]) data[i * 4 + 3] = alfa[i];
-  }
-  return sharp(data, { raw: { width: info.width, height: info.height, channels: 4 } }).png().toBuffer();
+// Si la foto ya viene sin fondo (al menos el 5% de sus píxeles del todo
+// transparentes), como los PNG o WebP de las marcas. Esas no pasan por el
+// modelo: sobre lo transparente, vuelve opacas zonas como el hueco entre las
+// cuerdas (y deja ver el color que el original tenía escondido ahí) y se come
+// las partes blancas del producto (el grip de la Clash 100), así que un
+// detalle cortado deja de tocar el borde.
+async function yaSinFondo(png) {
+  const alfa = await sharp(png).ensureAlpha().extractChannel(3).raw().toBuffer();
+  let transparentes = 0;
+  for (const valor of alfa) if (valor < 8) transparentes++;
+  return transparentes >= alfa.length * 0.05;
 }
 
 // Qué bordes de la foto toca el producto: un detalle que el original corta
@@ -172,11 +167,16 @@ function posicion(inicio, libre, medida, tocaInicio, tocaFin) {
 // Devuelve el PNG y los bordes que toca (para el aviso de la consola).
 async function recortar(ruta) {
   const entrada = await sharp(ruta).rotate().png().toBuffer();
-  const sinFondo = await removeBackground(new Blob([entrada], { type: "image/png" }), {
-    model: "medium",
-    output: { format: "image/png" },
-  });
-  const png = await respetarAlfa(await limpiar(Buffer.from(await sinFondo.arrayBuffer())), entrada);
+  let png;
+  if (await yaSinFondo(entrada)) {
+    png = await limpiar(entrada, { afirmar: false });
+  } else {
+    const sinFondo = await removeBackground(new Blob([entrada], { type: "image/png" }), {
+      model: "medium",
+      output: { format: "image/png" },
+    });
+    png = await limpiar(Buffer.from(await sinFondo.arrayBuffer()));
+  }
   const { width: anchoOriginal, height: altoOriginal } = await sharp(png).metadata();
   const caja = await contorno(png);
   const toca = bordesQueToca(caja, anchoOriginal, altoOriginal);

@@ -887,7 +887,8 @@ mismo margen, sobre el estudio de la celda.
   fondo, borra los restos sueltos (una sombra, un pedazo de cartel), recorta al
   contorno del producto y lo pone en un lienzo transparente de 1600 × 2000
   (4:5, como las celdas). Exporta AVIF y WebP con transparencia. Si la foto
-  ya viene sin fondo, respeta su transparencia (el hueco entre las cuerdas).
+  ya viene sin fondo, no pasa por el modelo: se usa como está (el modelo
+  llenaba el hueco entre las cuerdas y se comía las partes blancas).
   - **El producto entero** entra en el cuadrado del medio, de 1296px (el 81%
     del ancho): todos a la misma escala y con el mismo margen.
   - **Un detalle** (el producto toca un borde de la foto original, como la

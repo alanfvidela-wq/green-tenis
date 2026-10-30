@@ -104,9 +104,11 @@ borde de la foto (un detalle cortado, como la cabeza de la raqueta con el grip
 cortado abajo), lo pega a ese borde y la consola dice «detalle, pegado abajo»:
 en la tienda, el corte llega al borde de la celda. Una foto entera tiene que
 dejar algo de fondo alrededor del producto; si no, se toma como detalle. Si el original ya viene sin fondo (un PNG o WebP con
-transparencia, como los de las marcas), lo que era transparente sigue
-transparente: si no, el hueco entre las cuerdas de una raqueta se llenaría de
-gris. Sin `--sin-subir`, además las sube al bucket `productos` de
+transparencia, como los de las marcas), no pasa por el modelo: se usa como
+está y solo se borran los restos sueltos. El modelo, sobre lo transparente,
+llenaba de gris el hueco entre las cuerdas y se comía las partes blancas (el
+grip de la Clash 100), y entonces un detalle cortado dejaba de tocar el
+borde. Sin `--sin-subir`, además las sube al bucket `productos` de
 Supabase Storage (`recortes/<slug>-<n>.webp` y `.avif`) y anota la foto en la
 tabla `fotos` con la función `guardar_foto` (`0006_guardar_foto.sql`), que es
 lo único que la clave secreta puede escribir ahí; necesita
