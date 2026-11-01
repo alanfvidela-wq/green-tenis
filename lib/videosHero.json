@@ -1,0 +1,69 @@
+{
+  "clips": [
+    {
+      "nombre": "jugador",
+      "duracion": 6.88,
+      "desktop": {
+        "mp4": "/videos/hero-jugador-desktop.mp4",
+        "webm": "/videos/hero-jugador-desktop.webm",
+        "poster": "/videos/hero-jugador-desktop.webp"
+      },
+      "mobile": {
+        "mp4": "/videos/hero-jugador-mobile.mp4",
+        "webm": "/videos/hero-jugador-mobile.webm",
+        "poster": "/videos/hero-jugador-mobile.webp"
+      }
+    },
+    {
+      "nombre": "pique",
+      "duracion": 7,
+      "desktop": {
+        "mp4": "/videos/hero-pique-desktop.mp4",
+        "webm": "/videos/hero-pique-desktop.webm",
+        "poster": "/videos/hero-pique-desktop.webp"
+      },
+      "mobile": {
+        "mp4": "/videos/hero-pique-mobile.mp4",
+        "webm": "/videos/hero-pique-mobile.webm",
+        "poster": "/videos/hero-pique-mobile.webp"
+      }
+    },
+    {
+      "nombre": "derecha",
+      "duracion": 7.6,
+      "desktop": {
+        "mp4": "/videos/hero-derecha-desktop.mp4",
+        "webm": "/videos/hero-derecha-desktop.webm",
+        "poster": "/videos/hero-derecha-desktop.webp"
+      },
+      "mobile": {
+        "mp4": "/videos/hero-derecha-mobile.mp4",
+        "webm": "/videos/hero-derecha-mobile.webm",
+        "poster": "/videos/hero-derecha-mobile.webp"
+      }
+    }
+  ],
+  "creditos": [
+    {
+      "archivo": "tenis.mp4",
+      "autor": "cottonbro studio",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/video/young-man-playing-tennis-5740594/",
+      "clip": "jugador"
+    },
+    {
+      "archivo": "pexels-5730485.mp4",
+      "autor": "cottonbro studio",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/video/caucasian-man-bouncing-a-ball-for-tennis-serve-5730485/",
+      "clip": "pique"
+    },
+    {
+      "archivo": "pexels-5740600.mp4",
+      "autor": "cottonbro studio",
+      "fuente": "Pexels",
+      "url": "https://www.pexels.com/video/young-man-playing-tennis-5740600/",
+      "clip": "derecha"
+    }
+  ]
+}

@@ -19,9 +19,10 @@
   color: var(--blanco);
 }
 
-/* Poster y video ocupan todo el contenedor, uno encima del otro */
+/* Poster y videos ocupan todo el contenedor, uno encima del otro */
 .medio,
 .poster,
+.videos,
 .video {
   position: absolute;
   inset: 0;
@@ -29,13 +30,19 @@
   height: 100%;
 }
 
+/* Los dos videos que se turnan (VideoFondo): el que entra va encima del que
+   sale, pero los dos quedan debajo de la capa */
+.videos {
+  isolation: isolate;
+}
+
 .poster,
 .video {
   object-fit: cover;
 }
 
-/* Capa negra plana al 55%: con eso el titular blanco pasa AA aun en el cuadro
-   más claro del video (5,58:1) */
+/* Capa negra plana al 55%, la misma sobre todos los clips: con eso el titular
+   blanco pasa AA aun en el cuadro más claro (ver «Hero» en DESIGN.md) */
 .capa {
   position: absolute;
   inset: 0;

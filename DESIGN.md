@@ -88,7 +88,7 @@ encima. Se eligió en la muestra del rediseño entre tres opciones, medidas igua
 | Hormigón | **16,83** | **10,12** | 1,25 |
 | Estudio | **19,19** | **11,55** | 1,09 |
 | Negro | — | 1,66 | **21,00** |
-| Video del hero, con la capa negra al 55% | — | — | **5,58** |
+| Clips del hero, con la capa negra al 55% | — | — | **5,57** |
 
 **En negrita, las combinaciones permitidas como texto.** El grafito sobre negro
 (1,66) no se usa. El lima nunca es texto.
@@ -370,7 +370,8 @@ o sin JavaScript se ve desde el principio.
 Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
 `width` ni filtros en lo que se mueve. Sin giros.
 
-- **Hero**: el loop del video. Se puede pausar.
+- **Hero**: los clips en secuencia, con un fundido de 0,8s entre uno y otro.
+  Se pueden pausar.
 - **Vitrina**: con el mouse o el foco, el producto se acerca (escala 1,03) y la
   barra pasa a negro.
 - **Categorías**: la tarjeta se pinta del acento y la flecha avanza 6px.
@@ -409,7 +410,8 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
     foto a otra deslizándose; el acordeón baja 8px su contenido en 0,35s y el
     signo achica su barra vertical; el arco de los medidores se dibuja en 0,9s
     (un trazo, como el aro del pago aprobado).
-- **Con `prefers-reduced-motion`**: el hero muestra solo el poster, las fotos
+- **Con `prefers-reduced-motion`**: el hero muestra solo el poster del primer
+  clip, las fotos
   se ven desde el principio, la anatomía muestra la raqueta entera y quieta con
   los nombres de sus partes, y no hay animaciones ni transiciones (tampoco
   las microanimaciones: el esqueleto queda quieto, el aviso aparece sin
@@ -438,12 +440,16 @@ Sin cintas con leyendas ni bloques de slogan.
 - **El video en un contenedor**, no a sangre: un bloque con radio de 16px y el
   gutter de margen alrededor, del alto de la pantalla menos ese margen. Adentro,
   el header (en blanco), el titular, la bajada y el botón.
-- **Video**: un jugador de blanco en una cancha techada de polvo de ladrillo,
-  en loop y sin audio. Ver «Video».
+- **Video**: tres clips de la misma cancha techada de polvo de ladrillo, sin
+  audio, que pasan en secuencia con un fundido entre uno y otro y vuelven a
+  empezar: el jugador de blanco, el pique antes del saque y una derecha. Ver
+  «Video».
 - **Capa plana negra al 55%**, pareja en todo el contenedor (no es un
-  degradado). Medida sobre un cuadro cada medio segundo de las dos versiones del
-  video: en el cuadro más claro, el blanco del titular da 5,58:1 (percentil 99
-  de la zona del texto). Con la capa al 40% de antes no llegaba a AA.
+  degradado), la misma sobre todos los clips. Medida sobre un cuadro cada medio
+  segundo de las dos versiones de cada clip: en el cuadro más claro, el blanco
+  del texto da 5,57:1 (el jugador; el pique, 5,92:1, y la derecha, 7,03:1;
+  percentil 99 de la zona del texto). Con la capa al 40% de antes no llegaba
+  a AA.
 - **Titular** centrado, **en blanco**, en Archivo: «GAME, SET, MATCH», en una
   sola línea (con `lang="en"`, para que los lectores de pantalla lo
   pronuncien bien). Mide 6,9em: en pantallas angostas su tamaño es el ancho
@@ -451,16 +457,18 @@ Sin cintas con leyendas ni bloques de slogan.
   lado), así va de borde a borde (44px en 375); en desktop se frena en 8,5rem
   (136px, lo que medía el titular de antes en 1280): grande, sin ocupar todo
   el ancho. Es la única display que se calcula así. El acento no se lee sobre el video
-  (1,02:1). Debajo, qué se vende, en blanco y
-  en minúscula («raquetas, pelotas, cuerdas, grips y bolsos de las marcas que
-  ya conocés.»), y el botón del acento, grande (60px de alto). El `<title>`
+  (1,02:1). Debajo, qué se vende, en blanco («Todo para jugar al tenis:
+  raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
+  conocés.»), y el botón del acento, grande (60px de alto). El `<title>`
   («green. — Todo para el tenis») y la descripción dicen que es una tienda de
   tenis.
-- **Poster**: el primer cuadro de cada versión en WebP, pintado por el servidor
-  en un `<picture>`. El video se monta encima desde un componente cliente
-  (`VideoFondo`), que elige la versión según el ancho (corte en 760px).
+- **Poster**: el primer cuadro del primer clip, de cada versión, en WebP,
+  pintado por el servidor en un `<picture>`. Los videos se montan encima desde
+  un componente cliente (`VideoFondo`), que elige la versión según el ancho
+  (corte en 760px) y el formato (WebM si el navegador lo reproduce; si no, MP4).
 - **Control**: círculo blanco con el ícono de pausa/play en negro, abajo a la
-  derecha del contenedor, con etiqueta accesible.
+  derecha del contenedor, con etiqueta accesible. Pausa toda la secuencia,
+  también en medio de un fundido.
 
 ## Combos
 
@@ -922,14 +930,23 @@ por producto.
 
 ## Video
 
-El loop del hero sale de `public/videos/fuentes/tenis.mp4` (fuera de git) con
-`npm run video:hero` (`scripts/video-hero.mjs`): H.264 sin audio, de menos de
-4 MB, con un fundido cruzado entre el final y el principio para que el loop no
-salte. Hay dos versiones: `hero-desktop` (el cuadro entero, escalado) y
-`hero-mobile` (un recorte 9:16 que sigue al jugador). Cada una tiene su poster
-en WebP (el primer cuadro). El detalle y el control del loop están en
-`MEDIOS.md`. Si cambia el video, se vuelve a medir el contraste del titular
-sobre sus cuadros (ver «Hero»).
+Los clips del hero salen de `public/videos/fuentes/` (fuera de git) con
+`npm run video:hero` (`scripts/video-hero.mjs`): de 5 a 8 segundos, sin audio,
+cada uno en dos versiones, `desktop` (el cuadro entero, en 1920×1012) y
+`mobile` (un recorte 9:16 que sigue al jugador, en 720×1280), y cada versión
+en WebM (VP9) y MP4 (H.264), con su poster en WebP (el primer cuadro). Quedan
+anotados en `lib/videosHero.json`, con sus créditos, que el footer muestra
+(«Videos: …», como las fotos).
+
+- **La secuencia** (`VideoFondo`): dos `<video>` apilados que se turnan. Al
+  entrar solo se carga el primer clip; mientras uno se reproduce, el otro
+  carga el que sigue. Cuando al que se ve le quedan 0,8s, el siguiente arranca
+  encima y aparece (su opacidad sigue a su propio tiempo, así la pausa también
+  congela el fundido). Después del último vuelve al primero, que ya está en el
+  caché.
+- El detalle de cada clip (fuente, tramo, recorte y peso) está en
+  `MEDIOS.md`. Si cambia un clip, se vuelve a medir el contraste del titular
+  sobre sus cuadros (ver «Hero»).
 
 ## Páginas
 

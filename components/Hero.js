@@ -1,19 +1,21 @@
 import Link from "next/link";
-import { CORTE_MOBILE, VIDEOS_HERO } from "@/lib/heroVideo";
+import { CLIPS_HERO, CORTE_MOBILE } from "@/lib/heroVideo";
 import VideoFondo from "./VideoFondo";
 import styles from "./Hero.module.css";
 
-// Hero de la home: el video de la cancha en un contenedor con radio, con el
-// header flotando encima, una capa negra plana y el titular blanco centrado.
-// El poster va en un <picture> del servidor, así se ve desde el primer pintado.
+// Hero de la home: los clips de la cancha, en secuencia, en un contenedor con
+// radio, con el header flotando encima, una capa negra plana (la misma sobre
+// todos los clips) y el titular blanco centrado.
+// El poster del primer clip va en un <picture> del servidor, así se ve desde el
+// primer pintado.
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="hero-titulo" data-hero>
       <div className={styles.caja}>
       <picture className={styles.medio}>
-        <source media={CORTE_MOBILE} srcSet={VIDEOS_HERO.mobile.poster} />
+        <source media={CORTE_MOBILE} srcSet={CLIPS_HERO[0].mobile.poster} />
         <img
-          src={VIDEOS_HERO.desktop.poster}
+          src={CLIPS_HERO[0].desktop.poster}
           alt=""
           fetchPriority="high"
           className={styles.poster}
@@ -22,6 +24,7 @@ export default function Hero() {
 
       <VideoFondo
         className={styles.video}
+        claseVideos={styles.videos}
         claseBoton={styles.pausa}
         claseIcono={styles.icono}
       />
@@ -35,8 +38,8 @@ export default function Hero() {
           Game, set, match
         </h1>
         <p className={styles.frase}>
-          raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
-          conocés.
+          Todo para jugar al tenis: raquetas, pelotas, cuerdas, grips y bolsos
+          de las marcas que ya conocés.
         </p>
         <Link href="/categoria/raquetas" className={`boton ${styles.cta}`}>
           Ver raquetas
