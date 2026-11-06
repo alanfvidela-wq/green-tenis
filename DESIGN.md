@@ -312,6 +312,13 @@ stock: eso lo dicen las opciones, al lado.
   botones son círculos blancos de 48px, como la pausa del video. En la
   galería, con el mouse o el foco, el producto se acerca (1,03), como en la
   vitrina.
+- **Fotos por variante**: una variante puede tener su foto propia, una de las
+  de su producto (`variantes.orden_foto`), como el pack de 3 y el de 12 de un
+  grip. Entonces la galería sigue a la opción elegida en el panel: primero va
+  la foto de esa variante (si no tiene, la principal del producto), después
+  las que no son de ninguna variante, y las de las otras variantes no se ven.
+  En mobile el carrusel vuelve a la primera. La barra fija también muestra la
+  foto de la variante; la vitrina y el carrito, la principal.
 - **`/combo/[slug]`** (`GaleriaProducto`): la primera vista grande y las demás
   de a dos debajo; en escritorio queda fija mientras se lee la ficha.
 

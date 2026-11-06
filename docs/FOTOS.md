@@ -92,6 +92,18 @@ frente, sobre un fondo liso y con buena luz.
 - Las extras pasan por el mismo recorte. Un detalle que toca un borde de la
   foto (la cabeza con el grip cortado) queda pegado a ese borde de la celda,
   como en las fichas de las marcas.
+- **Una foto por variante** (el pack de 3 y el de 12 de un grip): se suben
+  como extras del producto y cada variante apunta a la suya por el orden, en
+  `variantes.orden_foto` (`0007_foto_por_variante.sql`, que ya lo hace para
+  los dos grips). Para otra, en el SQL Editor:
+  `update public.variantes set orden_foto = 2 where sku = '…';`. La ficha
+  muestra la foto de la variante elegida y esconde las de las otras; una
+  variante sin foto propia muestra la principal.
+- **Si el recorte falla**: un envase blanco sobre fondo blanco (el modelo se
+  lo come) se puede dejar transparente antes, borrando solo el blanco casi
+  puro que toca los bordes de la foto (como la Tecnifibre X-One, que es gris
+  muy claro); y a un producto entero que llega a los bordes de la foto se le
+  agrega margen blanco, así no se toma como detalle (el tarro de la Tourna).
 
 ```bash
 npm run fotos:productos -- --sin-subir

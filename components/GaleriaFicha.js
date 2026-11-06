@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { fotosDeVariante } from "@/lib/opciones";
 import FotoVitrina from "./FotoVitrina";
+import { useVarianteElegida } from "./VarianteElegida";
 import VisorFotos from "./VisorFotos";
 import styles from "./GaleriaFicha.module.css";
 
@@ -13,9 +15,14 @@ const VISIBLES = 4;
 // ancho si es la única o si son tres, y como mucho cuatro hasta «Ver todas».
 // En mobile, un carrusel que se desliza de a una foto, con los puntos que
 // dicen en cuál se está. Tocando una foto se abre en grande (VisorFotos), y
-// ahí se pasa de una a otra. Sin fotos, la silueta de la categoría.
+// ahí se pasa de una a otra. Si alguna variante tiene foto propia, se ven las
+// de la variante elegida en el panel (fotosDeVariante). Sin fotos, la silueta
+// de la categoría.
 export default function GaleriaFicha({ producto }) {
-  const fotos = producto.fotos?.length ? producto.fotos : [null];
+  const { varianteId } = useVarianteElegida();
+  const variante = producto.variantes.find((v) => v.id === varianteId);
+  const deLaVariante = fotosDeVariante(producto, variante);
+  const fotos = deLaVariante.length ? deLaVariante : [null];
   const total = fotos.length;
   const [todas, setTodas] = useState(false);
   const [actual, setActual] = useState(0);
@@ -41,8 +48,17 @@ export default function GaleriaFicha({ producto }) {
     };
   }, [total]);
 
-  const alt = (i) =>
-    i === 0 ? `${producto.marca} ${producto.nombre}` : `${producto.marca} ${producto.nombre}, vista ${i + 1}`;
+  // La foto propia de la variante dice cuál es
+  const alt = (i) => {
+    if (i === 0 && variante?.foto) return `${producto.marca} ${producto.nombre}, ${variante.nombre}`;
+    return i === 0 ? `${producto.marca} ${producto.nombre}` : `${producto.marca} ${producto.nombre}, vista ${i + 1}`;
+  };
+
+  // Al elegir otra variante, el carrusel vuelve a la primera foto: la suya
+  const primera = fotos[0];
+  useEffect(() => {
+    lista.current?.scrollTo({ left: 0, behavior: "instant" });
+  }, [primera]);
 
   // Al cerrar el visor, el carrusel queda en la última foto que se vio y el
   // foco vuelve a esa foto (si está a la vista: en escritorio, las de más de

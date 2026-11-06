@@ -145,6 +145,13 @@ values
   ((select id from public.productos where slug = 'yonex-ezone-100'), 100, 685, 320, 16, 19, 66, 20, 27, 'principiante', 'potencia'),
   ((select id from public.productos where slug = 'wilson-clash-100'), 100, 685, 310, 16, 19, 55, 22, 26, 'intermedio', 'confort');
 
+-- La foto de cada pack de los grips (orden_foto, 0007): la variante apunta a
+-- una foto de su producto por el orden
+update public.variantes set orden_foto = 2 where sku = 'WILSON-PRO-OVERGRIP-PACK-3';
+update public.variantes set orden_foto = 1 where sku = 'WILSON-PRO-OVERGRIP-PACK-12';
+update public.variantes set orden_foto = 1 where sku = 'TOURNA-GRIP-ORIGINAL-PACK-3';
+update public.variantes set orden_foto = 2 where sku = 'TOURNA-GRIP-ORIGINAL-PACK-10';
+
 -- Grip y peso de cada variante de raqueta
 insert into public.variantes_raqueta (variante_id, grip, peso_g) values
   ((select id from public.variantes where sku = 'BABOLAT-PURE-DRIVE-G1-300'), 1, 300),

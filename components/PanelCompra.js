@@ -18,6 +18,7 @@ import {
 import AvisoAgregado, { useAvisoAgregado } from "./AvisoAgregado";
 import FotoVitrina from "./FotoVitrina";
 import SelectorCantidad from "./SelectorCantidad";
+import { useVarianteElegida } from "./VarianteElegida";
 import styles from "./PanelCompra.module.css";
 
 // En el servidor (y al hidratar) no hay document.body para el portal
@@ -127,6 +128,7 @@ function Encordado({ encordado, activo, onActivo, cuerdaId, onCuerda, tension, o
 // cotizar en el servidor (cotizarCarrito).
 export default function PanelCompra({ producto, frase, encordado = null }) {
   const { agregarProducto } = useCarrito();
+  const { setVarianteId } = useVarianteElegida();
   const [avisoVisible, mostrarAviso] = useAvisoAgregado();
   const enNavegador = useSyncExternalStore(sinSuscripcion, enCliente, enServidor);
   const opciones = useMemo(() => dimensionesDe(producto), [producto]);
@@ -191,7 +193,10 @@ export default function PanelCompra({ producto, frase, encordado = null }) {
   }, []);
 
   function elegir(clave, valor) {
-    setEleccion((anterior) => ({ ...anterior, [clave]: valor }));
+    const nueva = { ...eleccion, [clave]: valor };
+    setEleccion(nueva);
+    // La galería muestra la foto de la variante elegida, si tiene
+    setVarianteId(varianteElegida(producto.variantes, valoresDe, nueva)?.id ?? null);
   }
 
   function agregar() {
@@ -298,6 +303,7 @@ export default function PanelCompra({ producto, frase, encordado = null }) {
             <BarraCompra
               visible={barraVisible && !agotado}
               producto={producto}
+              foto={variante?.foto ?? producto.fotos?.[0]}
               precio={precio}
               desde={desde}
               onAgregar={agregar}
@@ -310,10 +316,11 @@ export default function PanelCompra({ producto, frase, encordado = null }) {
   );
 }
 
-// La barra fija de abajo: la foto, el nombre, el precio y «Agregar». Entra
-// desde abajo (solo transform y opacity) y, mientras se ve, publica su alto en
-// --alto-barra-compra para que el aviso «Agregado al carrito» quede encima.
-function BarraCompra({ visible, producto, precio, desde, onAgregar }) {
+// La barra fija de abajo: la foto (la de la variante elegida, si tiene), el
+// nombre, el precio y «Agregar». Entra desde abajo (solo transform y
+// opacity) y, mientras se ve, publica su alto en --alto-barra-compra para que
+// el aviso «Agregado al carrito» quede encima.
+function BarraCompra({ visible, producto, foto, precio, desde, onAgregar }) {
   const barra = useRef(null);
 
   useEffect(() => {
@@ -325,7 +332,7 @@ function BarraCompra({ visible, producto, precio, desde, onAgregar }) {
   return (
     <div ref={barra} className={styles.barra} data-visible={visible || undefined} inert={!visible}>
       <div className={styles.barraFoto}>
-        <FotoVitrina foto={producto.fotos?.[0]} categoria={producto.categoria} sizes="56px" />
+        <FotoVitrina foto={foto} categoria={producto.categoria} sizes="56px" />
       </div>
       <div className={styles.barraTexto}>
         <p className={styles.barraNombre}>

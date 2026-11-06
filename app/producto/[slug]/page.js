@@ -6,10 +6,12 @@ import GaleriaFicha from "@/components/GaleriaFicha";
 import GrillaProductos from "@/components/GrillaProductos";
 import Medidores from "@/components/Medidores";
 import PanelCompra from "@/components/PanelCompra";
+import { ProveedorVariante } from "@/components/VarianteElegida";
 import { getCombosConProducto } from "@/lib/combos";
 import { ENVIOS_Y_DEVOLUCIONES } from "@/lib/envio";
 import { getFicha } from "@/lib/fichas";
 import { medidoresDe } from "@/lib/medidores";
+import { varianteInicial } from "@/lib/opciones";
 import {
   getCategoria,
   getCuerdasCompatibles,
@@ -118,19 +120,22 @@ export default async function PaginaProducto({ params }) {
         <span aria-current="page">{producto.nombre}</span>
       </nav>
 
-      <div className={styles.ficha}>
-        <GaleriaFicha producto={producto} />
+      {/* La variante elegida en el panel decide qué fotos muestra la galería */}
+      <ProveedorVariante inicial={varianteInicial(producto)?.id ?? null}>
+        <div className={styles.ficha}>
+          <GaleriaFicha producto={producto} />
 
-        <ColumnaFija className={styles.columnaPanel}>
-          <PanelCompra
-            producto={producto}
-            frase={primeraOracion(producto.descripcion)}
-            encordado={esRaqueta ? encordadoDe(producto, cuerdas, servicio) : null}
-          />
-          {medidores && <Medidores medidores={medidores} />}
-          <Acordeon secciones={secciones} />
-        </ColumnaFija>
-      </div>
+          <ColumnaFija className={styles.columnaPanel}>
+            <PanelCompra
+              producto={producto}
+              frase={primeraOracion(producto.descripcion)}
+              encordado={esRaqueta ? encordadoDe(producto, cuerdas, servicio) : null}
+            />
+            {medidores && <Medidores medidores={medidores} />}
+            <Acordeon secciones={secciones} />
+          </ColumnaFija>
+        </div>
+      </ProveedorVariante>
 
       {(cuerdas.length > 0 || combos.length > 0) && (
         <section className={styles.combina} aria-labelledby="titulo-combina">
