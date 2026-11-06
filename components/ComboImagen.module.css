@@ -1,0 +1,21 @@
+/* La imagen de un combo: las fotos de sus productos (recortes sin fondo, en
+   un lienzo de 4:5) encimadas sobre estudio. Llena la celda, que pone el
+   radio. Cada capa va donde dicen --x, --y y --ancho (ComboImagen). */
+.imagen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--estudio);
+}
+
+.capa {
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  width: var(--ancho);
+  aspect-ratio: 4 / 5;
+}
+
+.foto {
+  object-fit: contain;
+}

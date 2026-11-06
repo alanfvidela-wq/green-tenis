@@ -42,6 +42,19 @@
   font-size: var(--t-chico);
 }
 
+/* Si el kit coincide con un combo: el botón y, al lado, cuánto se ahorra */
+.combo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-3) var(--espacio-4);
+}
+
+.ahorro {
+  font-size: var(--t-chico);
+  font-variant-numeric: tabular-nums;
+}
+
 .guardado a {
   color: var(--negro);
   text-decoration: underline;

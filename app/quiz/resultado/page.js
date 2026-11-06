@@ -2,7 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Kit from "@/components/Kit";
 import { guardarKit } from "@/lib/accionesQuiz";
+import { comboDelKit, comboTienePreciosDistintos, getCombos } from "@/lib/combos";
 import { RespuestasQuiz } from "@/lib/esquemas";
+import { formatearPrecio } from "@/lib/formato";
 import { armarKit, getKitGuardado } from "@/lib/kits";
 import { PREGUNTAS, aBusqueda, mismasRespuestas, resumirRespuestas } from "@/lib/quiz";
 import { getUsuario } from "@/lib/sesion";
@@ -18,13 +20,15 @@ export const metadata = {
 // El resultado del quiz: las respuestas llegan en la URL (las pone
 // responderQuiz) y el kit se arma acá, con el catálogo y el stock de hoy. Con
 // sesión, dice si quedó guardado en la cuenta o deja guardarlo; sin sesión,
-// lleva a ingresar y de vuelta acá.
+// lleva a ingresar y de vuelta acá. Si el kit coincide con un combo (la misma
+// raqueta y su cuerda o su pelota, ver comboDelKit), ofrece llevarlo así.
 export default async function PaginaResultado({ searchParams }) {
   const validadas = RespuestasQuiz.safeParse(await searchParams);
   if (!validadas.success) redirect("/quiz");
   const respuestas = validadas.data;
 
-  const [items, usuario] = await Promise.all([armarKit(respuestas), getUsuario()]);
+  const [items, usuario, combos] = await Promise.all([armarKit(respuestas), getUsuario(), getCombos()]);
+  const combo = comboDelKit(items, combos);
   const guardado = usuario ? await getKitGuardado() : null;
   const estaGuardado = Boolean(guardado) && mismasRespuestas(guardado.respuestas, respuestas);
   const aca = `/quiz/resultado?${aBusqueda(respuestas)}`;
@@ -45,6 +49,17 @@ export default async function PaginaResultado({ searchParams }) {
           {resumirRespuestas(respuestas).join(" · ")}
         </p>
         <div className={styles.acciones}>
+          {combo && (
+            <div className={styles.combo}>
+              <Link href={`/combo/${combo.slug}`} className="boton">
+                Llevalo como combo
+              </Link>
+              <p className={styles.ahorro}>
+                {combo.nombre}: ahorrás {comboTienePreciosDistintos(combo) && "desde "}
+                {formatearPrecio(combo.ahorroDesde)}
+              </p>
+            </div>
+          )}
           <Link href="/quiz" className="boton boton-secundario">
             Volver a hacer el quiz
           </Link>

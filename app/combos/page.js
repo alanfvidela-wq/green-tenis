@@ -4,8 +4,10 @@ import { getCombos } from "@/lib/combos";
 import { contar } from "@/lib/formato";
 import styles from "../listado.module.css";
 
+// Qué es un combo, en una línea: la bajada del encabezado y la descripción
+// de la página
 const DESCRIPCION =
-  "Kits armados por la tienda, con un descuento sobre la suma de sus productos.";
+  "Raqueta, cuerda y pelotas elegidas para cada forma de jugar, o pelotas y grips para entrenar: juntos salen menos que comprando cada producto por separado.";
 
 export const metadata = { title: "Combos", description: DESCRIPCION };
 

@@ -479,9 +479,21 @@ Sin cintas con leyendas ni bloques de slogan.
 
 ## Combos
 
-Kits armados por la tienda («Kit para arrancar»: raqueta, tubo de pelotas y
-overgrip) con un descuento sobre la suma de sus productos. Se muestran y se
-venden como un producto más, con las mismas piezas.
+Kits armados por la tienda con un descuento sobre la suma de sus productos:
+«Kit para arrancar» (raqueta, tubo de pelotas y overgrip), uno por perfil del
+quiz («Kit control», «Kit potencia», «Kit cuidá tu brazo»: raqueta, cuerda
+compatible según el armador y dos tubos) y «Pack entrenamiento» (pelotas y
+overgrips, sin raqueta). Se cargan por migración (`0009_combos.sql`). Se
+muestran y se venden como un producto más, con las mismas piezas.
+
+- **La imagen** (`ComboImagen`): no es un archivo; se arma con las fotos de
+  sus productos, encimadas sobre estudio, así cambia sola si cambia un
+  producto o su foto. La raqueta grande atrás (más ancha que la celda, porque
+  el recorte trae margen) y la cuerda, las pelotas o el grip más chicos
+  adelante, abajo a la derecha; sin raqueta, el primero grande y los otros al
+  lado. De cada ítem va la foto de su pack, si tiene (`orden_foto`), o la
+  principal. Para los lectores de pantalla es una sola imagen, con el nombre
+  y lo que trae. Va en la celda y de portada en la página del combo.
 
 - **Precio y stock** (`lib/combos.js`): se calculan en el servidor a partir de
   los ítems. El precio es la suma menos el descuento redondeado para abajo (la
@@ -490,15 +502,21 @@ venden como un producto más, con las mismas piezas.
   cliente elige una: el precio de cada combinación llega calculado y la página
   solo muestra el que corresponde. Un combo con algún producto inactivo no se
   muestra.
-- **La celda** (`TarjetaCombo`): la misma de la vitrina. En la fila, el nombre
-  y el precio del combo («desde» si cambia con las opciones); debajo del
-  precio, el descuento («10 % menos»). Sin foto propia, el placeholder
-  es el de su primer producto.
-- **El listado** (`/combos`): como una categoría. Migas, «Combos» a
-  `--t-display-3`, la cantidad y la vitrina. Va en el header y en el footer,
+- **La celda** (`TarjetaCombo`): la misma de la vitrina, con la imagen armada.
+  En la fila, el nombre y, a la derecha, lo que sale por separado tachado (en
+  grafito) y, debajo, el precio del combo («desde» si cambia con las
+  opciones). Debajo, lo que trae, una línea por producto en grafito
+  («2 × Dunlop Fort Clay Court»), y cuánto se ahorra («Ahorrás $ 48.070»;
+  «desde» si cambia con las opciones).
+- **El listado** (`/combos`): como una categoría. Migas, «Combos» en la
+  display a `--t-display-3`, una línea que dice qué son («Raqueta, cuerda y
+  pelotas elegidas para cada forma de jugar, o pelotas y grips para entrenar:
+  juntos salen menos que comprando cada producto por separado»), la cantidad
+  y la vitrina. Va en el header y en el footer,
   después de las categorías.
-- **La página** (`/combo/[slug]`): como la de producto. La galería muestra las
-  fotos del combo, si tiene, y después la primera de cada producto. A la
+- **La página** (`/combo/[slug]`): como la de producto. La galería abre con la
+  imagen armada, en la celda grande, y sigue con las fotos del combo, si
+  tiene, y la de cada producto. A la
   derecha:
   - «Combo» en mayúsculas, el nombre y la descripción;
   - la ficha «Qué trae»: una fila por producto, que lleva a su página, con la
@@ -542,8 +560,11 @@ la cantidad).
   son las frases de las dos reglas que más le sumaron.
 - **El resultado** (`/quiz/resultado`, con las respuestas en la URL): migas,
   «Tu kit» a `--t-display-3`, las respuestas en una línea (separadas
-  por «·»), «Volver a hacer el quiz» (secundario) y si quedó guardado en la
-  cuenta (o «Guardar en mi cuenta», o «Ingresá para guardarlo»). Debajo,
+  por «·»), «Llevalo como combo» (el botón del acento, con «Kit control:
+  ahorrás $ 48.070» al lado) si el kit coincide con un combo con stock (lleva
+  la primera raqueta recomendada y además su cuerda o su pelota;
+  `comboDelKit`), «Volver a hacer el quiz» (secundario) y si quedó guardado en
+  la cuenta (o «Guardar en mi cuenta», o «Ingresá para guardarlo»). Debajo,
   «Raquetas» y «Cuerda y pelota» en la display a `--t-display-4`, cada uno con
   sus celdas: la foto 4:5 sobre estudio, la marca en mayúsculas, el nombre
   subrayado y el precio, el motivo y «Agregar al carrito» a lo ancho.

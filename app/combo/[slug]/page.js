@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ComboImagen from "@/components/ComboImagen";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorCombo from "@/components/SelectorCombo";
-import { comboTienePreciosDistintos, getComboPorSlug } from "@/lib/combos";
+import { comboTienePreciosDistintos, getComboPorSlug, lineasDeCombo } from "@/lib/combos";
 import styles from "../../detalle.module.css";
 
 export async function generateMetadata({ params }) {
@@ -17,17 +18,18 @@ export default async function PaginaCombo({ params }) {
   const combo = await getComboPorSlug(slug);
   if (!combo) notFound();
 
-  // La galería: las fotos del combo, si tiene, y la primera de cada producto
+  // La galería: la imagen armada con las fotos de sus productos, las fotos
+  // del combo, si tiene, y la de cada producto (la de su pack, si tiene)
   const vistas = [
     ...combo.fotos.map((foto, i) => ({
       foto,
       categoria: combo.items[0].producto.categoria,
       alt: i === 0 ? combo.nombre : `${combo.nombre}, vista ${i + 1}`,
     })),
-    ...combo.items.map(({ producto }) => ({
-      foto: producto.fotos[0] ?? null,
-      categoria: producto.categoria,
-      alt: `${producto.nombre} ${producto.marca}`,
+    ...combo.items.map((item) => ({
+      foto: item.foto,
+      categoria: item.producto.categoria,
+      alt: `${item.producto.nombre} ${item.producto.marca}`,
     })),
   ];
 
@@ -42,7 +44,17 @@ export default async function PaginaCombo({ params }) {
       </nav>
 
       <div className={styles.detalle}>
-        <GaleriaProducto vistas={vistas} />
+        <GaleriaProducto
+          vistas={vistas}
+          portada={
+            <ComboImagen
+              combo={combo}
+              alt={`${combo.nombre}: ${lineasDeCombo(combo).join(", ")}`}
+              sizes="(max-width: 859px) 100vw, 560px"
+              prioridad
+            />
+          }
+        />
 
         <div className={styles.info}>
           <p className={styles.marca}>Combo</p>

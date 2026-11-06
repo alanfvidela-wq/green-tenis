@@ -17,11 +17,13 @@ function vistasDe(producto) {
 
 // Galería de la página de producto (o de combo, que arma sus propias vistas),
 // en las celdas de la vitrina: la primera vista grande y las demás de a dos
-// debajo, sin texto encima.
-export default function GaleriaProducto({ producto, vistas = vistasDe(producto) }) {
+// debajo, sin texto encima. `portada`, si llega, va primera, en la celda grande
+// (el combo pone ahí su imagen armada, ComboImagen).
+export default function GaleriaProducto({ producto, vistas = vistasDe(producto), portada = null }) {
   return (
     <div className={styles.galeria}>
       <div className={styles.vistas}>
+        {portada && <div className={styles.vista}>{portada}</div>}
         {vistas.map((vista, i) => (
           <div key={i} className={styles.vista}>
             <FotoVitrina
@@ -29,11 +31,11 @@ export default function GaleriaProducto({ producto, vistas = vistasDe(producto) 
               categoria={vista.categoria}
               alt={vista.alt}
               sizes={
-                i === 0
+                i === 0 && !portada
                   ? "(max-width: 859px) 100vw, 560px"
                   : "(max-width: 859px) 50vw, 280px"
               }
-              prioridad={i === 0}
+              prioridad={i === 0 && !portada}
             />
           </div>
         ))}

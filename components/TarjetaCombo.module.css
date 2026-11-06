@@ -1,0 +1,20 @@
+/* Lo que suma la celda de un combo a la de un producto (TarjetaProducto):
+   lo que sale por separado, tachado; lo que trae y cuánto se ahorra */
+.lista {
+  color: var(--grafito);
+}
+
+.incluye {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  color: var(--grafito);
+  font-size: var(--t-dato);
+  line-height: 1.4;
+  list-style: none;
+}
+
+.ahorro {
+  font-size: var(--t-dato);
+  font-variant-numeric: tabular-nums;
+}
