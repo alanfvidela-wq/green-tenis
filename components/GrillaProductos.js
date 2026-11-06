@@ -13,14 +13,15 @@ const SIZES = "(max-width: 999px) 50vw, 400px";
 // La vitrina (ver «Vitrina de productos» en DESIGN.md): celdas grandes, tres
 // por fila desde 1000px y dos abajo. Muestra productos, combos o los dos (los
 // combos primero) y, con `foto` (un lugar de lib/fotos.js), una celda con una
-// foto de gente jugando, del mismo tamaño y sin texto encima. Las tarjetas
-// entran escalonadas al scrollear (VitrinaEscalonada); la celda de foto tiene
-// su propia aparición.
-export default function GrillaProductos({ productos = [], combos = [], foto }) {
+// foto de gente jugando, del mismo tamaño y sin texto encima. Con `motivos`
+// (por id de producto, el kit del quiz), cada celda dice por qué encaja. Las
+// tarjetas entran escalonadas al scrollear (VitrinaEscalonada); la celda de
+// foto tiene su propia aparición.
+export default function GrillaProductos({ productos = [], combos = [], foto, motivos }) {
   const celdas = [
     ...combos.map((combo) => <TarjetaCombo key={`combo-${combo.id}`} combo={combo} sizes={SIZES} />),
     ...productos.map((producto) => (
-      <TarjetaProducto key={producto.id} producto={producto} sizes={SIZES} />
+      <TarjetaProducto key={producto.id} producto={producto} motivo={motivos?.[producto.id]} sizes={SIZES} />
     )),
   ];
   if (foto) {

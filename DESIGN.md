@@ -255,7 +255,8 @@ baja; y la barra de acción a lo ancho.
 
 **Dónde va.** La grilla de cada categoría y cualquier listado de productos
 (`GrillaProductos` + `TarjetaProducto`), el listado de combos
-(`TarjetaCombo`) y «Lo que más sale» en la home. La foto de cada celda la pone
+(`TarjetaCombo`), «Lo que más sale» en la home y el kit del quiz (con el
+motivo debajo del nombre). La foto de cada celda la pone
 `FotoVitrina`. La pantalla de carga dibuja la misma grilla vacía.
 
 ### La grilla
@@ -566,11 +567,10 @@ la cantidad).
   `comboDelKit`), «Volver a hacer el quiz» (secundario) y si quedó guardado en
   la cuenta (o «Guardar en mi cuenta», o «Ingresá para guardarlo»). Debajo,
   «Raquetas» y «Cuerda y pelota» en la display a `--t-display-4`, cada uno con
-  sus celdas: la foto 4:5 sobre estudio, la marca en mayúsculas, el nombre
-  subrayado y el precio, el motivo y «Agregar al carrito» a lo ancho.
-  En las raquetas se elige grip y peso con las píldoras del producto; la
-  cuerda y la pelota van con la presentación que sugiere el quiz. Sin stock, la etiqueta «Sin stock» y ningún botón. Una celda por fila
-  en mobile, dos en tablet y tres desde 1000px.
+  la vitrina del catálogo (`GrillaProductos`): las mismas celdas que en
+  Raquetas, con el motivo en grafito debajo del nombre («Está pensada para tu
+  nivel…»). La celda entera lleva a la página del producto, donde se elige
+  grip, peso o presentación y se agrega al carrito.
 - **Tu kit** (`/tu-kit`, en la cuenta): con sesión, el quiz guarda el kit (el
   último reemplaza al anterior, en `kits_quiz`, que cada usuario ve solo suyo).
   La página lo muestra igual que el resultado, con la fecha del quiz y los
@@ -578,9 +578,8 @@ la cantidad).
 - **Movimiento**: la pregunta nueva entra desde el costado al que se va (32px
   y opacidad, 0,45s con `--deslizar`); la barra crece con `scaleX` (0,5s,
   `--deslizar`); la opción apretada se hunde a 0,97 y, al elegirla, salta a
-  1,03 con `--resorte`. Las celdas del kit entran escalonadas como la vitrina
-  y «Agregar al carrito» muestra el aviso «Agregado al carrito». Al pasar de
-  pregunta, el foco va a la pregunta nueva.
+  1,03 con `--resorte`. Las celdas del kit entran escalonadas, como en la
+  vitrina. Al pasar de pregunta, el foco va a la pregunta nueva.
 
 ## Carrito
 

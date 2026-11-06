@@ -7,8 +7,9 @@ import styles from "./TarjetaProducto.module.css";
 // Celda de la vitrina (ver «Vitrina de productos» en DESIGN.md): la foto del
 // producto sobre estudio; debajo, el nombre y el precio; y la barra de ancho
 // completo («Ver producto», o «Sin stock» en negro). Toda la celda es un solo
-// link. Va dentro de GrillaProductos.
-export default function TarjetaProducto({ producto, sizes }) {
+// link. Con `motivo` (el kit del quiz), la frase de por qué encaja va debajo
+// del nombre. Va dentro de GrillaProductos.
+export default function TarjetaProducto({ producto, motivo, sizes }) {
   const disponible = tieneStock(producto);
 
   return (
@@ -29,6 +30,7 @@ export default function TarjetaProducto({ producto, sizes }) {
             {formatearPrecio(producto.precioBase)}
           </p>
         </div>
+        {motivo && <p className={styles.motivo}>{motivo}</p>}
         <span className={`${styles.barra} ${disponible ? "" : styles.agotado}`}>
           {disponible ? "Ver producto" : "Sin stock"}
         </span>

@@ -70,6 +70,13 @@
   }
 }
 
+/* En el kit del quiz, por qué encaja, debajo del nombre */
+.motivo {
+  color: var(--grafito);
+  font-size: var(--t-dato);
+  line-height: 1.5;
+}
+
 /* La barra de ancho completo: el acento con «Ver producto»; negra sin stock */
 .barra {
   display: flex;
