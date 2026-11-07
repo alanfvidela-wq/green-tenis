@@ -1,0 +1,79 @@
+# El CI de green.: lint, build y los tests E2E que no escriben en la base.
+# Qué hace cada paso y qué secrets necesita: docs/CI.md.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Un push nuevo a la misma rama o PR cancela la corrida que quedó vieja
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+# Solo lee el repo: no publica nada ni comenta en los PR
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    name: Lint, build y E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      # Sin los secrets, el build pasa igual pero la tienda no puede leer el
+      # catálogo: mejor cortar acá con un mensaje claro
+      - name: Revisar los secrets
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          faltan=""
+          [ -n "$NEXT_PUBLIC_SUPABASE_URL" ] || faltan="$faltan NEXT_PUBLIC_SUPABASE_URL"
+          [ -n "$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY" ] || faltan="$faltan NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+          if [ -n "$faltan" ]; then
+            echo "::error::Faltan los secrets:$faltan. Se cargan en Settings > Secrets and variables > Actions (ver docs/CI.md)."
+            exit 1
+          fi
+
+      # Las NEXT_PUBLIC_ entran en el build (van al navegador y a next.config)
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      - name: Instalar Chromium de Playwright
+        run: npx playwright install --with-deps chromium
+
+      # Playwright levanta `next start` con el build de arriba (CI=true) y
+      # deja afuera los tests con el tag @escribe-en-base
+      - name: Tests E2E
+        id: e2e
+        run: npm run test:e2e:ci
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+
+      # El reporte HTML y las trazas, para abrirlos con el Trace Viewer
+      - name: Subir el reporte de Playwright
+        if: failure() && steps.e2e.outcome == 'failure'
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
