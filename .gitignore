@@ -59,3 +59,9 @@ next-env.d.ts
 
 # Configuración local de Claude Code (preview del panel del navegador); no va al repo
 /.claude/
+
+# Playwright: resultados y reporte de los tests E2E
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
