@@ -1,4 +1,5 @@
 import { Archivo, Inter_Tight } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -41,6 +42,9 @@ export default function RootLayout({ children }) {
           {children}
         </div>
         <Footer />
+        {/* Core Web Vitals de visitas reales (Vercel Speed Insights, ver
+            docs/CI.md). Solo mide en Vercel: en local el script no existe */}
+        <SpeedInsights />
       </body>
     </html>
   );
