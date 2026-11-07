@@ -22,7 +22,7 @@ Dos capas:
 | `e2e/compra.spec.js`      | El carrito agrega, cambia la cantidad, quita y actualiza el total            | Dos pelotas desde su ficha; el total es la suma de las líneas; «Uno más» duplica la línea y sube el total; «Quitar» la saca y lo baja; sin líneas, «Tu carrito está vacío.» |
 | `e2e/quiz.spec.js`        | El quiz responde las seis preguntas y muestra un kit con motivos             | La barra de avance pregunta por pregunta, «Ver mi kit», el resumen de respuestas, al menos dos raquetas, la cuerda y la pelota, y el porqué en cada celda |
 | `e2e/cuenta.spec.js`      | Entrar a /checkout sin sesión lleva a /ingresar                              | La redirección del proxy con `?siguiente=/checkout` y el texto para terminar la compra |
-| `e2e/cuenta.spec.js`      | Con la cuenta de prueba, el checkout llega a Mercado Pago sin pagar          | Carrito → «Ir a pagar» → ingresar → vuelve al checkout → envío → «Confirmar y pagar» → la URL de Checkout Pro con su `pref_id` |
+| `e2e/cuenta.spec.js`      | Con la cuenta de prueba, el checkout llega a Mercado Pago sin pagar (`@escribe-en-base`) | Carrito → «Ir a pagar» → ingresar → vuelve al checkout → envío → «Confirmar y pagar» → la URL de Checkout Pro con su `pref_id`. Al terminar, pase o falle, cancela su pedido y devuelve el stock |
 
 ### Cómo correrlos
 
@@ -43,18 +43,26 @@ E2E_PASSWORD=...
 
 Es una cuenta que ya existe (se crea una vez, a mano, en `/registrarme`), de
 cliente, sin el rol de admin. Los tests no crean cuentas. Sin estas dos
-variables, el test del checkout se saltea y los demás corren igual.
+variables, el test del checkout se saltea y los demás corren igual. Ese test
+necesita además la función `cancelar_pedido`
+(`supabase/migrations/0010_cancelar_pedido.sql`) para limpiar lo que crea.
 
 Después:
 
 ```bash
-npm run test:e2e
+npm run test:e2e        # los ocho
+npm run test:e2e:ci     # todos menos los que escriben en la base (los siete del CI)
 ```
 
 Playwright hace `npm run build`, levanta `next start` en el puerto 3100 (así no
-choca con `npm run dev` en el 3000), corre los ocho tests en Chromium con dos
+choca con `npm run dev` en el 3000), corre los tests en Chromium con dos
 workers y apaga el servidor. Si ya hay un `next start` en el 3100, lo reusa y
 no vuelve a armar el build. Los tests tardan unos 35 segundos, más el build.
+En GitHub corren con cada push (ver `docs/CI.md`).
+
+Los tests que escriben en la base llevan el tag `@escribe-en-base` (hoy, solo
+el del checkout). `test:e2e:ci` los deja afuera con `--grep-invert`; para
+correr solo esos, `npx playwright test --grep @escribe-en-base`.
 
 Otras formas útiles:
 
@@ -100,36 +108,42 @@ y la consola. `test-results/` y `playwright-report/` no van al repo.
 ### Qué dejan en la base y cómo se limpia
 
 Los tests no tocan el catálogo ni crean cuentas. Todos leen, salvo el del
-checkout:
+checkout, que crea un pedido y lo limpia al terminar.
+
+**Cómo limpia.** El test pone una marca de la corrida (`E2E <timestamp>`) en
+«Piso o departamento». En el `afterEach`, que corre aunque el test falle,
+`cancelarPedidosDePrueba` (`e2e/ayudas.js`) entra a Supabase con la cuenta de
+prueba, busca sus pedidos en `pendiente_pago` con esa marca y llama a
+`cancelar_pedido` con cada uno. La función hace lo mismo que
+`liberar_pedidos_vencidos` con un solo pedido: lo pasa a `cancelado` y
+devuelve el stock de sus ítems en la misma transacción. Solo puede cancelar un
+pedido de quien la llama, pendiente y sin un pago en curso. Usa la sesión de
+la cuenta de prueba, como la tienda, y no la clave secreta. El reporte anota
+qué pedido canceló («Pedido cancelado: #17»). Si no puede cancelarlo, el test
+falla con un error que empieza con «Limpieza:», así no queda un pedido colgado
+sin que se sepa. En ese caso el pedido vence solo a los 30 minutos, como
+cualquier otro.
+
+Lo que queda después de cada corrida:
 
 | Qué                    | Dónde queda                                    | Cuánto dura |
 | ---------------------- | ---------------------------------------------- | ----------- |
-| Un pedido de la cuenta de prueba, en `pendiente_pago`, con 1 tubo de Penn Championship y los datos de envío «Prueba E2E» | `pedidos` y `pedido_items` | Vence a los 30 minutos y pasa a `cancelado` (`cancelado_por = 'vencimiento'`) |
-| 1 tubo de Penn Championship reservado (el stock baja en 1) | `variantes.stock` | Vuelve cuando el pedido se cancela por vencido |
-| Una preferencia de Checkout Pro | La cuenta de prueba vendedora de Mercado Pago | Vence con el pedido (`expiration_date_to`) |
+| Un pedido de la cuenta de prueba, ya `cancelado` (`cancelado_por = 'cliente'`), con 1 tubo de Penn Championship y el envío a nombre de «Prueba E2E» | `pedidos` y `pedido_items` | Hasta que se borre (abajo). Se ve en «Mis pedidos» de la cuenta de prueba y en `/admin/pedidos` |
+| El stock                | `variantes.stock`                              | Nada: baja al confirmar y vuelve al limpiar, unos segundos después |
+| Una preferencia de Checkout Pro | La cuenta de prueba vendedora de Mercado Pago | Vence a los 30 minutos (`expiration_date_to`). Nadie la paga; si alguien lo hiciera, el pago iría a revisión (`pago_en_cancelado`) |
 | Un número de pedido usado | La secuencia de `pedidos.numero` | Para siempre (los números no se reusan) |
-| La sesión del login | Supabase Auth (`last_sign_in_at` de la cuenta de prueba) | Lo normal de cada ingreso |
+| La sesión del login | Supabase Auth (`last_sign_in_at` de la cuenta de prueba) | Lo normal de cada ingreso. La de la limpieza se cierra al terminar |
 
 El carrito vive en el `localStorage` del contexto de Playwright y se descarta
 al terminar cada test. El quiz se hace sin sesión, así que no guarda el kit.
 
-No hay un cron que venza los pedidos: `liberar_pedidos_vencidos()` corre al
-principio de cada `crear_pedido` y en cada aviso del webhook. Mientras nadie
-compre, el pedido vencido se sigue viendo como «Vencido» (la tienda lo calcula
-por la hora) y el tubo sigue reservado; el próximo pedido de cualquiera lo
-cancela y devuelve el stock. Con varias corridas se acumulan pedidos cancelados
-en «Mis pedidos» de la cuenta de prueba y en `/admin/pedidos`.
-
-Para limpiarlos, en el SQL Editor de Supabase, **pasados los 30 minutos** de la
-última corrida:
+Para borrar los pedidos cancelados que se van juntando, en el SQL Editor de
+Supabase:
 
 ```sql
--- 1. Cancela los pedidos vencidos y devuelve su stock
-select public.liberar_pedidos_vencidos();
-
--- 2. Borra los pedidos de los E2E (el envío a nombre de «Prueba E2E») ya
---    cancelados, con sus ítems y sus pagos (se borran en cascada). Poner el
---    email de E2E_EMAIL.
+-- Borra los pedidos de los E2E (el envío a nombre de «Prueba E2E») ya
+-- cancelados, con sus ítems y sus pagos (se borran en cascada). Poner el
+-- email de E2E_EMAIL.
 delete from public.pedidos
 where email = 'cuenta-de-prueba@ejemplo.com'
   and envio_datos ->> 'nombre' = 'Prueba E2E'
@@ -138,7 +152,10 @@ where email = 'cuenta-de-prueba@ejemplo.com'
 
 El filtro por «Prueba E2E» deja afuera los pedidos de las pruebas manuales con
 la misma cuenta. Nunca borrar un pedido en `pendiente_pago`: su stock sigue
-reservado y, sin el pedido, ya no vuelve.
+reservado y, sin el pedido, ya no vuelve. Si quedó alguno pendiente (la
+limpieza falló), se cancela solo a los 30 minutos, con el próximo
+`crear_pedido`, o con `select public.liberar_pedidos_vencidos();` en el SQL
+Editor una vez pasado ese plazo.
 
 ## Casos de prueba manuales
 

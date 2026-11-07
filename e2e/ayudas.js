@@ -1,5 +1,7 @@
 // Lo que comparten los tests E2E.
 
+import { createClient } from "@supabase/supabase-js";
+
 // Productos del catálogo que usan los tests. Los tests no cambian el
 // catálogo: si alguno deja de existir, hay que cambiarlo acá.
 export const PELOTA_BARATA = { slug: "penn-championship", nombre: "Championship", opcion: "Tubo x3" };
@@ -33,6 +35,48 @@ export async function raquetaConVarianteAgotada(request) {
     if (conStock) return { producto, agotada, conStock };
   }
   return null;
+}
+
+// Cancela los pedidos pendientes de la cuenta de prueba que llevan `marca` en
+// «Piso o departamento» (la pone el test del checkout) y devuelve su stock,
+// con cancelar_pedido (supabase/migrations/0010_cancelar_pedido.sql). Entra
+// con la sesión de la cuenta de prueba, como en la tienda: no usa la clave
+// secreta. Devuelve los números de los pedidos cancelados; si alguno no se
+// pudo cancelar, tira, así el test falla y se sabe que quedó algo en la base.
+export async function cancelarPedidosDePrueba(marca) {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
+  const { error: errorIngreso } = await supabase.auth.signInWithPassword({
+    email: process.env.E2E_EMAIL,
+    password: process.env.E2E_PASSWORD,
+  });
+  if (errorIngreso) throw new Error(`Limpieza: no se pudo ingresar con la cuenta de prueba (${errorIngreso.message})`);
+
+  try {
+    const { data: pedidos, error } = await supabase
+      .from("pedidos")
+      .select("id, numero")
+      .eq("estado", "pendiente_pago")
+      .eq("envio_datos->>piso", marca);
+    if (error) throw new Error(`Limpieza: no se pudieron leer los pedidos (${error.message})`);
+
+    const cancelados = [];
+    for (const { id, numero } of pedidos) {
+      const { data: cancelado, error: errorCancelar } = await supabase.rpc("cancelar_pedido", { pedido: id });
+      if (errorCancelar) {
+        throw new Error(`Limpieza: no se pudo cancelar el pedido #${numero} (${errorCancelar.message})`);
+      }
+      if (!cancelado) throw new Error(`Limpieza: el pedido #${numero} no se canceló (¿tiene un pago en curso?)`);
+      cancelados.push(numero);
+    }
+    return cancelados;
+  } finally {
+    // Cierra solo esta sesión: la del navegador de otro test sigue andando
+    await supabase.auth.signOut({ scope: "local" });
+  }
 }
 
 // Agrega al carrito la opción de un producto (que no sea raqueta) desde su

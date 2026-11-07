@@ -11,7 +11,8 @@
     "modelo:raqueta": "npx -y @gltf-transform/cli@4 optimize modelos-fuente/raqueta.glb public/models/raqueta.glb --compress meshopt --texture-compress webp --texture-size 2048 --simplify false --join false --flatten false",
     "fotos": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/fotos.mjs",
     "fotos:productos": "node --env-file-if-exists=.env.local scripts/fotos-productos.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:ci": "playwright test --grep-invert @escribe-en-base"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.9",

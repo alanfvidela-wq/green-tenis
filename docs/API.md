@@ -852,6 +852,10 @@ aunque el código se equivoque:
 - **Funciones**: las que escriben con privilegios (`security definer`, con
   `search_path` vacío) tienen el `execute` restringido. `crear_pedido` es solo
   para `authenticated` y toma al usuario de `auth.uid()`, no de un argumento.
+  `cancelar_pedido` (`0010_cancelar_pedido.sql`) también: cancela un pedido
+  propio en `pendiente_pago` sin un pago en curso y devuelve su stock
+  (`cancelado_por = 'cliente'`, o `'vencimiento'` si ya pasaron los 30
+  minutos). Hoy la usa solo la limpieza del test E2E del checkout.
   `conciliar_pago`, `guardar_preferencia`, `liberar_pedidos_vencidos` y
   `guardar_foto` (la de `npm run fotos:productos`) son solo para
   `service_role`, con `SUPABASE_SECRET_KEY`, que nunca sale del servidor. Ese
