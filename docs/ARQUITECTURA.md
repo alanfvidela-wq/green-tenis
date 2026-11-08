@@ -158,7 +158,7 @@ Tres reglas cruzan todo el diseño:
 
 ## 3. Base de datos
 
-Diez migraciones en `supabase/migrations/`, que se corren a mano en el SQL
+Once migraciones en `supabase/migrations/`, que se corren a mano en el SQL
 Editor de Supabase, más `supabase/seed.sql` con el catálogo.
 
 ```mermaid
@@ -293,7 +293,7 @@ vacío y `execute` solo para el rol que corresponde.
 | `conciliar_pago` | `service_role` | Aplica un pago de Mercado Pago (el que devolvió su API) al pedido: lo marca pagado, lo reactiva si se aprobó a tiempo o lo manda a revisión (monto distinto, pago duplicado, devolución, contracargo). Es idempotente: el mismo aviso dos veces no cambia nada |
 | `admin_guardar_producto` | `authenticated` (corta si no es admin) | Crea o actualiza un producto con su ficha y sus variantes en una transacción. Corre con los permisos de quien llama (`security invoker`), así que RLS aplica igual |
 | `guardar_foto` | `service_role` | Anota una foto de producto o combo con la ruta que arma ella (`recortes/<slug>-<n>.webp`); la usa `npm run fotos:productos` |
-| `liberar_pedidos_vencidos` | `service_role` (y adentro de `crear_pedido` y `conciliar_pago`) | Cancela los pedidos pendientes de más de 30 minutos sin un pago en curso y devuelve su stock |
+| `liberar_pedidos_vencidos` | `pg_cron` cada 10 minutos, `service_role`, y adentro de `crear_pedido` y `conciliar_pago` | Cancela los pedidos pendientes de más de 30 minutos sin un pago en curso y devuelve su stock |
 | `guardar_preferencia` | `service_role` | Guarda la preferencia de Checkout Pro del pedido para reusarla mientras se pueda pagar |
 | `cancelar_pedido` | `authenticated` | Cancela un pedido propio pendiente y devuelve el stock en el momento; hoy la usa la limpieza del test del checkout |
 | `es_admin` | todos | `true` si el token trae el rol de admin; la usan las políticas |
@@ -395,7 +395,7 @@ apenas queda `activo`.
 
 ## 5. Historia del proyecto
 
-105 commits entre el 1 de octubre y el 7 de noviembre de 2026, y 10
+110 commits entre el 1 de octubre y el 8 de noviembre de 2026, y 11
 migraciones. Hubo tres conceptos antes de tenis: la base técnica se armó
 cuando el concepto ya estaba firme.
 
@@ -487,10 +487,13 @@ variante (`0007`), bolsos con una sola opción (`0008`) y cuatro combos nuevos
 - **Descartado:** una imagen por combo hecha a mano, y el hero con un solo
   clip en loop.
 
-### 8. Calidad (7 de noviembre)
+### 8. Calidad y cierre (7 y 8 de noviembre)
 
 Tests E2E con Playwright, `cancelar_pedido` (`0010`) para que el test del
-checkout limpie lo que crea, CI en GitHub Actions y Speed Insights.
+checkout limpie lo que crea, CI en GitHub Actions y Speed Insights. Al
+final, el encordado agrupado con su raqueta en todo lo que muestra un pedido,
+y `liberar_pedidos_vencidos` programada con `pg_cron` cada 10 minutos
+(`0011`).
 
 - **Decisión:** los tests corren contra el build de producción y usan locators
   semánticos. El CI corre solo los tests que leen, con dos secrets públicos de
@@ -562,13 +565,9 @@ checkout limpie lo que crea, CI en GitHub Actions y Speed Insights.
   fórmula sobre la ficha (`lib/medidores.js`): cabeza, rigidez, peso y el
   perfil que carga la tienda. Son una guía para comparar productos de la
   tienda entre sí, no una medición.
-- **Los pedidos vencidos se liberan tarde.** No hay cron: el stock de un
-  pedido sin pagar vuelve cuando corre `liberar_pedidos_vencidos`, que se
-  ejecuta con el próximo `crear_pedido` o con un aviso del webhook. El sitio
-  ya muestra «Vencido» a los 30 minutos. La mejora sería `pg_cron` cada pocos
-  minutos.
 - **Cualquier cuenta puede reservar stock.** Un pedido sin pagar aparta el
-  stock 30 minutos, y no hay un límite de pedidos pendientes por usuario.
+  stock entre 30 y 40 minutos: vence a los 30 y `pg_cron` lo libera en los 10
+  siguientes (`0011`). No hay un límite de pedidos pendientes por usuario.
 - **Las fotos de producto no son propias.** Muestran productos de marcas
   reales; para vender de verdad hacen falta las del distribuidor, con permiso
   de uso, o fotos propias. Las de ambiente y los videos son de Pexels y

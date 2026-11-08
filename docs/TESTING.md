@@ -158,9 +158,9 @@ where email = 'cuenta-de-prueba@ejemplo.com'
 El filtro por «Prueba E2E» deja afuera los pedidos de las pruebas manuales con
 la misma cuenta. Nunca borrar un pedido en `pendiente_pago`: su stock sigue
 reservado y, sin el pedido, ya no vuelve. Si quedó alguno pendiente (la
-limpieza falló), se cancela solo a los 30 minutos, con el próximo
-`crear_pedido`, o con `select public.liberar_pedidos_vencidos();` en el SQL
-Editor una vez pasado ese plazo.
+limpieza falló), se cancela solo: `pg_cron` corre `liberar_pedidos_vencidos`
+cada 10 minutos (`0011_liberar_con_cron.sql`), así que a más tardar a los 40
+minutos el pedido está cancelado y el stock devuelto.
 
 ## Casos de prueba manuales
 
@@ -209,10 +209,10 @@ abajo. Los precios son los del catálogo de hoy.
 
 |                       |   |
 | --------------------- | - |
-| **Precondiciones**    | Una cuenta de cliente con sesión iniciada. El stock de Head Tour XT, Tubo x3, anotado (en `/admin/productos`). |
+| **Precondiciones**    | Una cuenta de cliente con sesión iniciada. `pg_cron` programado (`0011_liberar_con_cron.sql`). El stock de Head Tour XT, Tubo x3, anotado (en `/admin/productos`). |
 | **Datos de entrada**  | 2 × Head Tour XT, Tubo x3. Un envío válido cualquiera. |
-| **Pasos**             | 1. Agregar 2 tubos al carrito, ir a pagar y «Confirmar y pagar». 2. En Checkout Pro, no pagar: volver atrás. 3. Revisar el stock en el admin. 4. Esperar 31 minutos y abrir el pedido en «Mis pedidos». 5. Hacer cualquier otro pedido (o «Simular» un aviso del webhook). 6. Revisar el pedido y el stock. |
-| **Resultado esperado** | Después del paso 1, el pedido está «Pendiente de pago» y el stock bajó en 2 (está reservado). A los 31 minutos el pedido dice «Vencido», con «Pasaron 30 minutos sin el pago: el pedido se cancela y el stock vuelve a estar disponible.», y ya no muestra «Pagar con Mercado Pago». Después del paso 5 el pedido está «Cancelado» y el stock volvió al valor anotado. |
+| **Pasos**             | 1. Agregar 2 tubos al carrito, ir a pagar y «Confirmar y pagar». 2. En Checkout Pro, no pagar: volver atrás. 3. Revisar el stock en el admin. 4. Esperar 31 minutos y abrir el pedido en «Mis pedidos». 5. Esperar a la próxima corrida de `pg_cron` (10 minutos como mucho; se ve en Integrations › Cron o en `cron.job_run_details`), sin hacer otro pedido. 6. Revisar el pedido y el stock. |
+| **Resultado esperado** | Después del paso 1, el pedido está «Pendiente de pago» y el stock bajó en 2 (está reservado). A los 31 minutos el pedido dice «Vencido», con «Pasaron 30 minutos sin el pago: el pedido se cancela y el stock vuelve a estar disponible.», y ya no muestra «Pagar con Mercado Pago». Después del paso 5, sin que nadie haya comprado, el pedido está «Cancelado» y el stock volvió al valor anotado. |
 
 ### CP-06 · El carrito no deja pedir más de lo que hay
 

@@ -907,7 +907,9 @@ aunque el código se equivoque:
   `guardar_foto` (la de `npm run fotos:productos`) son solo para
   `service_role`, con `SUPABASE_SECRET_KEY`, que nunca sale del servidor. Ese
   rol no tiene permisos sobre ninguna tabla: con la clave secreta solo se
-  ejecutan esas funciones.
+  ejecutan esas funciones. `liberar_pedidos_vencidos` la corre además
+  `pg_cron` cada 10 minutos, dentro de la base y como `postgres`
+  (`0011_liberar_con_cron.sql`).
 
 ### Lo demás
 
@@ -1257,7 +1259,7 @@ sequenceDiagram
   end
 
   opt Nadie paga en 30 minutos
-    Note over S: El próximo crear_pedido o conciliar_pago<br/>llama a liberar_pedidos_vencidos:<br/>cancela el pedido y devuelve el stock
+    Note over S: pg_cron, cada 10 minutos (o antes un crear_pedido<br/>o conciliar_pago), llama a liberar_pedidos_vencidos:<br/>cancela el pedido y devuelve el stock
   end
 ```
 
@@ -1302,10 +1304,11 @@ podría esperar al `approved`, pero:
 
 El costo es stock apartado por pedidos que nunca se pagan. Lo acota el
 vencimiento: la preferencia vence a los 30 minutos (Mercado Pago no acepta
-pagos después) y `liberar_pedidos_vencidos` devuelve el stock. No hay cron: la
-llaman `crear_pedido` y cada aviso del webhook, y el sitio ya muestra «Vencido»
-apenas pasan los 30 minutos. Si hiciera falta que el stock vuelva justo a
-tiempo, se puede programar con `pg_cron` cada pocos minutos.
+pagos después) y `liberar_pedidos_vencidos` devuelve el stock. La corre
+`pg_cron` cada 10 minutos (`0011_liberar_con_cron.sql`), así que el stock de un
+pedido vencido vuelve a más tardar a los 40 minutos de creado. También la
+llaman `crear_pedido` y cada aviso del webhook, por si llegan antes. El sitio
+muestra «Vencido» apenas pasan los 30 minutos.
 
 ## Variables de entorno
 
