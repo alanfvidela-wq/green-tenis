@@ -21,6 +21,8 @@ Dos capas:
 | `e2e/compra.spec.js`      | En la ficha, elegir grip y peso habilita «Agregar al carrito» y lo agotado no se puede elegir | Sin elegir, el botón deshabilitado y «Falta elegir grip y peso.»; con el grip de una combinación agotada, ese peso deshabilitado; con grip y peso, el botón habilitado, el aviso y el carrito del header en 1 |
 | `e2e/compra.spec.js`      | El carrito agrega, cambia la cantidad, quita y actualiza el total            | Dos pelotas desde su ficha; el total es la suma de las líneas; «Uno más» duplica la línea y sube el total; «Quitar» la saca y lo baja; sin líneas, «Tu carrito está vacío.» |
 | `e2e/quiz.spec.js`        | El quiz responde las seis preguntas y muestra un kit con motivos             | La barra de avance pregunta por pregunta, «Ver mi kit», el resumen de respuestas, al menos dos raquetas, la cuerda y la pelota, y el porqué en cada celda |
+| `e2e/admin.spec.js`       | Sin sesión, los endpoints de admin responden 401                             | Los siete endpoints de la administración (`?todos=1`, POST, PATCH y DELETE de productos, PATCH de pedidos) responden `401 sin_sesion` |
+| `e2e/admin.spec.js`       | Con sesión pero sin el rol de admin, responden 403 y /admin lleva a la home  | Con la cuenta de prueba (que no es admin), los mismos siete responden `403 sin_permiso`, y `/admin/productos` redirige a la home. Los cuerpos están armados para no escribir nada aunque la protección fallara. Sin `E2E_EMAIL` y `E2E_PASSWORD` se saltea (en CI, por ejemplo) |
 | `e2e/cuenta.spec.js`      | Entrar a /checkout sin sesión lleva a /ingresar                              | La redirección del proxy con `?siguiente=/checkout` y el texto para terminar la compra |
 | `e2e/cuenta.spec.js`      | Con la cuenta de prueba, el checkout llega a Mercado Pago sin pagar (`@escribe-en-base`) | Carrito → «Ir a pagar» → ingresar → vuelve al checkout → envío → «Confirmar y pagar» → la URL de Checkout Pro con su `pref_id`. Al terminar, pase o falle, cancela su pedido y devuelve el stock |
 
@@ -50,8 +52,8 @@ necesita además la función `cancelar_pedido`
 Después:
 
 ```bash
-npm run test:e2e        # los ocho
-npm run test:e2e:ci     # todos menos los que escriben en la base (los siete del CI)
+npm run test:e2e        # los diez
+npm run test:e2e:ci     # todos menos los que escriben en la base (los del CI)
 ```
 
 Playwright hace `npm run build`, levanta `next start` en el puerto 3100 (así no

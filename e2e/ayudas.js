@@ -79,6 +79,17 @@ export async function cancelarPedidosDePrueba(marca) {
   }
 }
 
+// Ingresa con la cuenta de prueba desde /ingresar, como alguien de verdad, y
+// espera «Mis pedidos», a donde lleva la tienda sin otro destino. Las cookies
+// de la sesión quedan en el contexto: las usan la página y page.request.
+export async function ingresar(page, email, contrasena) {
+  await page.goto("/ingresar");
+  await page.getByRole("textbox", { name: "Email" }).fill(email);
+  await page.getByLabel("Contraseña", { exact: true }).fill(contrasena);
+  await page.getByRole("button", { name: "Ingresar" }).click();
+  await page.getByRole("heading", { level: 1, name: "Mis pedidos" }).waitFor();
+}
+
 // Agrega al carrito la opción de un producto (que no sea raqueta) desde su
 // ficha y espera el aviso
 export async function agregarAlCarrito(page, { slug, opcion }) {

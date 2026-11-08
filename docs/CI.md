@@ -60,8 +60,11 @@ Nada más. Los que **no** van, a propósito:
   el pago con Mercado Pago (`lib/cobros.js`), y ningún test del CI llega a
   pagar. Sin ellas la tienda funciona igual: el checkout diría que el pago
   online no está disponible.
-- `E2E_EMAIL` y `E2E_PASSWORD`: solo los usa el test del checkout, que no corre
-  en CI.
+- `E2E_EMAIL` y `E2E_PASSWORD`: los usan el test del checkout, que no corre
+  en CI, y el del 403 de la API de administración (`e2e/admin.spec.js`), que
+  sin ellas se saltea. Ese test solo ingresa y hace requests que no escriben:
+  si se quiere que corra también en CI, alcanza con cargar los dos como
+  secrets y pasarlos con `env:` al paso «Tests E2E».
 
 La clave publicable no es secreta (viaja al navegador en cada visita), pero va
 igual como secret para que ningún valor quede en el YAML ni en el historial.
