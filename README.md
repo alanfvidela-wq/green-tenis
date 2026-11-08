@@ -1,5 +1,70 @@
 [![CI](https://github.com/alanfvidela-wq/green-tenis/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/alanfvidela-wq/green-tenis/actions/workflows/ci.yml)
 
+# green.
+
+Tienda online de tenis: raquetas, pelotas, cuerdas, grips y bolsos de marcas
+reales, más combos con descuento, encordado a medida y un quiz que recomienda
+un kit según cómo jugás. **En vivo: [green-tenis.vercel.app](https://green-tenis.vercel.app)**
+
+| Home | Ficha de producto | Quiz |
+| ---- | ----------------- | ---- |
+| ![Home](docs/capturas/home.jpg) | ![Ficha de producto](docs/capturas/ficha.jpg) | ![Kit del quiz](docs/capturas/quiz.jpg) |
+
+## Funcionalidades
+
+- Catálogo por categoría con fichas técnicas, fotos por variante y medidores.
+- Raquetas con grip y peso a elección, y encordado con cuerda y tensión.
+- Carrito con precios, descuentos y stock calculados en el servidor.
+- Cuenta (registro, ingreso, recuperar contraseña) y «Mis pedidos».
+- Checkout con Mercado Pago (Checkout Pro) y webhook firmado.
+- Quiz de seis preguntas que arma un kit con el porqué de cada producto.
+- Administración: productos (crear, editar, borrar) y estados de pedidos.
+- API REST en `/api/v1`, validada con Zod.
+
+## Stack
+
+Next.js 16 (App Router) · React 19 · JavaScript · CSS Modules · Supabase
+(Postgres con RLS, Auth, Storage, pg_cron) · Mercado Pago · Zod · Playwright ·
+GitHub Actions · Vercel y Speed Insights. Detalle y diagramas:
+[docs/ARQUITECTURA.md](docs/ARQUITECTURA.md).
+
+## Cómo levantarlo en local
+
+1. Clonar e instalar:
+
+   ```bash
+   git clone https://github.com/alanfvidela-wq/green-tenis.git
+   cd green-tenis
+   npm install
+   ```
+
+2. Copiar `.env.example` a `.env.local` y completar las variables (Supabase y
+   Mercado Pago; qué es cada una, en [docs/API.md](docs/API.md)).
+3. En el SQL Editor de Supabase, correr en orden las migraciones de
+   `supabase/migrations/` (de `0001` a `0011`) y después `supabase/seed.sql`.
+4. `npm run dev` y abrir [http://localhost:3000](http://localhost:3000).
+
+## Tests
+
+```bash
+npx playwright install chromium   # la primera vez
+npm run test:e2e                  # todos (arma el build y levanta el servidor)
+npm run test:e2e:ci               # los del CI: sin los que escriben en la base
+```
+
+El de checkout necesita `E2E_EMAIL` y `E2E_PASSWORD` en `.env.local` (una
+cuenta de prueba). Más en [docs/TESTING.md](docs/TESTING.md).
+
+## Documentación
+
+- [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md): stack, arquitectura, base de datos e historia.
+- [docs/API.md](docs/API.md): los endpoints, el pago con Mercado Pago y la seguridad.
+- [docs/TESTING.md](docs/TESTING.md): tests E2E, casos de prueba manuales y reportes de bug.
+- [docs/CI.md](docs/CI.md): el pipeline de GitHub Actions y Speed Insights.
+- [docs/FOTOS.md](docs/FOTOS.md): cómo se cargan y procesan las fotos.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
