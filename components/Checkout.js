@@ -42,6 +42,9 @@ function Resumen({ cotizacion, alDia }) {
                       {texto}
                     </p>
                   ))}
+                  {linea.encordado && (
+                    <p className={`${styles.detalle} ${base.encordado}`}>{linea.encordado}</p>
+                  )}
                   {linea.problema && <p className={styles.problema}>{linea.problema}</p>}
                 </div>
                 {linea.subtotal !== undefined && (

@@ -24,7 +24,8 @@ Dos capas:
 | `e2e/admin.spec.js`       | Sin sesión, los endpoints de admin responden 401                             | Los siete endpoints de la administración (`?todos=1`, POST, PATCH y DELETE de productos, PATCH de pedidos) responden `401 sin_sesion` |
 | `e2e/admin.spec.js`       | Con sesión pero sin el rol de admin, responden 403 y /admin lleva a la home  | Con la cuenta de prueba (que no es admin), los mismos siete responden `403 sin_permiso`, y `/admin/productos` redirige a la home. Los cuerpos están armados para no escribir nada aunque la protección fallara. Sin `E2E_EMAIL` y `E2E_PASSWORD` se saltea (en CI, por ejemplo) |
 | `e2e/cuenta.spec.js`      | Entrar a /checkout sin sesión lleva a /ingresar                              | La redirección del proxy con `?siguiente=/checkout` y el texto para terminar la compra |
-| `e2e/cuenta.spec.js`      | Con la cuenta de prueba, el checkout llega a Mercado Pago sin pagar (`@escribe-en-base`) | Carrito → «Ir a pagar» → ingresar → vuelve al checkout → envío → «Confirmar y pagar» → la URL de Checkout Pro con su `pref_id`. Al terminar, pase o falle, cancela su pedido y devuelve el stock |
+| `e2e/cuenta.spec.js`      | Con la cuenta de prueba, una raqueta encordada llega a Mercado Pago sin pagar y el pedido la agrupa (`@escribe-en-base`) | La misma raqueta dos veces, una encordada y otra no. En el carrito, dos líneas y el encordado solo en la suya. Después: «Ir a pagar» → ingresar → vuelve al checkout, con el encordado una sola vez en el resumen → envío → «Confirmar y pagar» → la URL de Checkout Pro con su `pref_id`, que solo se arma si los ítems suman el total. En el pedido, dos líneas: el encordado debajo de su raqueta, con la cuerda y el servicio, y ninguna línea suelta de «Tensión». Al terminar, pase o falle, cancela su pedido y devuelve el stock |
+| `e2e/lineas-pedido.spec.js` | Cuatro casos de `lineasDe` (`lib/pedidos.js`), sin navegador ni base | Con dos raquetas, el encordado va con la que lo lleva. Dos unidades encordadas suman sus cuerdas y servicios. Un pedido sin encordado queda como antes. Un servicio sin su raqueta se muestra solo, con la tensión |
 
 ### Cómo correrlos
 
@@ -52,7 +53,7 @@ necesita además la función `cancelar_pedido`
 Después:
 
 ```bash
-npm run test:e2e        # los diez
+npm run test:e2e        # los catorce
 npm run test:e2e:ci     # todos menos los que escriben en la base (los del CI)
 ```
 
@@ -98,7 +99,9 @@ y la consola. `test-results/` y `playwright-report/` no van al repo.
   leen de cada línea (el servidor los cotiza) y la raqueta con una
   combinación agotada se busca por la API pública (`/api/v1/productos`), así el
   test no se rompe cuando cambia el stock. Los productos fijos están en
-  `e2e/ayudas.js`: Penn Championship y Head Tour XT, en tubo de 3.
+  `e2e/ayudas.js`: Penn Championship y Head Tour XT, en tubo de 3, y la
+  Babolat Pure Drive que se compra encordada (de su combinación con más
+  stock).
 - **Cada test arranca de cero**: Playwright abre un contexto de navegador
   nuevo por test, con el `localStorage` (el carrito) y las cookies (la sesión)
   vacíos.
@@ -130,7 +133,7 @@ Lo que queda después de cada corrida:
 
 | Qué                    | Dónde queda                                    | Cuánto dura |
 | ---------------------- | ---------------------------------------------- | ----------- |
-| Un pedido de la cuenta de prueba, ya `cancelado` (`cancelado_por = 'cliente'`), con 1 tubo de Penn Championship y el envío a nombre de «Prueba E2E» | `pedidos` y `pedido_items` | Hasta que se borre (abajo). Se ve en «Mis pedidos» de la cuenta de prueba y en `/admin/pedidos` |
+| Un pedido de la cuenta de prueba, ya `cancelado` (`cancelado_por = 'cliente'`), con dos Babolat Pure Drive (una encordada, con su set de cuerda y el servicio) y el envío a nombre de «Prueba E2E» | `pedidos` y `pedido_items` | Hasta que se borre (abajo). Se ve en «Mis pedidos» de la cuenta de prueba y en `/admin/pedidos` |
 | El stock                | `variantes.stock`                              | Nada: baja al confirmar y vuelve al limpiar, unos segundos después |
 | Una preferencia de Checkout Pro | La cuenta de prueba vendedora de Mercado Pago | Vence a los 30 minutos (`expiration_date_to`). Nadie la paga; si alguien lo hiciera, el pago iría a revisión (`pago_en_cancelado`) |
 | Un número de pedido usado | La secuencia de `pedidos.numero` | Para siempre (los números no se reusan) |

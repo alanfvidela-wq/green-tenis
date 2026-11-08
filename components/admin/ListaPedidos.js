@@ -27,6 +27,24 @@ const ACCIONES = {
   enviado: { texto: "Marcar enviado", completo: "Marcar como enviado" },
 };
 
+// Lo que lleva un pedido, para prepararlo: cada producto con su opción y,
+// debajo de una raqueta encordada, con sangría, con qué cuerda y a qué
+// tensión; cada combo con lo que trae
+function ProductosPedido({ productos = [] }) {
+  if (productos.length === 0) return null;
+  return (
+    <ul className={styles.productosPedido} aria-label="Productos">
+      {productos.map((producto, i) => (
+        <li key={i}>
+          {producto.texto}
+          {producto.detalle && <p className={styles.secundario}>{producto.detalle}</p>}
+          {producto.encordado && <p className={styles.encordado}>{producto.encordado}</p>}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 // El listado de pedidos de la administración: lo pide a la API
 // (GET /api/v1/pedidos?todos=1, con el filtro por estado) y pasa cada pedido
 // al estado siguiente con PATCH /api/v1/pedidos/[id].
@@ -129,11 +147,12 @@ export default function ListaPedidos() {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {pedidos.map((original) => {
-                const pedido = cambiados[original.id] ?? original;
-                return (
-                  <tr key={pedido.id}>
+            {/* Cada pedido, su tbody: la fila con los datos y, debajo, lo que lleva */}
+            {pedidos.map((original) => {
+              const pedido = cambiados[original.id] ?? original;
+              return (
+                <tbody key={pedido.id}>
+                  <tr className={styles.conProductos}>
                     <td className={styles.principal}>
                       <Link href={`/mis-pedidos/${pedido.id}`} className={styles.numeroPedido}>
                         #{pedido.numero}
@@ -170,9 +189,14 @@ export default function ListaPedidos() {
                       </span>
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
+                  <tr className={styles.filaProductos}>
+                    <td colSpan={6}>
+                      <ProductosPedido productos={pedido.productos} />
+                    </td>
+                  </tr>
+                </tbody>
+              );
+            })}
           </table>
         </div>
       )}

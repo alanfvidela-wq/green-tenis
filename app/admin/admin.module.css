@@ -153,6 +153,33 @@
   font-size: var(--t-dato);
 }
 
+/* Pedidos: la fila con los datos y la de lo que lleva van juntas, con la
+   línea abajo de las dos */
+.tabla .conProductos td {
+  padding-bottom: var(--espacio-1);
+  border-bottom: 0;
+}
+
+.tabla .filaProductos td {
+  padding-top: 0;
+  font-size: var(--t-chico);
+}
+
+.productosPedido {
+  display: grid;
+  gap: var(--espacio-1);
+  list-style: none;
+}
+
+/* El encordado, debajo de su raqueta y con sangría, como en el pedido */
+.encordado {
+  margin-top: var(--espacio-1);
+  padding-left: var(--espacio-3);
+  border-left: 1px solid var(--negro);
+  color: var(--grafito);
+  font-size: var(--t-dato);
+}
+
 .etiquetas {
   display: flex;
   flex-wrap: wrap;

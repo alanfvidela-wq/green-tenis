@@ -99,6 +99,14 @@
   font-size: var(--t-dato);
 }
 
+/* El encordado, debajo de su raqueta y con sangría (como en el pedido). Lo
+   usa también el resumen del checkout */
+.encordado {
+  margin-top: var(--espacio-1);
+  padding-left: var(--espacio-3);
+  border-left: 1px solid var(--negro);
+}
+
 /* Lo que impide comprar la línea: en negro, sin color, con una línea al lado */
 .problema {
   margin-top: var(--espacio-2);

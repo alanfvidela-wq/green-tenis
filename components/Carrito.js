@@ -125,6 +125,7 @@ function Linea({ linea, cotizada, listo, onCantidad, onQuitar }) {
               {texto}
             </p>
           ))}
+          {cotizada?.encordado && <p className={`${styles.detalle} ${styles.encordado}`}>{cotizada.encordado}</p>}
           {cotizada?.problema && <p className={styles.problema}>{cotizada.problema}</p>}
         </div>
       </div>

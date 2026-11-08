@@ -6,6 +6,13 @@ import { createClient } from "@supabase/supabase-js";
 // catálogo: si alguno deja de existir, hay que cambiarlo acá.
 export const PELOTA_BARATA = { slug: "penn-championship", nombre: "Championship", opcion: "Tubo x3" };
 export const OTRA_PELOTA = { slug: "head-tour-xt", nombre: "Tour XT", opcion: "Tubo x3" };
+// La que se compra encordada en el test del checkout (ofrece encordado: tiene
+// rango de tensión y cuerdas compatibles en set)
+export const RAQUETA_ENCORDABLE = { slug: "babolat-pure-drive", marca: "Babolat", nombre: "Pure Drive" };
+
+// El texto del encordado, como lo escribe la tienda: «Encordada con Babolat
+// RPM Blast 1.25 a 24,5 kg»
+export const TEXTO_ENCORDADO = /^Encordada con .+ a \d+(,5)? kg$/;
 
 // Un precio en pesos como lo muestra la tienda («$ 12.900»), como expresión
 // regular: el espacio después del $ depende del navegador (a veces es un
@@ -88,6 +95,25 @@ export async function ingresar(page, email, contrasena) {
   await page.getByLabel("Contraseña", { exact: true }).fill(contrasena);
   await page.getByRole("button", { name: "Ingresar" }).click();
   await page.getByRole("heading", { level: 1, name: "Mis pedidos" }).waitFor();
+}
+
+// Agrega al carrito una raqueta encordada desde su ficha: la combinación de
+// grip y peso con más stock (sale de la API pública) y «Llevala encordada»
+// con la cuerda y la tensión que propone la tienda. Devuelve la variante.
+export async function agregarRaquetaEncordada(page, request, { slug }) {
+  const { producto } = await (await request.get(`/api/v1/productos/${slug}`)).json();
+  const [variante] = producto.variantes
+    .filter((v) => v.grip != null && v.pesoG != null && v.stock > 0)
+    .sort((a, b) => b.stock - a.stock);
+  if (!variante) throw new Error(`${slug} no tiene stock en ninguna combinación de grip y peso`);
+
+  await page.goto(`/producto/${slug}`);
+  await page.getByRole("group", { name: "Grip" }).getByRole("button", { name: new RegExp(`^${variante.grip}\\b`) }).click();
+  await page.getByRole("group", { name: "Peso" }).getByRole("button", { name: `${variante.pesoG} g` }).click();
+  await page.getByRole("checkbox", { name: /Llevala encordada/ }).check();
+  await page.getByRole("button", { name: "Agregar al carrito" }).click();
+  await page.getByRole("status").filter({ hasText: "Agregado al carrito." }).waitFor();
+  return variante;
 }
 
 // Agrega al carrito la opción de un producto (que no sea raqueta) desde su

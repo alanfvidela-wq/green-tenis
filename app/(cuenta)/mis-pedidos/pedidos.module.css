@@ -133,6 +133,13 @@
   list-style: none;
 }
 
+/* El encordado de una raqueta, con la misma sangría debajo de ella */
+.encordado {
+  margin-top: var(--espacio-2);
+  padding-left: var(--espacio-4);
+  border-left: 1px solid var(--negro);
+}
+
 .lateral {
   display: flex;
   flex-direction: column;

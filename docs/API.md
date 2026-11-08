@@ -490,6 +490,44 @@ curl -b "sb-<proyecto>-auth-token=…" "https://<dominio>/api/v1/pedidos/0b6f5c9
 Los precios y los nombres son los que quedaron copiados al comprar, aunque el
 catálogo haya cambiado después.
 
+**Una raqueta encordada.** El servicio de encordado y el set de cuerda son
+líneas del pedido, como cualquier producto, y siguen en `sueltas` con sus
+precios de siempre. Además, `pedido_encordados` guarda a qué raqueta encordan
+(desde `0001`), y con eso:
+
+- la línea de la raqueta suma `encordado`: `texto` («Encordada con Babolat
+  RPM Blast 1.25 a 24 kg») y `total` (la raqueta, la cuerda y el servicio);
+- la línea de la cuerda y la del servicio suman `encordaA`, el `id` de esa
+  raqueta.
+
+Para mostrar el pedido agrupado, se dejan afuera las líneas con `encordaA` y se
+ponen debajo de su raqueta, como hacen la página del pedido, la administración
+y la preferencia de Mercado Pago (`lineasDe` en `lib/pedidos.js`). Con dos
+raquetas, una encordada y otra no, el `encordado` va solo en la que lo lleva.
+Los dos campos se sumaron sin cambiar los demás, así que un cliente que no los
+conoce sigue sumando bien las líneas.
+
+```json
+"sueltas": [
+  {
+    "id": "a1…", "slug": "babolat-pure-drive", "href": "/producto/babolat-pure-drive",
+    "nombre": "Babolat Pure Drive", "variante": "Grip 2 / 300 g",
+    "precioUnitario": 389000, "cantidad": 1, "subtotal": 389000,
+    "encordado": { "texto": "Encordada con Babolat RPM Blast 1.25 a 24 kg", "total": 438900 }
+  },
+  {
+    "id": "c3…", "slug": "babolat-rpm-blast-125", "href": "/producto/babolat-rpm-blast-125",
+    "nombre": "Babolat RPM Blast 1.25", "variante": "Set 12 m",
+    "precioUnitario": 34900, "cantidad": 1, "subtotal": 34900, "encordaA": "a1…"
+  },
+  {
+    "id": "e5…", "slug": "encordado", "href": null,
+    "nombre": "Encordado", "variante": "Tensión 24 kg",
+    "precioUnitario": 15000, "cantidad": 1, "subtotal": 15000, "encordaA": "a1…"
+  }
+]
+```
+
 **400** (`/pedidos/abc`, con sesión)
 
 ```json
@@ -727,7 +765,12 @@ Los pedidos de todos, el más nuevo primero.
       "nombre": "Ana Pérez", "destino": "Rosario, Santa Fe", "total": 777620,
       "creadoEn": "2026-10-25T18:20:00Z",
       "estado": { "clave": "pagado", "texto": "Pagado" },
-      "siguiente": "preparando"
+      "siguiente": "preparando",
+      "productos": [
+        { "texto": "1 × Babolat Pure Drive · Grip 2 / 300 g", "encordado": "Encordada con Babolat RPM Blast 1.25 a 24 kg" },
+        { "texto": "1 × Babolat Pure Drive · Grip 3 / 300 g", "encordado": null },
+        { "texto": "1 × Kit control", "detalle": "Wilson Blade 98 · Grip 2 / 305 g; Luxilon ALU Power 1.25 · Set 12 m; 2 × Dunlop Fort Clay Court · Tubo x3" }
+      ]
     }
   ],
   "paginacion": { "page": 1, "limit": 50, "total": 1, "paginas": 1 }
@@ -736,6 +779,10 @@ Los pedidos de todos, el más nuevo primero.
 
 `estado` es el mismo que ve el cliente (un pendiente puede verse «Pago en
 proceso» o «Vencido»); `siguiente`, a qué estado se lo puede pasar, o `null`.
+`productos` es lo que lleva el pedido, para prepararlo: cada combo con lo que
+trae y cada producto suelto con su opción; una raqueta encordada, con su
+`encordado` (la cuerda y el servicio no van solos). El listado de `/admin/pedidos`
+lo muestra debajo de cada fila.
 
 ### `PATCH /api/v1/pedidos/[id]`
 

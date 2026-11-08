@@ -494,20 +494,26 @@ checkout limpie lo que crea, CI en GitHub Actions y Speed Insights.
 
 - **Decisión:** los tests corren contra el build de producción y usan locators
   semánticos. El CI corre solo los tests que leen, con dos secrets públicos de
-  Supabase.
+  Supabase. El encordado se agrupa con lo que la base ya guardaba
+  (`pedido_encordados` sabe qué raqueta encorda cada servicio), sumando
+  campos a la API sin cambiar los que había.
 - **Descartado:** correr en CI el test que crea pedidos, limpiar con la clave
   secreta (se usa la sesión de la cuenta de prueba) y armar el build dos veces
-  en CI.
+  en CI. Para el encordado, una migración nueva (no hacía falta) y sacar la
+  cuerda y el servicio de la lista de la API (rompía a quien la usa).
 
 ## 6. Calidad
 
-- **Tests E2E** (`e2e/`, Playwright, Chromium): diez tests.
+- **Tests E2E** (`e2e/`, Playwright, Chromium): catorce tests.
   - Ocho recorren la tienda: la home, la grilla de Raquetas hasta una ficha,
     grip y peso con una combinación agotada, el carrito con el total, el
-    quiz, la protección de `/checkout`, el checkout hasta Mercado Pago y el
-    404 de un producto.
+    quiz, la protección de `/checkout`, el checkout de dos raquetas (una
+    encordada) hasta Mercado Pago con el pedido agrupado, y el 404 de un
+    producto.
   - Dos prueban la API de administración: 401 sin sesión y 403 con sesión
     sin el rol.
+  - Cuatro prueban, sin navegador, cómo se agrupa el encordado con su
+    raqueta en las líneas del pedido (`lineasDe`).
   - El del checkout escribe en la base (crea un pedido) y lo cancela al
     terminar. Lleva el tag `@escribe-en-base`.
   - Ver [`docs/TESTING.md`](TESTING.md), que suma seis casos de prueba

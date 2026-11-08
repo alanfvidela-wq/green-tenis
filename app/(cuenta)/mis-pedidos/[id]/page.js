@@ -42,7 +42,27 @@ function notaDe(pedido, pagoOnline) {
   }
 }
 
-function Linea({ linea }) {
+// Lo que suma el encordado de una raqueta: la cuerda (su set) y el servicio,
+// que va una línea por unidad y acá se junta en una
+function desgloseEncordado(partes) {
+  const servicios = partes.filter((parte) => parte.slug === "encordado");
+  const cuerdas = partes
+    .filter((parte) => parte.slug !== "encordado")
+    .map((cuerda) => `Cuerda: ${cuerda.variante} · ${cuerda.cantidad} × ${formatearPrecio(cuerda.precioUnitario)}`);
+  if (servicios.length === 0) return cuerdas;
+  const cantidad = servicios.reduce((suma, servicio) => suma + servicio.cantidad, 0);
+  const precios = new Set(servicios.map((servicio) => servicio.precioUnitario));
+  const servicio =
+    precios.size === 1
+      ? `Servicio de encordado · ${cantidad} × ${formatearPrecio(servicios[0].precioUnitario)}`
+      : `Servicio de encordado · ${formatearPrecio(servicios.reduce((suma, s) => suma + s.subtotal, 0))}`;
+  return [...cuerdas, servicio];
+}
+
+// Una línea del pedido. Una raqueta encordada lleva debajo, con sangría, con
+// qué cuerda y a qué tensión, y lo que suman la cuerda y el servicio; el monto
+// es el de las tres cosas (ver lineasDe en lib/pedidos.js)
+function Linea({ linea, partes = [] }) {
   return (
     <li className={styles.linea}>
       <div>
@@ -56,10 +76,30 @@ function Linea({ linea }) {
         <p className={styles.dato}>
           {linea.variante} · {linea.cantidad} × {formatearPrecio(linea.precioUnitario)}
         </p>
+        {linea.encordado && (
+          <div className={styles.encordado}>
+            <p>{linea.encordado.texto}</p>
+            {desgloseEncordado(partes).map((texto) => (
+              <p key={texto} className={styles.dato}>
+                {texto}
+              </p>
+            ))}
+          </div>
+        )}
       </div>
-      <p className={styles.monto}>{formatearPrecio(linea.subtotal)}</p>
+      <p className={styles.monto}>{formatearPrecio(linea.encordado?.total ?? linea.subtotal)}</p>
     </li>
   );
+}
+
+// Las líneas a la vista: las de la cuerda y el servicio de un encordado van
+// adentro de su raqueta
+function Lineas({ lineas }) {
+  return lineas
+    .filter((linea) => !linea.encordaA)
+    .map((linea) => (
+      <Linea key={linea.id} linea={linea} partes={lineas.filter((parte) => parte.encordaA === linea.id)} />
+    ));
 }
 
 export default async function PaginaPedido({ params, searchParams }) {
@@ -127,17 +167,13 @@ export default async function PaginaPedido({ params, searchParams }) {
                     {formatearPrecio(combo.descuento)}
                   </p>
                   <ul className={styles.items}>
-                    {combo.lineas.map((linea) => (
-                      <Linea key={linea.id} linea={linea} />
-                    ))}
+                    <Lineas lineas={combo.lineas} />
                   </ul>
                 </div>
                 <p className={styles.monto}>{formatearPrecio(combo.precio)}</p>
               </li>
             ))}
-            {pedido.sueltas.map((linea) => (
-              <Linea key={linea.id} linea={linea} />
-            ))}
+            <Lineas lineas={pedido.sueltas} />
           </ul>
         </section>
 
