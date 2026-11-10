@@ -6,9 +6,11 @@ Tienda online de tenis: raquetas, pelotas, cuerdas, grips y bolsos de marcas
 reales, más combos con descuento, encordado a medida y un quiz que recomienda
 un kit según cómo jugás. **En vivo: [green-tenis.vercel.app](https://green-tenis.vercel.app)**
 
-| Home | Ficha de producto | Quiz |
-| ---- | ----------------- | ---- |
-| ![Home](docs/capturas/home.jpg) | ![Ficha de producto](docs/capturas/ficha.jpg) | ![Kit del quiz](docs/capturas/quiz.jpg) |
+| Home | Ficha de producto |
+| ---- | ----------------- |
+| ![Home](docs/capturas/home.jpg) | ![Ficha de producto](docs/capturas/ficha.jpg) |
+| **Quiz** | **Administración** |
+| ![Kit del quiz](docs/capturas/quiz.jpg) | ![Productos en la administración](docs/capturas/admin.jpg) |
 
 ## Funcionalidades
 
