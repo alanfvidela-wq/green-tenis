@@ -62,6 +62,39 @@ test.describe("Navegación", () => {
     await expect(page.getByRole("button", { name: /Agregar al carrito|Sin stock/ })).toBeVisible();
   });
 
+  test("en Raquetas, el orden y los filtros cambian la grilla y quedan en la URL", async ({ page }) => {
+    await page.goto("/categoria/raquetas");
+    const filtros = page.getByRole("navigation", { name: "Ordenar y filtrar" });
+    const celdas = page.getByRole("main").getByRole("link").filter({ has: page.getByRole("heading", { level: 3 }) });
+    await expect(celdas.first()).toBeVisible();
+    const total = await celdas.count();
+
+    // Los precios de las celdas, como números («desde $ 349.000» → 349000)
+    const precios = async () =>
+      (await celdas.locator("p").allInnerTexts()).map((texto) => Number(texto.replace(/\D/g, "")));
+
+    await filtros.getByRole("link", { name: "Menor precio" }).click();
+    await expect(page).toHaveURL("/categoria/raquetas?orden=precio-asc");
+    await expect(filtros.getByRole("link", { name: "Menor precio" })).toHaveAttribute("aria-current", "true");
+    const ordenados = await precios();
+    expect(ordenados).toHaveLength(total);
+    expect(ordenados).toEqual([...ordenados].sort((a, b) => a - b));
+
+    // La marca se suma al orden, y la cuenta dice cuántos quedan
+    await filtros.getByRole("link", { name: "Wilson" }).click();
+    await expect(page).toHaveURL("/categoria/raquetas?orden=precio-asc&marca=wilson");
+    await expect(page.getByText(/^\d+ de \d+ productos$/)).toBeVisible();
+    const deWilson = await celdas.count();
+    expect(deWilson).toBeGreaterThan(0);
+    expect(deWilson).toBeLessThan(total);
+    await expect(page.getByText(`${deWilson} de ${total} productos`, { exact: true })).toBeVisible();
+
+    // «Todas» saca la marca y deja el orden
+    await filtros.getByRole("link", { name: "Todas" }).click();
+    await expect(page).toHaveURL("/categoria/raquetas?orden=precio-asc");
+    await expect(celdas).toHaveCount(total);
+  });
+
   test("un producto que no existe responde 404", async ({ page }) => {
     const respuesta = await page.goto("/producto/raqueta-que-no-existe");
 

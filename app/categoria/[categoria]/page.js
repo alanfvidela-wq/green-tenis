@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import BloqueFoto from "@/components/BloqueFoto";
+import FiltrosListado from "@/components/FiltrosListado";
 import GrillaProductos from "@/components/GrillaProductos";
 import { lugaresDe } from "@/lib/fotos";
 import { contar } from "@/lib/formato";
+import { armarListado } from "@/lib/listado";
 import { getCategoria, getProductosPorCategoria } from "@/lib/productos";
 import { compartir, tituloCompartir } from "@/lib/sitio";
 import styles from "../../listado.module.css";
@@ -23,12 +25,18 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function PaginaCategoria({ params }) {
+// El orden y los filtros vienen en la URL («?orden=precio-asc&marca=wilson»)
+// y se resuelven acá, en el servidor (lib/listado.js). La URL canónica es
+// siempre la de la categoría sin parámetros.
+export default async function PaginaCategoria({ params, searchParams }) {
   const { categoria: slug } = await params;
   const categoria = getCategoria(slug);
   if (!categoria) notFound();
 
-  const productos = await getProductosPorCategoria(slug);
+  const ruta = `/categoria/${slug}`;
+  // Las raquetas se filtran por nivel, que está en la ficha
+  const todos = await getProductosPorCategoria(slug, { conFicha: slug === "raquetas" });
+  const { productos, grupos, filtrado } = armarListado(todos, await searchParams, ruta);
   const [celda] = lugaresDe(slug, "celda");
   const [bloque] = lugaresDe(slug, "bloque");
 
@@ -43,7 +51,8 @@ export default async function PaginaCategoria({ params }) {
         <h1 className={`display ${styles.titulo}`}>{categoria.nombre}</h1>
         <p className={styles.descripcion}>{categoria.descripcion}</p>
         <p className={`dato ${styles.cuenta}`}>
-          {contar(productos.length, "producto", "productos")}
+          {filtrado && `${productos.length} de `}
+          {contar(filtrado ? todos.length : productos.length, "producto", "productos")}
         </p>
         {slug === "raquetas" && (
           <div className={styles.quiz}>
@@ -55,7 +64,18 @@ export default async function PaginaCategoria({ params }) {
         )}
       </header>
 
-      <GrillaProductos productos={productos} foto={celda} />
+      {todos.length > 1 && <FiltrosListado grupos={grupos} />}
+
+      {productos.length > 0 ? (
+        <GrillaProductos productos={productos} foto={celda} />
+      ) : (
+        <p className={styles.vacio}>
+          Ningún producto con esos filtros.{" "}
+          <Link href={ruta} scroll={false}>
+            Quitar los filtros
+          </Link>
+        </p>
+      )}
       <BloqueFoto lugar={bloque} className={styles.bloque} />
     </main>
   );

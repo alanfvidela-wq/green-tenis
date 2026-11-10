@@ -1,0 +1,57 @@
+/* Los grupos, uno al lado del otro; bajan de a uno cuando no entran */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-6) var(--espacio-12);
+  padding-bottom: var(--espacio-12);
+}
+
+.grupo {
+  min-width: 0;
+}
+
+/* Como la etiqueta de un campo */
+.rotulo {
+  margin-bottom: var(--espacio-3);
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
+}
+
+.opciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-2);
+  list-style: none;
+}
+
+/* Cada opción, una píldora con borde de 1px, como las de la ficha; la
+   elegida, en el acento con texto blanco */
+.opcion {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--espacio-2) var(--espacio-5);
+  border: 1px solid var(--negro);
+  border-radius: var(--radio-pildora);
+  background: var(--blanco);
+  color: var(--negro);
+  font-size: var(--t-chico);
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--transicion),
+    border-color var(--transicion);
+}
+
+.opcion:hover {
+  background: var(--hormigon);
+}
+
+.activa,
+.activa:hover {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: var(--blanco);
+}

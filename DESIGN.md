@@ -282,6 +282,26 @@ motivo debajo del nombre). La foto de cada celda la pone
 - **Toda la celda es un solo link** al producto (un solo paso de Tab).
 - Sin sombras, sin degradados, sin texto sobre la foto.
 
+### Orden y filtros
+
+En la página de cada categoría, entre el encabezado y la grilla
+(`FiltrosListado`, con `lib/listado.js`):
+
+- **Un grupo por cosa que se elige**, con el rótulo en mayúsculas a 13px (como
+  la etiqueta de un campo) y las opciones en píldoras de 44px con borde de 1px,
+  como las opciones de la ficha: «Ordenar» (Recomendados, que es el orden de
+  la tienda; Menor precio; Mayor precio), «Marca» (si hay más de una) y, en
+  las raquetas, «Nivel». La elegida va en el acento con texto blanco; la
+  primera de cada grupo es la que vale sin elegir nada.
+- **Cada opción es un link** a la misma página con los parámetros en la URL
+  (`?orden=precio-asc&marca=wilson&nivel=intermedio`): se resuelve en el
+  servidor, anda sin JavaScript, se puede compartir y no vuelve arriba. La URL
+  canónica sigue siendo la de la categoría sola.
+- **La cuenta** del encabezado pasa a «2 de 5 productos» cuando hay un filtro.
+  Si no queda ninguno: «Ningún producto con esos filtros.» y el link «Quitar
+  los filtros».
+- Los grupos van uno al lado del otro y bajan de a uno cuando no entran.
+
 ### Estados
 
 - **Hover y foco**: el producto escala a 1,03 (400ms) y la barra pasa a negro.

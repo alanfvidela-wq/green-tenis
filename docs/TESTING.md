@@ -17,6 +17,7 @@ Dos capas:
 | ------------------------- | ---------------------------------------------------------------------------- | ------------ |
 | `e2e/navegacion.spec.js`  | La home carga el hero y los links principales                                | El titular y «Ver raquetas» del hero, el logo, las seis secciones del header, «Mi cuenta», el carrito y que el botón del hero lleve a Raquetas |
 | `e2e/navegacion.spec.js`  | La grilla de Raquetas muestra productos y lleva a una ficha                  | Que la vitrina tenga celdas, que «N productos» coincida con las celdas y que la primera abra su ficha (el `h1` es el nombre de la celda) |
+| `e2e/navegacion.spec.js`  | En Raquetas, el orden y los filtros cambian la grilla y quedan en la URL     | «Menor precio» ordena las celdas por precio y queda en la URL; «Wilson» se suma al orden, deja menos celdas y la cuenta dice «N de M productos»; «Todas» saca la marca y deja el orden |
 | `e2e/navegacion.spec.js`  | Un producto que no existe responde 404                                       | El status HTTP 404 (no solo la pantalla) y «Página no encontrada». Es la regresión de [BUG-01](#bug-01-las-páginas-inexistentes-responden-200) |
 | `e2e/compra.spec.js`      | En la ficha, elegir grip y peso habilita «Agregar al carrito» y lo agotado no se puede elegir | Sin elegir, el botón deshabilitado y «Falta elegir grip y peso.»; con el grip de una combinación agotada, ese peso deshabilitado; con grip y peso, el botón habilitado, el aviso y el carrito del header en 1 |
 | `e2e/compra.spec.js`      | El carrito agrega, cambia la cantidad, quita y actualiza el total            | Dos pelotas desde su ficha; el total es la suma de las líneas; «Uno más» duplica la línea y sube el total; «Quitar» la saca y lo baja; sin líneas, «Tu carrito está vacío.» |
@@ -53,7 +54,7 @@ necesita además la función `cancelar_pedido`
 Después:
 
 ```bash
-npm run test:e2e        # los catorce
+npm run test:e2e        # los quince
 npm run test:e2e:ci     # todos menos los que escriben en la base (los del CI)
 ```
 
