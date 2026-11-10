@@ -8,9 +8,10 @@
   --hormigon: #e6e6e6;
   /* Solo el fondo de las fotos de producto */
   --estudio: #f4f5f2;
-  /* El acento: naranja polvo de ladrillo. El único color de la interfaz, solo
-     en acciones y estados activos, siempre con texto blanco (5,48:1). */
-  --acento: #b3471c;
+  /* El acento: verde césped, por el nombre de la tienda. El único color de la
+     interfaz, solo en acciones y estados activos, siempre con texto blanco
+     (6,33:1). */
+  --acento: #0f6e3c;
   /* El amarillo de la pelota: solo la pelota del wordmark y del favicon */
   --lima: #dcf900;
   --foco: var(--negro);

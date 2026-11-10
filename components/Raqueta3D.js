@@ -35,8 +35,9 @@ const FOV = 30;
 // La cámara mira de frente, un poco desde la derecha y desde arriba
 const AZIMUT = 0.32;
 const ELEVACION = 0.1;
-// El acento (--acento en globals.css): la parte activa
-const ACENTO = "#b3471c";
+// El acento, la parte activa: el mismo valor que --acento en globals.css (acá
+// va escrito porque los materiales se arman fuera de React y del CSS)
+const ACENTO = "#0f6e3c";
 // La raqueta: grafito satinado. Un poco más claro que --grafito (#333): con
 // la luz de estudio, ese se ve negro y se pierde la forma.
 const GRAFITO = "#4a4b48";

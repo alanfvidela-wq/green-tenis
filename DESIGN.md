@@ -55,30 +55,38 @@ baja, con mucho aire. **Pocas cosas, grandes y con aire.**
 | `--estudio` | Estudio | `#F4F5F2` | El fondo de las fotos de producto en la vitrina y la galería, y la banda de la anatomía de la raqueta |
 | `--negro` | Negro | `#000000` | Texto, bordes de 1px, la banda del footer |
 | `--grafito` | Grafito | `#333333` | Texto secundario sobre blanco, hormigón y estudio; la raqueta 3D de la anatomía |
-| `--acento` | Naranja polvo | `#B3471C` | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
+| `--acento` | Verde césped | `#0F6E3C` | El único color: botón principal, barra de la vitrina, carrito, estados activos, la parte activa de la raqueta |
 | `--lima` | Amarillo pelota | `#DCF900` | Solo la pelota del wordmark y del favicon |
 
 ### El acento
 
-**Naranja polvo** (`#B3471C`, un tono de polvo de ladrillo, cercano al de
-Roland Garros): uno solo en todo el sitio, y siempre con **texto blanco**
-encima. Se eligió en la muestra del rediseño entre tres opciones, medidas igual:
+**Verde césped** (`#0F6E3C`, el de una cancha de césped, cercano al de
+Wimbledon): uno solo en todo el sitio, y siempre con **texto blanco** encima.
+Acompaña el nombre de la tienda. Reemplazó al naranja polvo (`#B3471C`), y se
+eligió entre tres verdes, medidos igual:
 
-| Opción | Hex | Con blanco | Contra el negro | Contra hormigón | Como texto sobre el video |
-| --- | --- | --- | --- | --- | --- |
-| **Naranja polvo** (la elegida) | `#B3471C` | **5,48** | 3,83 | 4,39 | 1,02 |
-| Verde Wimbledon | `#0F6E3C` | 6,33 | 3,32 | 5,07 | 1,12 |
-| Azul cancha | `#1F5BBF` | 6,35 | 3,31 | 5,09 | 1,13 |
+| Opción | Hex | Con blanco | Contra hormigón | Contra el estudio | Contra el negro | Como texto sobre el video |
+| --- | --- | --- | --- | --- | --- | --- |
+| Césped oscuro | `#0F5C36` | 8,06 | 6,46 | 7,37 | 2,60 | — |
+| **Verde césped** (el elegido) | `#0F6E3C` | **6,33** | **5,07** | **5,79** | 3,32 | 1,12 |
+| Verde vivo | `#0A8043` | 5,02 | 4,02 | 4,59 | 4,18 | — |
+| Naranja polvo (el de antes) | `#B3471C` | 5,48 | 4,39 | 5,00 | 3,83 | 1,02 |
 
 - **«Con blanco»** vale en los dos sentidos: texto blanco sobre el acento (en
-  botones, barras y el carrito) y el acento como texto sobre blanco: 5,48:1,
-  AA.
-- **Contra el negro** da 3,83:1 y **contra el estudio**, 5,00:1: más que el 3:1
-  de un componente. Alcanza para la parte activa de la raqueta sobre la banda
-  de la anatomía.
-- **Sobre el video no se lee** (1,02:1 en el cuadro más claro): el titular del
+  botones, barras y el carrito) y el acento como texto sobre blanco: 6,33:1,
+  AA. Como texto también pasa sobre hormigón (5,07:1) y sobre estudio
+  (5,79:1).
+- **Contra el negro** da 3,32:1: más que el 3:1 de un componente. Es el paso
+  del botón a su hover, que sigue siendo negro. El césped oscuro no llegaba
+  (2,60:1) y el vivo no pasaba como texto sobre hormigón (4,02:1).
+- **Contra el estudio**, 5,79:1: alcanza para la parte activa de la raqueta
+  sobre la banda de la anatomía.
+- **Sobre el video no se lee** (1,12:1 en el cuadro más claro): el titular del
   hero va en blanco y el acento queda en el botón.
-- El lima de antes ya no es acento: es el amarillo de la pelota del wordmark.
+- **Un solo token**: no hay variante de hover (es el negro) ni de fondo suave.
+  La raqueta 3D lo repite escrito (`ACENTO` en `components/Raqueta3D.js`): si
+  cambia el token, cambia ahí también.
+- El lima no es acento: es el amarillo de la pelota del wordmark.
 
 ### Contrastes de los neutros
 
@@ -485,7 +493,7 @@ Sin cintas con leyendas ni bloques de slogan.
   lado), así va de borde a borde (44px en 375); en desktop se frena en 8,5rem
   (136px, lo que medía el titular de antes en 1280): grande, sin ocupar todo
   el ancho. Es la única display que se calcula así. El acento no se lee sobre el video
-  (1,02:1). Debajo, qué se vende, en blanco («Todo para jugar al tenis:
+  (1,12:1). Debajo, qué se vende, en blanco («Todo para jugar al tenis:
   raquetas, pelotas, cuerdas, grips y bolsos de las marcas que ya
   conocés.»), y el botón del acento, grande (60px de alto). El `<title>`
   («green. — Todo para el tenis») y la descripción dicen que es una tienda de
@@ -769,7 +777,7 @@ parte por parte. Lo que sigue es lo propio de la sección.
   fotos de producto, sin texturas ni dibujos. Entra y sale con un borde recto.
 - Negro para el texto, los títulos, las líneas guía y el contorno de los
   puntos; grafito para la bajada, el número y el dato de cada paso; el acento
-  para la parte activa (5,00:1 contra el estudio).
+  para la parte activa (5,79:1 contra el estudio).
 - **La raqueta contrasta con la banda**: la 3D va en grafito satinado, con las
   cuerdas claras; la dibujada, en relleno blanco con contorno negro. Las dos
   llevan una **sombra suave** (un `drop-shadow` de CSS, negro al 20%, 22px de
