@@ -562,9 +562,7 @@ muestran y se venden como un producto más, con las mismas piezas.
 
 Seis preguntas sobre cómo se juega que terminan en un kit del catálogo: dos o
 tres raquetas, una cuerda y una pelota, cada una con por qué encaja. Se llega
-desde «Quiz» en el header, desde la home y desde la categoría raquetas («¿No
-sabés cuál elegir?» y el botón secundario «Hacer el quiz de juego», debajo de
-la cantidad).
+solo desde «Quiz» en el header y desde la home: los listados no lo ofrecen.
 
 - **Las preguntas** (`PREGUNTAS` en `lib/quiz.js`): nivel, cuántas veces por
   semana, desde dónde (fondo, red o toda la cancha), potencia o control, si

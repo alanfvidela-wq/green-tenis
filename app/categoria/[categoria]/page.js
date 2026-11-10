@@ -54,14 +54,6 @@ export default async function PaginaCategoria({ params, searchParams }) {
           {filtrado && `${productos.length} de `}
           {contar(filtrado ? todos.length : productos.length, "producto", "productos")}
         </p>
-        {slug === "raquetas" && (
-          <div className={styles.quiz}>
-            <p>¿No sabés cuál elegir? Seis preguntas sobre cómo jugás y te recomendamos dos o tres.</p>
-            <Link href="/quiz" className="boton boton-secundario">
-              Hacer el quiz de juego
-            </Link>
-          </div>
-        )}
       </header>
 
       {todos.length > 1 && <FiltrosListado grupos={grupos} />}
