@@ -5,13 +5,22 @@ import GrillaProductos from "@/components/GrillaProductos";
 import { lugaresDe } from "@/lib/fotos";
 import { contar } from "@/lib/formato";
 import { getCategoria, getProductosPorCategoria } from "@/lib/productos";
+import { compartir, tituloCompartir } from "@/lib/sitio";
 import styles from "../../listado.module.css";
 
 export async function generateMetadata({ params }) {
   const { categoria: slug } = await params;
   const categoria = getCategoria(slug);
   if (!categoria) return { title: "Categoría no encontrada" };
-  return { title: categoria.nombre, description: categoria.descripcion };
+  return {
+    title: categoria.nombre,
+    description: categoria.descripcion,
+    ...compartir({
+      titulo: tituloCompartir(categoria.nombre),
+      descripcion: categoria.descripcion,
+      ruta: `/categoria/${categoria.slug}`,
+    }),
+  };
 }
 
 export default async function PaginaCategoria({ params }) {

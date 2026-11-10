@@ -2,6 +2,7 @@ import Link from "next/link";
 import GrillaProductos from "@/components/GrillaProductos";
 import { getCombos } from "@/lib/combos";
 import { contar } from "@/lib/formato";
+import { compartir, tituloCompartir } from "@/lib/sitio";
 import styles from "../listado.module.css";
 
 // Qué es un combo, en una línea: la bajada del encabezado y la descripción
@@ -9,7 +10,11 @@ import styles from "../listado.module.css";
 const DESCRIPCION =
   "Raqueta, cuerda y pelotas elegidas para cada forma de jugar, o pelotas y grips para entrenar: juntos salen menos que comprando cada producto por separado.";
 
-export const metadata = { title: "Combos", description: DESCRIPCION };
+export const metadata = {
+  title: "Combos",
+  description: DESCRIPCION,
+  ...compartir({ titulo: tituloCompartir("Combos"), descripcion: DESCRIPCION, ruta: "/combos" }),
+};
 
 export default async function PaginaCombos() {
   const combos = await getCombos();

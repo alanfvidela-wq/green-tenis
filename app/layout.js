@@ -2,6 +2,7 @@ import { Archivo, Inter_Tight } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { DESCRIPCION_SITIO, TITULO_SITIO, URL_SITIO, compartir } from "@/lib/sitio";
 import "./globals.css";
 
 // La display: Archivo extra condensada (ancho 62, peso 900), en mayúsculas en
@@ -21,13 +22,17 @@ const texto = Inter_Tight({
   weight: "400",
 });
 
+// metadataBase: contra qué se resuelven las URLs relativas de los metadatos
+// (la canónica, las imágenes al compartir). Lo de compartir es lo general de
+// la tienda: vale para las páginas que no definen lo suyo.
 export const metadata = {
+  metadataBase: new URL(URL_SITIO),
   title: {
-    default: "green. — Todo para el tenis",
+    default: TITULO_SITIO,
     template: "%s | green.",
   },
-  description:
-    "Raquetas, pelotas, cuerdas, grips y bolsos de tenis.",
+  description: DESCRIPCION_SITIO,
+  ...compartir({ titulo: TITULO_SITIO, descripcion: DESCRIPCION_SITIO }),
 };
 
 export default function RootLayout({ children }) {

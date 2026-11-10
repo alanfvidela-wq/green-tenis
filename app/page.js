@@ -12,7 +12,15 @@ import {
 import { lugaresDe } from "@/lib/fotos";
 import { contar } from "@/lib/formato";
 import { CATEGORIAS, getProductos } from "@/lib/productos";
+import { DESCRIPCION_SITIO, TITULO_SITIO, compartir } from "@/lib/sitio";
 import styles from "./page.module.css";
+
+// El título y la descripción son los del layout; acá, la URL canónica
+export const metadata = compartir({
+  titulo: TITULO_SITIO,
+  descripcion: DESCRIPCION_SITIO,
+  ruta: "/",
+});
 
 export default async function Home() {
   const productos = await getProductos();

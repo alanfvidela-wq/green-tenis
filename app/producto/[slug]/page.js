@@ -10,6 +10,8 @@ import { ProveedorVariante } from "@/components/VarianteElegida";
 import { getCombosConProducto } from "@/lib/combos";
 import { ENVIOS_Y_DEVOLUCIONES } from "@/lib/envio";
 import { getFicha } from "@/lib/fichas";
+import { formatearPrecio } from "@/lib/formato";
+import { imagenDeFicha } from "@/lib/imagenCompartir";
 import { medidoresDe } from "@/lib/medidores";
 import { varianteInicial } from "@/lib/opciones";
 import {
@@ -18,16 +20,63 @@ import {
   getProductoPorSlug,
   getServicioEncordado,
   setDeCuerda,
+  tienePreciosDistintos,
+  tieneStock,
 } from "@/lib/productos";
+import { URL_SITIO, compartir, precioCompartir, tituloCompartir } from "@/lib/sitio";
 import styles from "./ficha.module.css";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const producto = await getProductoPorSlug(slug);
   if (!producto) return { title: "Producto no encontrado" };
+
+  // Al compartir: el precio adelante (con «desde» si hay variantes más caras)
+  // y la foto principal sobre estudio
+  const nombre = `${producto.marca} ${producto.nombre}`;
+  const ruta = `/producto/${producto.slug}`;
+  const precio = `${tienePreciosDistintos(producto) ? "Desde " : ""}${formatearPrecio(producto.precioBase)}`;
   return {
-    title: `${producto.marca} ${producto.nombre}`,
+    title: nombre,
     description: producto.descripcion,
+    ...compartir({
+      titulo: tituloCompartir(nombre),
+      descripcion: `${precio} · ${producto.descripcion}`,
+      ruta,
+      imagen: producto.fotos.length > 0 ? imagenDeFicha(ruta, nombre) : undefined,
+    }),
+    other: precioCompartir(producto.precioBase),
+  };
+}
+
+// Los datos del producto para los buscadores (JSON-LD, schema.org/Product):
+// con un solo precio, una oferta; con varios, el rango. Hay stock si lo tiene
+// alguna variante.
+function datosEstructurados(producto) {
+  const precios = producto.variantes.map((v) => v.precio);
+  const oferta = {
+    priceCurrency: "ARS",
+    availability: tieneStock(producto)
+      ? "https://schema.org/InStock"
+      : "https://schema.org/OutOfStock",
+    url: `${URL_SITIO}/producto/${producto.slug}`,
+  };
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `${producto.marca} ${producto.nombre}`,
+    description: producto.descripcion,
+    brand: { "@type": "Brand", name: producto.marca },
+    ...(producto.fotos.length > 0 && { image: producto.fotos }),
+    offers: tienePreciosDistintos(producto)
+      ? {
+          "@type": "AggregateOffer",
+          lowPrice: Math.min(...precios),
+          highPrice: Math.max(...precios),
+          offerCount: precios.length,
+          ...oferta,
+        }
+      : { "@type": "Offer", price: producto.precioBase, ...oferta },
   };
 }
 
@@ -112,6 +161,13 @@ export default async function PaginaProducto({ params }) {
 
   return (
     <main>
+      {/* El < va escapado: el JSON queda dentro de un <script> */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(datosEstructurados(producto)).replace(/</g, "\\u003c"),
+        }}
+      />
       <nav className="migas" aria-label="Ubicación">
         <Link href="/">Inicio</Link>
         <span aria-hidden="true">/</span>

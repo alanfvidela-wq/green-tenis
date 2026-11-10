@@ -4,13 +4,34 @@ import ComboImagen from "@/components/ComboImagen";
 import GaleriaProducto from "@/components/GaleriaProducto";
 import SelectorCombo from "@/components/SelectorCombo";
 import { comboTienePreciosDistintos, getComboPorSlug, lineasDeCombo } from "@/lib/combos";
+import { formatearPrecio } from "@/lib/formato";
+import { fotosDeCombo, imagenDeFicha } from "@/lib/imagenCompartir";
+import { compartir, precioCompartir, tituloCompartir } from "@/lib/sitio";
 import styles from "../../detalle.module.css";
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
   const combo = await getComboPorSlug(slug);
   if (!combo) return { title: "Combo no encontrado" };
-  return { title: combo.nombre, description: combo.descripcion };
+
+  // Al compartir: el precio adelante (con «desde» si depende de lo que se
+  // elige) y la imagen armada con las fotos de lo que trae
+  const ruta = `/combo/${combo.slug}`;
+  const precio = `${comboTienePreciosDistintos(combo) ? "Desde " : ""}${formatearPrecio(combo.precioDesde)}`;
+  return {
+    title: combo.nombre,
+    description: combo.descripcion,
+    ...compartir({
+      titulo: tituloCompartir(combo.nombre),
+      descripcion: `${precio} · ${combo.descripcion}`,
+      ruta,
+      imagen:
+        fotosDeCombo(combo).length > 0
+          ? imagenDeFicha(ruta, `${combo.nombre}: ${lineasDeCombo(combo).join(", ")}`)
+          : undefined,
+    }),
+    other: precioCompartir(combo.precioDesde),
+  };
 }
 
 export default async function PaginaCombo({ params }) {
