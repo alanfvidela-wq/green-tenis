@@ -135,8 +135,9 @@ métricas de respaldo en next/font (al cargar movería el texto).
 
 Uso: **siempre en mayúsculas** (`text-transform`, el texto se escribe normal),
 `font-stretch: 62%`, peso 900, tracking 0, `text-wrap: balance`. Nunca por
-debajo de 2rem ni en párrafos. A la izquierda; solo el hero y los estados se
-centran.
+debajo de 2rem ni en párrafos, con una excepción: los títulos de los pasos de
+la anatomía en mobile van a 1,75rem, porque el paso entero tiene que entrar
+debajo de la raqueta. A la izquierda; solo el hero y los estados se centran.
 
 **Interlineado: 0,92.** Con menos, las tildes de las mayúsculas (Á É Í Ó Ú Ñ,
 que en Archivo suben hasta 0,89em) tocan la línea de arriba.
@@ -223,8 +224,28 @@ cualquier acento.
 - **Se esconde en la anatomía**: mientras la raqueta queda fija y la sección
   ocupa la pantalla, el header se desliza para arriba; vuelve al salir de la
   sección o al scrollear para arriba (ver «Anatomía de una raqueta»).
-- Por debajo de 1024px los links de las secciones bajan a una segunda fila con
-  scroll horizontal; arriba quedan el wordmark, «Mi cuenta» y el carrito.
+- **El wordmark mide lo que mide** (no se estira a su columna): el anillo de
+  foco, que como todos aparece solo con `:focus-visible`, lo rodea a él.
+- De 640 a 1023px los links de las secciones bajan a una segunda fila (las
+  seis entran); arriba quedan el wordmark, «Mi cuenta» y el carrito.
+- **En el celular (menos de 640px), el menú**: una sola fila con el wordmark,
+  el botón «Menú» y el carrito. «Menú» es texto como los links (subrayado
+  mientras está abierto), no una hamburguesa ni una píldora. Abre una hoja
+  blanca debajo del header, hasta abajo de la pantalla, con las seis secciones
+  y «Mi cuenta» una debajo de la otra, como los links del footer (48px de
+  alto). Sobre el video, con el menú abierto el header pasa a la banda blanca.
+  Es un disclosure (`MenuSecciones`): `aria-expanded` y `aria-controls` en el
+  botón, los links siguen en el orden de tabulación, y se cierra con el mismo
+  botón, con Escape (el foco vuelve al botón), al elegir un link, al tocar
+  afuera o cuando el foco sale del menú. Con el menú abierto, el header no se
+  esconde en la anatomía.
+  - Por qué un menú y no la fila con scroll horizontal: en 375px entraban
+    cuatro secciones y media, y «Combos» y «Quiz» quedaban afuera sin nada
+    que dijera que seguían. El indicio tendría que ser un degradado o una
+    sombra en el borde (fuera del sistema) o flechas, y con el mouse la fila
+    no se scrollea. El menú las muestra todas juntas, con aire, sigue siendo
+    texto en mayúsculas y deja el header en una fila (60px en vez de 104px),
+    que es pantalla para el resto, sobre todo en la anatomía.
 
 ### Botones
 
@@ -766,8 +787,8 @@ sin 3D y la va a usar «Armá tu raqueta».
 
 ## Anatomía de una raqueta
 
-Una sección de la home, entre los dos bloques de foto, que explica la raqueta
-parte por parte. Lo que sigue es lo propio de la sección.
+Una sección de la home, después del bloque de foto y antes de las categorías,
+que explica la raqueta parte por parte. Lo que sigue es lo propio de la sección.
 
 ### Color y fondo
 
@@ -823,24 +844,41 @@ vista.
   sale del escenario. El nombre lleva el fondo de estudio de la banda (no se
   ve como recuadro): si en el 3D llega a rozar el marco, se sigue leyendo. Con el
   3D se ve solo el del paso activo; en la versión dibujada, todos.
+- **En mobile, pegado al marco**: el nombre va a la altura de su parte, justo
+  afuera del borde de la silueta de ese lado (con 8px de separación y una
+  línea de 18px como mínimo), nunca sobre las cuerdas. El borde sale de la
+  silueta medida sobre los vértices del modelo (ancho y espesor, porque la
+  cámara mira un poco de costado), en una franja de ±1,5cm alrededor de la
+  parte (el nombre tiene alto). «Punto dulce» va en dos líneas, a 12px.
 - **Sin palabra gigante detrás de la raqueta**: el nombre ya está en el título
   del paso y en la etiqueta de la parte.
 - **Titular y pasos**: el titular de la sección en la display a
   `--t-display-2`; los títulos de los pasos en la display a `--t-display-4`.
   Debajo del título va primero la frase, grande (`--t-titulo`), y después el
   dato técnico, chico (0,875rem, en grafito), separados por espacio.
+- **Pasos en mobile, compactos**: arriba «03 / 11» (cuál es y cuántas son, en
+  grafito, 13px), el título a 1,75rem, la frase en texto normal (1rem) y el
+  dato debajo, con poco espacio entre uno y otro y el texto arriba, pegado a la
+  raqueta.
 
 ### Estructura
 
 - **Desktop**: la raqueta queda fija (sticky) a la izquierda, en un escenario
   de toda la pantalla (100dvh), y los pasos van pasando a la derecha, uno por
-  pantalla. **Mobile**: la raqueta fija arriba (55dvh, de borde a borde) y los
-  pasos abajo. En dvh, así en mobile no la tapa la barra del navegador.
+  pantalla. **Mobile**: la raqueta fija arriba, de borde a borde, y debajo el
+  paso activo; entre los dos ocupan la pantalla entera (100dvh). Cada paso
+  mide lo que queda debajo de la raqueta, así entra justo uno a la vez, sin
+  espacio vacío abajo. El escenario se queda con lo que no ocupa el texto del
+  paso más largo (lo mide AnatomiaRaqueta en `--alto-texto`), nunca menos de
+  46dvh: en 375×812, 555px de raqueta y 257px de texto. En dvh, así en mobile
+  no la tapa la barra del navegador.
 - **Pantalla completa**: el escenario se pega arriba de todo y, mientras está
   fijo, el header se esconde (AnatomiaRaqueta marca `data-sin-header` en
   `<html>`). Vuelve al salir de la sección, para arriba o para abajo, y
   apenas se scrollea para arriba adentro, para poder navegar. Si algo del
-  header toma el foco (con Tab), también vuelve.
+  header toma el foco (con Tab), también vuelve; pero tener el foco adentro
+  no lo deja fijo (antes, después de tocar el logo, que se queda con el foco,
+  el header no se escondía más).
 - **Un paso por parte, de arriba hacia abajo**, con la terminología técnica
   en castellano: marco, protector, ojales, encordado, punto dulce,
   antivibrador, garganta, empuñadura, grip, overgrip y tapón. Cada paso tiene
@@ -867,6 +905,12 @@ vista.
   en el protector o el antivibrador; en las partes angostas (empuñadura, grip,
   tapón) el acercamiento no cambia. Los focos y las anclas de cada paso
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
+- **En mobile, además**: la cámara se aleja hasta que, a la altura de la
+  parte, al costado de la raqueta entre su nombre afuera del marco (en el
+  final, el de todas las partes). Entre un paso y otro, en el medio. Y no deja
+  más de 4cm de aire arriba de la punta ni abajo del tapón: si se alejó, la
+  raqueta llena el escenario en vez de quedar arriba o abajo con la mitad
+  vacía. Así se ve entera, o completa la zona del paso, y centrada de costado.
 - **Al activarse un paso**: la parte pasa al acento (el encordado brilla,
   aparece el disco del punto dulce o el antivibrador pasa al acento), el nombre
   de la parte aparece con su línea guía (un fundido corto). El paso activo se

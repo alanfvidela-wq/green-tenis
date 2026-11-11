@@ -41,12 +41,15 @@ const Raqueta3D = dynamic(() => import("./Raqueta3D"), { ssr: false });
 // 1% de ancho
 const PROPORCION = LIENZO.alto / LIENZO.ancho;
 
-// Hasta dónde se alejan los stickers del centro, en % de la escena. En
-// pantallas angostas, menos: si no, se salen por el borde.
+// Hasta dónde se alejan los stickers del centro, en % de la escena (desktop)
 const LIMITES = { derecha: [60, 80], izquierda: [20, 40] };
-const LIMITES_ANGOSTOS = { derecha: [56, 72], izquierda: [28, 44] };
 // Aire entre el sticker y el borde del escenario, en px
 const AIRE = 8;
+// En mobile el nombre va afuera del marco: a esta distancia del borde de la
+// silueta y con la línea guía de este largo como mínimo, en px. Raqueta3D
+// aleja la cámara lo necesario para que entre (ver LUGAR_NOMBRE).
+const SEPARACION = 8;
+const GUIA_MINIMA = 18;
 // Cuánto tiene que moverse el scroll (en px, de un cuadro al otro) para contar
 // como que sube o baja: el header no parpadea con un temblor del touchpad
 const UMBRAL_SCROLL = 2;
@@ -62,6 +65,11 @@ function posicionMarca(paso, x, y, limites = LIMITES) {
     paso.lado === "derecha"
       ? limitar(x + distancia, ...limites.derecha)
       : limitar(x - distancia, ...limites.izquierda);
+  return trazo(x, y, ex);
+}
+
+// Las variables del sticker y su línea: del punto (x, y) al nombre, en ex
+function trazo(x, y, ex) {
   const ey = limitar(y, 6, 94);
   const dx = ex - x;
   const dy = (ey - y) * PROPORCION;
@@ -110,6 +118,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     fraccion: 1,
     anchoEscenario: 1,
     stickers: [],
+    angosta: false,
   });
   const angosta = useRef(false);
 
@@ -117,23 +126,36 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
   const [modo3d, setModo3d] = useState(false);
   const alListo = useCallback(() => setModo3d(true), []);
 
-  // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo.
-  // Los límites se achican para que el sticker entero quede dentro del
-  // escenario: si no, lo corta el borde.
+  // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo
+  // (x, y) y, en mobile, dónde está el borde de la silueta a esa altura, del
+  // lado del nombre (borde). Todo en % de la escena. Los límites se achican
+  // para que el sticker entero quede dentro del escenario: si no, lo corta el
+  // borde.
   const colocarMarca = useCallback(
-    (indice, x, y) => {
+    (indice, x, y, borde) => {
       const marca = refMarcas.current[indice];
       if (!marca) return;
+      const paso = pasos[indice];
       const { escena, anchoEscenario, stickers } = medidas.current;
-      const base = angosta.current ? LIMITES_ANGOSTOS : LIMITES;
-      const sticker = (((stickers[indice] ?? 0) + AIRE) / escena.ancho) * 100;
-      const izquierda = (-escena.x / escena.ancho) * 100 + sticker;
-      const derecha = ((anchoEscenario - escena.x) / escena.ancho) * 100 - sticker;
-      const limites = {
-        derecha: [Math.min(base.derecha[0], derecha), Math.min(base.derecha[1], derecha)],
-        izquierda: [Math.max(base.izquierda[0], izquierda), Math.max(base.izquierda[1], izquierda)],
-      };
-      const lugar = posicionMarca(pasos[indice], x, y, limites);
+      const enEscena = (px) => (px / escena.ancho) * 100;
+      const sticker = enEscena((stickers[indice] ?? 0) + AIRE);
+      const izquierda = enEscena(-escena.x) + sticker;
+      const derecha = enEscena(anchoEscenario - escena.x) - sticker;
+      let lugar;
+      if (angosta.current && borde !== undefined) {
+        // Mobile: afuera del marco, pegado al borde de la silueta
+        const ex =
+          paso.lado === "derecha"
+            ? Math.min(Math.max(x + enEscena(GUIA_MINIMA), borde + enEscena(SEPARACION)), derecha)
+            : Math.max(Math.min(x - enEscena(GUIA_MINIMA), borde - enEscena(SEPARACION)), izquierda);
+        lugar = trazo(x, y, ex);
+      } else {
+        const limites = {
+          derecha: [Math.min(LIMITES.derecha[0], derecha), Math.min(LIMITES.derecha[1], derecha)],
+          izquierda: [Math.max(LIMITES.izquierda[0], izquierda), Math.max(LIMITES.izquierda[1], izquierda)],
+        };
+        lugar = posicionMarca(paso, x, y, limites);
+      }
       for (const [variable, valor] of Object.entries(lugar)) {
         marca.style.setProperty(variable, valor);
       }
@@ -152,13 +174,14 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     function medir() {
       const s = escenario.getBoundingClientRect();
       const e = escena.getBoundingClientRect();
+      angosta.current = consulta.matches;
       medidas.current = {
         escena: { x: e.left - s.left, y: e.top - s.top, ancho: e.width, alto: e.height },
         fraccion: e.height / s.height,
         anchoEscenario: s.width,
         stickers: etiquetas.map((etiqueta) => etiqueta?.offsetWidth ?? 0),
+        angosta: angosta.current,
       };
-      angosta.current = consulta.matches;
     }
     medir();
     const observador = new ResizeObserver(medir);
@@ -169,11 +192,37 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     return () => observador.disconnect();
   }, [cargar3d]);
 
+  // En mobile, la raqueta arriba y el paso activo abajo llenan la pantalla
+  // (100dvh): el escenario se queda con lo que no ocupa el texto del paso más
+  // largo (--alto-texto, que mira el CSS). Se vuelve a medir si cambia el
+  // ancho o carga la fuente.
+  useEffect(() => {
+    const raiz = refRaiz.current;
+    const elementos = [...raiz.querySelectorAll("[data-paso]")];
+    function medir() {
+      let mayor = 0;
+      for (const paso of elementos) {
+        const { paddingTop, paddingBottom } = getComputedStyle(paso);
+        const arriba = paso.firstElementChild.getBoundingClientRect().top;
+        const abajo = paso.lastElementChild.getBoundingClientRect().bottom;
+        mayor = Math.max(mayor, abajo - arriba + parseFloat(paddingTop) + parseFloat(paddingBottom));
+      }
+      if (mayor > 0) raiz.style.setProperty("--alto-texto", `${Math.ceil(mayor)}px`);
+    }
+    medir();
+    const observador = new ResizeObserver(medir);
+    elementos.forEach((paso) => [...paso.children].forEach((hijo) => observador.observe(hijo)));
+    return () => observador.disconnect();
+  }, []);
+
   // Pantalla completa: mientras el escenario está fijo arriba de todo, el
   // header se esconde (se desliza para arriba). Vuelve al salir de la
   // sección, para arriba o para abajo, y apenas se scrollea para arriba
   // adentro, para poder navegar. Se marca en <html> (data-sin-header), que es
   // lo que mira el header; con prefers-reduced-motion cambia sin deslizarse.
+  // Si algo del header toma el foco (con Tab) también vuelve, pero no se queda
+  // fijo por tener el foco: si no, después de tocar el logo (que queda con el
+  // foco) no se escondía más.
   useEffect(() => {
     const anatomia = refAnatomia.current;
     const escenario = refEscenario.current;
@@ -185,7 +234,8 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
       cuadro = 0;
       const y = window.scrollY;
       const { top, bottom } = anatomia.getBoundingClientRect();
-      const fija = top <= 0 && bottom >= escenario.offsetHeight;
+      // Con un píxel de tolerancia: justo al fijarse, top queda en fracciones
+      const fija = top <= 1 && bottom >= escenario.offsetHeight;
       if (!fija || y < ultimoY - UMBRAL_SCROLL) html.removeAttribute("data-sin-header");
       else if (y > ultimoY + UMBRAL_SCROLL) html.setAttribute("data-sin-header", "");
       ultimoY = y;
@@ -193,13 +243,18 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     function pedir() {
       if (!cuadro) cuadro = requestAnimationFrame(mirar);
     }
+    function alFoco(evento) {
+      if (evento.target.closest?.("[data-cabecera]")) html.removeAttribute("data-sin-header");
+    }
 
     window.addEventListener("scroll", pedir, { passive: true });
     window.addEventListener("resize", pedir);
+    document.addEventListener("focusin", alFoco);
     return () => {
       cancelAnimationFrame(cuadro);
       window.removeEventListener("scroll", pedir);
       window.removeEventListener("resize", pedir);
+      document.removeEventListener("focusin", alFoco);
       html.removeAttribute("data-sin-header");
     };
   }, []);
@@ -209,19 +264,22 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     if (!modo3d) return;
 
     const raiz = refRaiz.current;
-    const escena = refEscena.current;
     const mobile = window.matchMedia("(max-width: 859px)");
     const elementosPasos = [...raiz.querySelectorAll("[data-paso]")];
     const bloqueCierre = raiz.querySelector("[data-cierre]");
     const escenario = refEscenario.current;
 
+    // La línea de lectura: el centro de la pantalla; en mobile, el centro de
+    // lo que queda debajo del escenario, donde un paso entra justo
+    function lineaDeLectura() {
+      const alto = window.innerHeight;
+      return mobile.matches ? (escenario.getBoundingClientRect().bottom + alto) / 2 : alto / 2;
+    }
+
     // Progreso continuo: 0 con el primer paso en la línea de lectura, 1 con
     // el segundo, etc. De -1 (antes del primero) a pasos.length (después).
     function progreso() {
-      const alto = window.innerHeight;
-      const linea = mobile.matches
-        ? (escena.getBoundingClientRect().bottom + alto) / 2
-        : alto / 2;
+      const linea = lineaDeLectura();
       const centros = elementosPasos.map((el) => {
         const r = el.getBoundingClientRect();
         return r.top + r.height / 2;
@@ -241,10 +299,7 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     // Avance dentro del bloque de cierre: 0 cuando su borde de arriba cruza la
     // línea de lectura, 1 justo antes de que la raqueta deje de estar fija
     function avanceFinal() {
-      const alto = window.innerHeight;
-      const linea = mobile.matches
-        ? (escena.getBoundingClientRect().bottom + alto) / 2
-        : alto / 2;
+      const linea = lineaDeLectura();
       const r = bloqueCierre.getBoundingClientRect();
       const resto = Math.max(0, escenario.getBoundingClientRect().bottom - linea);
       return limitar((linea - r.top) / Math.max(1, r.height - resto), 0, 1);
@@ -364,8 +419,11 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
           <ol className={styles.pasos}>
             {pasos.map((paso, i) => (
               <li key={paso.id} className={styles.paso} data-paso={i}>
+                {/* «03 / 11» en mobile, «03» en desktop. La lista ya dice
+                    cuántas son a los lectores de pantalla. */}
                 <span className={styles.numero} aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
+                  <span className={styles.total}> / {String(pasos.length).padStart(2, "0")}</span>
                 </span>
                 <h3 className={styles.titulo}>{paso.titulo}</h3>
                 <p className={styles.frase}>{paso.frase}</p>

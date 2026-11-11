@@ -68,6 +68,7 @@ export default function CabeceraFlotante({ className, children }) {
     <header
       ref={ref}
       className={className}
+      data-cabecera
       data-transparente={transparente || undefined}
     >
       {children}

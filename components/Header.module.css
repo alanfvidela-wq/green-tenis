@@ -15,8 +15,9 @@
 
 /* Escondido mientras la anatomía de la raqueta ocupa la pantalla (la marca
    AnatomiaRaqueta en <html>): se desliza para arriba. Si algo de adentro toma
-   el foco (con Tab), vuelve. */
-:global(html[data-sin-header]) .header:not(:focus-within) {
+   el foco (con Tab), AnatomiaRaqueta lo hace volver. Con el menú abierto no
+   se esconde. */
+:global(html[data-sin-header]) .header:not(:has(.menu[aria-expanded="true"])) {
   transform: translateY(-100%);
 }
 
@@ -30,6 +31,8 @@
 }
 
 .contenido {
+  /* La hoja del menú se ubica debajo */
+  position: relative;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
@@ -45,10 +48,17 @@
   transform: translateY(var(--gutter));
 }
 
+/* El wordmark mide lo que mide: así el anillo de foco lo rodea a él y no a
+   toda la columna */
+.logo {
+  justify-self: start;
+}
+
 /* Links de texto en mayúsculas, a la izquierda, al lado del wordmark */
-.nav {
+.lista {
   display: flex;
   gap: var(--espacio-6);
+  list-style: none;
 }
 
 .acciones {
@@ -74,6 +84,13 @@
 .link:hover,
 .link[aria-current="page"] {
   text-decoration-color: currentColor;
+}
+
+/* El botón del menú y «Mi cuenta» adentro del menú: solo en el celular (van
+   después de .link, que también les pone display) */
+.menu,
+.soloMenu {
+  display: none;
 }
 
 /* El carrito: la única píldora, en el acento con texto blanco */
@@ -103,8 +120,8 @@
   color: var(--negro);
 }
 
-/* Sin lugar para todo en una fila: las secciones bajan a una segunda fila con
-   scroll horizontal */
+/* Sin lugar para todo en una fila: las secciones bajan a una segunda fila
+   (desde 640px entran las seis; el scroll queda por si una fuente mide más) */
 @media (max-width: 1023px) {
   .contenido {
     grid-template-columns: minmax(0, 1fr) auto;
@@ -114,7 +131,6 @@
   .nav {
     grid-column: 1 / -1;
     grid-row: 2;
-    gap: var(--espacio-5);
     /* Lugar para el anillo de foco dentro del scroll */
     margin: 0 -6px;
     padding: 0 6px;
@@ -122,8 +138,89 @@
     scrollbar-width: none;
   }
 
+  .lista {
+    gap: var(--espacio-5);
+  }
+
   .acciones {
     gap: var(--espacio-4);
+  }
+}
+
+/* ---------- El celular: una sola fila y las secciones en el menú ---------- */
+
+@media (max-width: 639px) {
+  .contenido {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0 var(--espacio-5);
+  }
+
+  .nav {
+    grid-column: auto;
+    grid-row: auto;
+    justify-self: end;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  /* «Menú», con el estilo de los links: subrayado mientras está abierto */
+  .menu {
+    display: inline-flex;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .menu[aria-expanded="true"] {
+    text-decoration-color: currentColor;
+  }
+
+  /* La hoja: blanca, de borde a borde y hasta abajo de la pantalla, con las
+     secciones una debajo de la otra, como los links del footer */
+  .lista {
+    --foco: var(--negro);
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    height: calc(100dvh - var(--alto-header));
+    padding: var(--espacio-2) var(--gutter) var(--espacio-8);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: var(--blanco);
+    color: var(--negro);
+  }
+
+  .nav[data-abierto] .lista {
+    display: flex;
+  }
+
+  .lista .link {
+    min-height: 48px;
+  }
+
+  .soloMenu {
+    display: block;
+  }
+
+  .cuenta {
+    display: none;
+  }
+
+  /* Con el menú abierto, el header es la banda blanca también sobre el video */
+  .header:has(.menu[aria-expanded="true"]) {
+    --foco: var(--negro);
+    background: var(--blanco);
+    color: var(--negro);
+  }
+
+  .header:has(.menu[aria-expanded="true"]) .contenido {
+    padding-inline: var(--gutter);
+    transform: none;
   }
 }
 

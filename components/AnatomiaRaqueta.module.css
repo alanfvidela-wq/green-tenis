@@ -3,6 +3,12 @@
    acento. Mientras la raqueta queda fija, ocupa toda la pantalla y el header
    se esconde. Todo lo que se mueve es transform u opacity. */
 .seccion {
+  /* En mobile, la raqueta arriba y el paso abajo llenan la pantalla: el texto
+     del paso más largo (lo mide AnatomiaRaqueta; 40dvh hasta entonces) y el
+     escenario con el resto, nunca menos de 46dvh. En desktop el escenario mide
+     100dvh (ver abajo). */
+  --alto-texto: 40dvh;
+  --alto-escenario: max(46dvh, 100dvh - var(--alto-texto));
   /* clip y no hidden: hidden la volvería contenedor de scroll y la raqueta
      dejaría de quedar fija */
   overflow: clip;
@@ -50,11 +56,10 @@
 
 /* Lo que queda fijo mientras pasan los pasos, desde arriba de todo: mientras
    está fijo el header se esconde (AnatomiaRaqueta), así ocupa la pantalla
-   entera (en desktop) o la parte de arriba (en mobile, con los pasos debajo).
+   entera (en desktop) o la parte de arriba (en mobile, con el paso debajo).
    En dvh: en mobile no lo tapa la barra del navegador. Recorta lo que la
    cámara deja afuera. */
 .escenario {
-  --alto-escenario: 55dvh;
   position: sticky;
   z-index: 1;
   top: 0;
@@ -221,7 +226,7 @@
 /* Sin 3D: la frase y el botón quedan fijos al lado (o debajo) de la raqueta */
 .cierreContenido {
   position: sticky;
-  top: calc(55dvh + var(--espacio-6));
+  top: var(--alto-escenario);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -281,14 +286,28 @@
 }
 
 /* En mobile el escenario va de borde a borde, para que los nombres tengan
-   lugar */
+   lugar afuera del marco. Los de dos palabras («Punto dulce») van en dos
+   líneas: ocupan menos al costado de la raqueta. */
 @media (max-width: 859px) {
   .escenario {
     margin-inline: calc(var(--gutter) * -1);
   }
 
   .etiqueta {
+    width: min-content;
     font-size: 0.75rem;
+    line-height: 1.15;
+    white-space: normal;
+  }
+
+  .izquierda .etiqueta {
+    text-align: end;
+  }
+
+  /* La frase y el botón del final, debajo de la raqueta, en el lugar del paso */
+  .cierreContenido {
+    gap: var(--espacio-6);
+    padding-block: var(--espacio-5);
   }
 }
 
@@ -323,6 +342,11 @@
   font-size: var(--t-dato);
 }
 
+/* El total («/ 11»), solo en mobile */
+.total {
+  display: none;
+}
+
 .titulo {
   font-family: var(--fuente-display);
   font-size: var(--t-display-4);
@@ -345,6 +369,36 @@
   font-variant-numeric: tabular-nums;
   font-size: 0.875rem;
   line-height: 1.6;
+}
+
+/* Mobile: cada paso mide lo que queda debajo del escenario, con el texto
+   arriba, pegado a la raqueta. Más compacto: «03 / 11», el título más chico,
+   la frase en texto normal y el dato debajo. */
+@media (max-width: 859px) {
+  .paso {
+    justify-content: flex-start;
+    gap: var(--espacio-2);
+    min-height: calc(100dvh - var(--alto-escenario));
+    padding-block: var(--espacio-5) var(--espacio-6);
+  }
+
+  .total {
+    display: inline;
+  }
+
+  .titulo {
+    margin-bottom: var(--espacio-1);
+    font-size: 1.75rem;
+  }
+
+  .frase {
+    font-size: var(--t-texto);
+    line-height: 1.5;
+  }
+
+  .dato {
+    line-height: 1.5;
+  }
 }
 
 @media (min-width: 860px) {

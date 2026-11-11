@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { ContactShadows, Environment, Lightformer, useGLTF } from "@react-three/drei";
-import { Color, MathUtils, Vector3 } from "three";
+import { Color, MathUtils, Matrix4, Vector3 } from "three";
 
 // La raqueta 3D de «Anatomía de una raqueta» (ver DESIGN.md). Se carga con
 // dynamic import y sin SSR desde AnatomiaRaqueta, que le pasa el progreso del
@@ -73,6 +73,69 @@ function medioAnchoMaximo(desde, hasta) {
 // Aire a los costados: la raqueta ocupa como mucho el 84% del ancho del lienzo
 const AIRE_LATERAL = 1.19;
 
+// Mobile: el nombre de la parte va afuera del marco, a la altura de su parte.
+// La cámara se aleja hasta que a esa altura, al costado de la raqueta, entren
+// el nombre y LUGAR_NOMBRE (px: la línea guía mínima, la separación del marco
+// y el aire contra el borde, ver AnatomiaRaqueta). El borde del marco se toma
+// MARGEN_MARCO (cm) por fuera del ancho aproximado, y GIRO_MAXIMO cubre el
+// ángulo de la cámara y lo que gira al flotar.
+const LUGAR_NOMBRE = 30;
+const MARGEN_MARCO = 0.4;
+const GIRO_MAXIMO = 1.04;
+// El nombre tiene alto: el borde se toma como el más ancho de la raqueta en
+// esta franja (cm, para arriba y para abajo de la parte). Así no roza el
+// marco donde se curva, como en la punta.
+const FRANJA_NOMBRE = 1.5;
+// En mobile la cámara no deja más que esto (cm) de aire arriba de la punta ni
+// abajo del tapón: si se aleja para que entren los nombres, la raqueta llena
+// el escenario en vez de quedar arriba o abajo con la mitad vacía.
+const AIRE_VERTICAL = 4;
+
+// La silueta de verdad, medida una vez sobre los vértices del modelo: el
+// ancho (x) y el espesor (z), las mitades desde el centro, en franjas de medio
+// centímetro. La usa mobile para poner los nombres pegados al marco; la
+// aproximación de arriba (medioAncho) ensancha la cabeza cerca del puente y
+// alejaba de más la cámara. El espesor cuenta porque la cámara mira un poco
+// de costado: el mango, por ejemplo, se ve más ancho de lo que es.
+const PASO_SILUETA = 0.5;
+// Cuánto del espesor se suma al ancho visto con el ángulo de la cámara y el
+// giro al flotar (el seno de 0,32 + 0,14 rad)
+const ESPESOR_VISTO = 0.45;
+function medirSilueta(scene) {
+  const franjas = Math.ceil((LARGO + 4) / PASO_SILUETA);
+  const anchos = new Float32Array(franjas);
+  const espesores = new Float32Array(franjas);
+  const punto = new Vector3();
+  // En el espacio de la escena, aunque ya esté adentro del grupo que flota
+  scene.updateMatrixWorld(true);
+  const aEscena = new Matrix4().copy(scene.matrixWorld).invert();
+  const matriz = new Matrix4();
+  scene.traverse((objeto) => {
+    const posiciones = objeto.isMesh ? objeto.geometry.attributes.position : null;
+    if (!posiciones) return;
+    matriz.multiplyMatrices(aEscena, objeto.matrixWorld);
+    for (let i = 0; i < posiciones.count; i++) {
+      punto.fromBufferAttribute(posiciones, i).applyMatrix4(matriz);
+      const franja = Math.floor((punto.y + 2) / PASO_SILUETA);
+      if (franja >= 0 && franja < franjas) {
+        anchos[franja] = Math.max(anchos[franja], Math.abs(punto.x));
+        espesores[franja] = Math.max(espesores[franja], Math.abs(punto.z));
+      }
+    }
+  });
+  return (desde, hasta) => {
+    let x = 0;
+    let z = 0;
+    const primera = Math.max(0, Math.floor((desde + 2) / PASO_SILUETA));
+    const ultima = Math.min(franjas - 1, Math.floor((hasta + 2) / PASO_SILUETA));
+    for (let f = primera; f <= ultima; f++) {
+      x = Math.max(x, anchos[f]);
+      z = Math.max(z, espesores[f]);
+    }
+    return { x, z };
+  };
+}
+
 function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   const { scene } = useGLTF(URL_RAQUETA, false, true);
   const grupo = useRef(null);
@@ -107,6 +170,17 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     });
   }, [scene]);
 
+  // Hasta dónde llega el marco a la altura de una parte (con la franja del
+  // nombre y un margen), en cm: el ancho (x) y el espesor (z). Se mide
+  // después de enderezar el modelo.
+  const bordeMarco = useMemo(() => {
+    const silueta = medirSilueta(scene);
+    return (alto) => {
+      const { x, z } = silueta(alto - FRANJA_NOMBRE, alto + FRANJA_NOMBRE);
+      return { x: x + MARGEN_MARCO, z };
+    };
+  }, [scene]);
+
   useEffect(() => {
     onListo();
   }, [onListo]);
@@ -122,9 +196,11 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
   const mirada = useRef(null);
   const giroLento = useRef(0);
   const ancla = useMemo(() => new Vector3(), []);
+  const borde = useMemo(() => new Vector3(), []);
 
   useFrame((state, delta) => {
     const { p, fin } = estado.current;
+    const { angosta, stickers } = medidas.current;
 
     // Adónde mira la cámara: de foco en foco, con entrada y salida suaves
     const q = p + 1;
@@ -150,9 +226,37 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       distancia = minima;
     }
 
+    // Mobile: además, que el nombre entre afuera del marco. Para cada foco, la
+    // distancia mínima con la que la mitad de la raqueta a la altura de la
+    // parte deja al costado el nombre (en el final, el de todas las partes);
+    // entre un foco y otro, en el medio.
+    let yVista = y;
+    if (angosta) {
+      const paraPaso = (i) => {
+        const marco = bordeMarco(pasos[i].ancla3d[1]);
+        const mitad = (marco.x + marco.z * ESPESOR_VISTO) * GIRO_MAXIMO;
+        const libre = Math.max(24, size.width / 2 - (stickers[i] ?? 0) - LUGAR_NOMBRE);
+        return (mitad * size.height) / 2 / (libre * tangente);
+      };
+      const paraFoco = (j) => {
+        if (j >= 1 && j <= pasos.length) return paraPaso(j - 1);
+        if (j === pasos.length + 1) return Math.max(...pasos.map((_, i) => paraPaso(i)));
+        return 0;
+      };
+      distancia = Math.max(distancia, MathUtils.lerp(paraFoco(k), paraFoco(k + 1), t));
+
+      // Sin escenario vacío arriba de la punta ni abajo del tapón (si la
+      // raqueta entera entra, centrada)
+      const mitadAlto = distancia * tangente;
+      yVista =
+        mitadAlto * 2 >= LARGO + AIRE_VERTICAL * 2
+          ? LARGO / 2
+          : limitar(y, mitadAlto - AIRE_VERTICAL, LARGO + AIRE_VERTICAL - mitadAlto);
+    }
+
     // Con un poco de inercia
-    const m = mirada.current ?? (mirada.current = { y, distancia });
-    m.y = MathUtils.damp(m.y, y, 4, delta);
+    const m = mirada.current ?? (mirada.current = { y: yVista, distancia });
+    m.y = MathUtils.damp(m.y, yVista, 4, delta);
     m.distancia = MathUtils.damp(m.distancia, distancia, 4, delta);
     camera.position.set(
       Math.sin(AZIMUT) * Math.cos(ELEVACION) * m.distancia,
@@ -215,15 +319,37 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     materialAntivibrador.emissiveIntensity = mezcla * 0.35;
 
     // El nombre de la parte del paso activo, anclado a la posición 3D de su
-    // parte. En el final, todos juntos alrededor de la raqueta entera.
+    // parte. En el final, todos juntos alrededor de la raqueta entera. En
+    // mobile también va dónde termina la silueta a esa altura, del lado del
+    // nombre: el nombre va afuera del marco.
     const escena = medidas.current.escena;
+    const enEscenaX = (ndc) => ((((ndc + 1) / 2) * size.width - escena.x) / escena.ancho) * 100;
     const colocar = (i) => {
-      ancla.set(...pasos[i].ancla3d);
+      const paso = pasos[i];
+      ancla.set(...paso.ancla3d);
       grupo.current.localToWorld(ancla);
       ancla.project(camera);
-      const x = ((ancla.x + 1) / 2) * size.width;
       const yPantalla = ((1 - ancla.y) / 2) * size.height;
-      onMarca(i, ((x - escena.x) / escena.ancho) * 100, ((yPantalla - escena.y) / escena.alto) * 100);
+      let bordeX;
+      if (angosta) {
+        const alto = paso.ancla3d[1];
+        const { x: mitad, z: espesor } = bordeMarco(alto);
+        // Las cuatro esquinas del marco a esa altura (los dos lados, adelante
+        // y atrás): con el ángulo de la cámara y el giro, el borde es la que
+        // queda más lejos del centro
+        const lados = [
+          [mitad, espesor],
+          [mitad, -espesor],
+          [-mitad, espesor],
+          [-mitad, -espesor],
+        ].map(([x, z]) => {
+          borde.set(x, alto, z);
+          grupo.current.localToWorld(borde);
+          return enEscenaX(borde.project(camera).x);
+        });
+        bordeX = paso.lado === "derecha" ? Math.max(...lados) : Math.min(...lados);
+      }
+      onMarca(i, enEscenaX(ancla.x), ((yPantalla - escena.y) / escena.alto) * 100, bordeX);
     };
     if (fin > STICKERS[0] && fin < STICKERS[1]) {
       pasos.forEach((_, i) => colocar(i));
