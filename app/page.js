@@ -27,8 +27,9 @@ export default async function Home() {
   // Cinco destacados y la celda de foto: dos filas llenas de tres
   const destacados = productos.filter((p) => p.destacado).slice(0, 5);
   const [celda] = lugaresDe("home", "celda");
-  const [bloqueUno, bloqueDos] = lugaresDe("home", "bloque");
-  const claseBloque = `${styles.contenido} ${styles.bloque}`;
+  // Un solo bloque de foto, antes de la anatomía: el segundo lugar de la home
+  // (raqueta-cancha-01) ya no se muestra, ver lib/fotos.js
+  const [bloque] = lugaresDe("home", "bloque");
 
   return (
     <main className={styles.home}>
@@ -61,18 +62,17 @@ export default async function Home() {
         </div>
       </section>
 
-      <BloqueFoto lugar={bloqueUno} className={claseBloque} />
+      <BloqueFoto lugar={bloque} className={`${styles.contenido} ${styles.bloque}`} />
 
-      {/* Anatomía de una raqueta: la banda negra, con la raqueta fija y los
-          pasos con el scroll (ver DESIGN.md) */}
+      {/* Anatomía de una raqueta: la banda de estudio, con la raqueta fija y
+          los pasos con el scroll (ver DESIGN.md). Las categorías van pegadas
+          abajo: cada banda deja su espacio */}
       <AnatomiaRaqueta
         titulo={TITULO_ANATOMIA}
         bajada={BAJADA_ANATOMIA}
         cierre={CIERRE_ANATOMIA}
         pasos={PASOS_ANATOMIA}
       />
-
-      <BloqueFoto lugar={bloqueDos} className={claseBloque} />
 
       <section aria-labelledby="titulo-categorias" className={styles.hormigon}>
         <div className={`${styles.contenido} ${styles.seccion}`}>

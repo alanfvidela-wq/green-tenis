@@ -367,8 +367,8 @@ lista para conseguirlas y cómo agregarlas está en `docs/FOTOS.md`.
   recortada al alto de la fila (`object-fit: cover`), radio de 16px y sin texto
   encima.
 - **Bloques entre secciones** (objetos, 16:9): de ancho completo dentro del
-  contenido, con radio de 16px y sin texto encima. En la home, uno después de
-  «Lo que más sale» y otro después de la anatomía.
+  contenido, con radio de 16px y sin texto encima. En la home, uno solo, antes
+  de la anatomía.
 - Son decorativas: van ocultas para lectores de pantalla.
 
 ### Placeholder
@@ -465,9 +465,9 @@ Poco y con sentido. Solo `transform` y `opacity`; nada de `top`, `left`,
    Ver «Quiz».
 4. **Bloque de foto** (`pelota-polvo-01`).
 5. **Anatomía de una raqueta** (banda de estudio). Ver esa sección.
-6. **Bloque de foto** (`raqueta-cancha-01`).
-7. **Categorías** (hormigón): el título y las cuatro tarjetas.
-8. **Footer** (negro).
+6. **Categorías** (hormigón): el título y las cuatro tarjetas, pegadas a la
+   anatomía, sin foto en el medio. Cada banda deja su espacio arriba y abajo.
+7. **Footer** (negro).
 
 Sin cintas con leyendas ni bloques de slogan.
 
