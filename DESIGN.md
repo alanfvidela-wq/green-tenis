@@ -844,9 +844,9 @@ vista.
   sale del escenario. El nombre lleva el fondo de estudio de la banda (no se
   ve como recuadro): si en el 3D llega a rozar el marco, se sigue leyendo. Con el
   3D se ve solo el del paso activo; en la versión dibujada, todos.
-- **En mobile, pegado al marco**: el nombre va a la altura de su parte, justo
-  afuera del borde de la silueta de ese lado (con 8px de separación y una
-  línea de 18px como mínimo), nunca sobre las cuerdas. El borde sale de la
+- **En la 3D, pegado al marco** (desktop y mobile): el nombre va a la altura
+  de su parte, justo afuera del borde de la silueta de ese lado (con 8px de
+  separación y una línea de 18px como mínimo), nunca sobre las cuerdas. El borde sale de la
   silueta medida sobre los vértices del modelo (ancho y espesor, porque la
   cámara mira un poco de costado), en una franja de ±1,5cm alrededor de la
   parte (el nombre tiene alto). «Punto dulce» va en dos líneas, a 12px.
@@ -905,12 +905,15 @@ vista.
   en el protector o el antivibrador; en las partes angostas (empuñadura, grip,
   tapón) el acercamiento no cambia. Los focos y las anclas de cada paso
   están en `lib/anatomia.js` (`foco3d`, `ancla3d`, en centímetros del modelo).
-- **En mobile, además**: la cámara se aleja hasta que, a la altura de la
-  parte, al costado de la raqueta entre su nombre afuera del marco (en el
-  final, el de todas las partes). Entre un paso y otro, en el medio. Y no deja
-  más de 4cm de aire arriba de la punta ni abajo del tapón: si se alejó, la
-  raqueta llena el escenario en vez de quedar arriba o abajo con la mitad
-  vacía. Así se ve entera, o completa la zona del paso, y centrada de costado.
+- **Lugar para el nombre**: la cámara también se aleja hasta que, a la altura
+  de la parte, al costado de la raqueta entre su nombre afuera del marco (en
+  el final, el de todas las partes). Entre un paso y otro, en el medio. En
+  desktop pasa en los pasos de la cabeza (ojales, encordado, punto dulce): la
+  cabeza se ve entera.
+- **En mobile, además**, la cámara no deja más de 4cm de aire arriba de la
+  punta ni abajo del tapón: si se alejó, la raqueta llena el escenario en vez
+  de quedar arriba o abajo con la mitad vacía. Así se ve entera, o completa la
+  zona del paso, y centrada de costado.
 - **Al activarse un paso**: la parte pasa al acento (el encordado brilla,
   aparece el disco del punto dulce o el antivibrador pasa al acento), el nombre
   de la parte aparece con su línea guía (un fundido corto). El paso activo se

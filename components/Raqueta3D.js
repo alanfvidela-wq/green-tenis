@@ -73,12 +73,12 @@ function medioAnchoMaximo(desde, hasta) {
 // Aire a los costados: la raqueta ocupa como mucho el 84% del ancho del lienzo
 const AIRE_LATERAL = 1.19;
 
-// Mobile: el nombre de la parte va afuera del marco, a la altura de su parte.
-// La cámara se aleja hasta que a esa altura, al costado de la raqueta, entren
-// el nombre y LUGAR_NOMBRE (px: la línea guía mínima, la separación del marco
-// y el aire contra el borde, ver AnatomiaRaqueta). El borde del marco se toma
-// MARGEN_MARCO (cm) por fuera del ancho aproximado, y GIRO_MAXIMO cubre el
-// ángulo de la cámara y lo que gira al flotar.
+// El nombre de la parte va afuera del marco, a la altura de su parte. La
+// cámara se aleja hasta que a esa altura, al costado de la raqueta, entren el
+// nombre y LUGAR_NOMBRE (px: la línea guía mínima, la separación del marco y
+// el aire contra el borde, ver AnatomiaRaqueta). El borde del marco se toma
+// MARGEN_MARCO (cm) por fuera de la silueta medida, y GIRO_MAXIMO cubre la
+// perspectiva y lo que gira al flotar.
 const LUGAR_NOMBRE = 30;
 const MARGEN_MARCO = 0.4;
 const GIRO_MAXIMO = 1.04;
@@ -93,9 +93,9 @@ const AIRE_VERTICAL = 4;
 
 // La silueta de verdad, medida una vez sobre los vértices del modelo: el
 // ancho (x) y el espesor (z), las mitades desde el centro, en franjas de medio
-// centímetro. La usa mobile para poner los nombres pegados al marco; la
-// aproximación de arriba (medioAncho) ensancha la cabeza cerca del puente y
-// alejaba de más la cámara. El espesor cuenta porque la cámara mira un poco
+// centímetro. Con ella van los nombres pegados al marco; la aproximación de
+// arriba (medioAncho) ensancha la cabeza cerca del puente y alejaría de más
+// la cámara. El espesor cuenta porque la cámara mira un poco
 // de costado: el mango, por ejemplo, se ve más ancho de lo que es.
 const PASO_SILUETA = 0.5;
 // Cuánto del espesor se suma al ancho visto con el ángulo de la cámara y el
@@ -226,27 +226,27 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       distancia = minima;
     }
 
-    // Mobile: además, que el nombre entre afuera del marco. Para cada foco, la
+    // Además, que el nombre entre afuera del marco. Para cada foco, la
     // distancia mínima con la que la mitad de la raqueta a la altura de la
     // parte deja al costado el nombre (en el final, el de todas las partes);
     // entre un foco y otro, en el medio.
+    const paraPaso = (i) => {
+      const marco = bordeMarco(pasos[i].ancla3d[1]);
+      const mitad = (marco.x + marco.z * ESPESOR_VISTO) * GIRO_MAXIMO;
+      const libre = Math.max(24, size.width / 2 - (stickers[i] ?? 0) - LUGAR_NOMBRE);
+      return (mitad * size.height) / 2 / (libre * tangente);
+    };
+    const paraFoco = (j) => {
+      if (j >= 1 && j <= pasos.length) return paraPaso(j - 1);
+      if (j === pasos.length + 1) return Math.max(...pasos.map((_, i) => paraPaso(i)));
+      return 0;
+    };
+    distancia = Math.max(distancia, MathUtils.lerp(paraFoco(k), paraFoco(k + 1), t));
+
+    // Mobile: sin escenario vacío arriba de la punta ni abajo del tapón (si
+    // la raqueta entera entra, centrada)
     let yVista = y;
     if (angosta) {
-      const paraPaso = (i) => {
-        const marco = bordeMarco(pasos[i].ancla3d[1]);
-        const mitad = (marco.x + marco.z * ESPESOR_VISTO) * GIRO_MAXIMO;
-        const libre = Math.max(24, size.width / 2 - (stickers[i] ?? 0) - LUGAR_NOMBRE);
-        return (mitad * size.height) / 2 / (libre * tangente);
-      };
-      const paraFoco = (j) => {
-        if (j >= 1 && j <= pasos.length) return paraPaso(j - 1);
-        if (j === pasos.length + 1) return Math.max(...pasos.map((_, i) => paraPaso(i)));
-        return 0;
-      };
-      distancia = Math.max(distancia, MathUtils.lerp(paraFoco(k), paraFoco(k + 1), t));
-
-      // Sin escenario vacío arriba de la punta ni abajo del tapón (si la
-      // raqueta entera entra, centrada)
       const mitadAlto = distancia * tangente;
       yVista =
         mitadAlto * 2 >= LARGO + AIRE_VERTICAL * 2
@@ -319,9 +319,9 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
     materialAntivibrador.emissiveIntensity = mezcla * 0.35;
 
     // El nombre de la parte del paso activo, anclado a la posición 3D de su
-    // parte. En el final, todos juntos alrededor de la raqueta entera. En
-    // mobile también va dónde termina la silueta a esa altura, del lado del
-    // nombre: el nombre va afuera del marco.
+    // parte. En el final, todos juntos alrededor de la raqueta entera. También
+    // va dónde termina la silueta a esa altura, del lado del nombre: el nombre
+    // va afuera del marco.
     const escena = medidas.current.escena;
     const enEscenaX = (ndc) => ((((ndc + 1) / 2) * size.width - escena.x) / escena.ancho) * 100;
     const colocar = (i) => {
@@ -330,25 +330,22 @@ function Escena({ pasos, estado, medidas, onMarca, onListo, mobile }) {
       grupo.current.localToWorld(ancla);
       ancla.project(camera);
       const yPantalla = ((1 - ancla.y) / 2) * size.height;
-      let bordeX;
-      if (angosta) {
-        const alto = paso.ancla3d[1];
-        const { x: mitad, z: espesor } = bordeMarco(alto);
-        // Las cuatro esquinas del marco a esa altura (los dos lados, adelante
-        // y atrás): con el ángulo de la cámara y el giro, el borde es la que
-        // queda más lejos del centro
-        const lados = [
-          [mitad, espesor],
-          [mitad, -espesor],
-          [-mitad, espesor],
-          [-mitad, -espesor],
-        ].map(([x, z]) => {
-          borde.set(x, alto, z);
-          grupo.current.localToWorld(borde);
-          return enEscenaX(borde.project(camera).x);
-        });
-        bordeX = paso.lado === "derecha" ? Math.max(...lados) : Math.min(...lados);
-      }
+      const alto = paso.ancla3d[1];
+      const { x: mitad, z: espesor } = bordeMarco(alto);
+      // Las cuatro esquinas del marco a esa altura (los dos lados, adelante y
+      // atrás): con el ángulo de la cámara y el giro, el borde es la que queda
+      // más lejos del centro
+      const lados = [
+        [mitad, espesor],
+        [mitad, -espesor],
+        [-mitad, espesor],
+        [-mitad, -espesor],
+      ].map(([x, z]) => {
+        borde.set(x, alto, z);
+        grupo.current.localToWorld(borde);
+        return enEscenaX(borde.project(camera).x);
+      });
+      const bordeX = paso.lado === "derecha" ? Math.max(...lados) : Math.min(...lados);
       onMarca(i, enEscenaX(ancla.x), ((yPantalla - escena.y) / escena.alto) * 100, bordeX);
     };
     if (fin > STICKERS[0] && fin < STICKERS[1]) {

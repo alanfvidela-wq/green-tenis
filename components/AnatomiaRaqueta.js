@@ -41,13 +41,14 @@ const Raqueta3D = dynamic(() => import("./Raqueta3D"), { ssr: false });
 // 1% de ancho
 const PROPORCION = LIENZO.alto / LIENZO.ancho;
 
-// Hasta dónde se alejan los stickers del centro, en % de la escena (desktop)
+// En la raqueta dibujada, hasta dónde se alejan los stickers del centro, en %
+// de la escena
 const LIMITES = { derecha: [60, 80], izquierda: [20, 40] };
 // Aire entre el sticker y el borde del escenario, en px
 const AIRE = 8;
-// En mobile el nombre va afuera del marco: a esta distancia del borde de la
-// silueta y con la línea guía de este largo como mínimo, en px. Raqueta3D
-// aleja la cámara lo necesario para que entre (ver LUGAR_NOMBRE).
+// En la raqueta 3D el nombre va afuera del marco: a esta distancia del borde
+// de la silueta y con la línea guía de este largo como mínimo, en px.
+// Raqueta3D aleja la cámara lo necesario para que entre (ver LUGAR_NOMBRE).
 const SEPARACION = 8;
 const GUIA_MINIMA = 18;
 // Cuánto tiene que moverse el scroll (en px, de un cuadro al otro) para contar
@@ -120,17 +121,16 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     stickers: [],
     angosta: false,
   });
-  const angosta = useRef(false);
 
   const cargar3d = useSyncExternalStore(sinSuscripcion, puede3d, () => false);
   const [modo3d, setModo3d] = useState(false);
   const alListo = useCallback(() => setModo3d(true), []);
 
   // La escena 3D avisa en cada cuadro dónde quedó la parte del paso activo
-  // (x, y) y, en mobile, dónde está el borde de la silueta a esa altura, del
-  // lado del nombre (borde). Todo en % de la escena. Los límites se achican
-  // para que el sticker entero quede dentro del escenario: si no, lo corta el
-  // borde.
+  // (x, y) y dónde está el borde de la silueta a esa altura, del lado del
+  // nombre (borde). Todo en % de la escena. El nombre va afuera del marco,
+  // pegado a ese borde; los límites lo dejan entero dentro del escenario (si
+  // no, lo corta el borde).
   const colocarMarca = useCallback(
     (indice, x, y, borde) => {
       const marca = refMarcas.current[indice];
@@ -141,21 +141,11 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
       const sticker = enEscena((stickers[indice] ?? 0) + AIRE);
       const izquierda = enEscena(-escena.x) + sticker;
       const derecha = enEscena(anchoEscenario - escena.x) - sticker;
-      let lugar;
-      if (angosta.current && borde !== undefined) {
-        // Mobile: afuera del marco, pegado al borde de la silueta
-        const ex =
-          paso.lado === "derecha"
-            ? Math.min(Math.max(x + enEscena(GUIA_MINIMA), borde + enEscena(SEPARACION)), derecha)
-            : Math.max(Math.min(x - enEscena(GUIA_MINIMA), borde - enEscena(SEPARACION)), izquierda);
-        lugar = trazo(x, y, ex);
-      } else {
-        const limites = {
-          derecha: [Math.min(LIMITES.derecha[0], derecha), Math.min(LIMITES.derecha[1], derecha)],
-          izquierda: [Math.max(LIMITES.izquierda[0], izquierda), Math.max(LIMITES.izquierda[1], izquierda)],
-        };
-        lugar = posicionMarca(paso, x, y, limites);
-      }
+      const ex =
+        paso.lado === "derecha"
+          ? Math.min(Math.max(x + enEscena(GUIA_MINIMA), borde + enEscena(SEPARACION)), derecha)
+          : Math.max(Math.min(x - enEscena(GUIA_MINIMA), borde - enEscena(SEPARACION)), izquierda);
+      const lugar = trazo(x, y, ex);
       for (const [variable, valor] of Object.entries(lugar)) {
         marca.style.setProperty(variable, valor);
       }
@@ -174,13 +164,12 @@ export default function AnatomiaRaqueta({ titulo, bajada, pasos, cierre }) {
     function medir() {
       const s = escenario.getBoundingClientRect();
       const e = escena.getBoundingClientRect();
-      angosta.current = consulta.matches;
       medidas.current = {
         escena: { x: e.left - s.left, y: e.top - s.top, ancho: e.width, alto: e.height },
         fraccion: e.height / s.height,
         anchoEscenario: s.width,
         stickers: etiquetas.map((etiqueta) => etiqueta?.offsetWidth ?? 0),
-        angosta: angosta.current,
+        angosta: consulta.matches,
       };
     }
     medir();
