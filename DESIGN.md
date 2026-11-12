@@ -860,6 +860,19 @@ vista.
   grafito, 13px), el título a 1,75rem, la frase en texto normal (1rem) y el
   dato debajo, con poco espacio entre uno y otro y el texto arriba, pegado a la
   raqueta.
+- **Hasta 768px, el dato plegado**: en su lugar va «Ver más», un botón de texto
+  como los links (mayúsculas, 13px, 44px de alto) pero subrayado siempre,
+  porque en el celular no hay hover. Lo despliega y pasa a «Ver menos»; el
+  botón va antes del dato, así lo que sigue en el orden de lectura es lo que
+  abrió (`aria-expanded`, `aria-controls`, el foco de siempre). El dato
+  aparece bajando 8px, como en el acordeón de la ficha (nada con
+  `prefers-reduced-motion`). Se abre uno a la vez: al pasar a otra parte (el
+  paso deja la línea de lectura) vuelve plegado. Si el dato abierto no entra
+  entero, la página baja lo justo, dentro del aire que hay arriba del número;
+  si no alcanza, el número queda entero debajo de la raqueta, nunca cortado.
+  El alto del texto se mide con el dato plegado: abrirlo no achica la raqueta.
+  Sin JavaScript, el dato se ve siempre. De 769 a 859px el dato se ve como
+  antes.
 
 ### Estructura
 

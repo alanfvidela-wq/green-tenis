@@ -347,6 +347,11 @@
   display: none;
 }
 
+/* «Ver más», solo en mobile chico (ver abajo) */
+.verMas {
+  display: none;
+}
+
 .titulo {
   font-family: var(--fuente-display);
   font-size: var(--t-display-4);
@@ -398,6 +403,51 @@
 
   .dato {
     line-height: 1.5;
+  }
+}
+
+/* Hasta 768px, más liviano: el dato queda plegado detrás de «Ver más», un
+   botón de texto como los links (en mayúsculas, a 13px), subrayado porque
+   en el celular no hay hover. Al abrirlo el dato baja 8px y aparece, como en
+   el acordeón de la ficha; «Ver menos» lo vuelve a plegar. Solo con
+   JavaScript (data-plegable): sin él, el dato se ve siempre. */
+@media (max-width: 768px) {
+  .seccion[data-plegable] .verMas {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    min-height: 44px;
+    margin-block: calc(var(--espacio-2) * -1);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--negro);
+    font-size: var(--t-dato);
+    letter-spacing: var(--tracking-nav);
+    text-transform: uppercase;
+    text-decoration: underline 1px;
+    text-underline-offset: 6px;
+  }
+
+  .seccion[data-plegable] .dato:not([data-abierto]) {
+    display: none;
+  }
+
+  .seccion[data-plegable] .dato[data-abierto] {
+    animation: abrirDato 0.35s var(--deslizar);
+  }
+}
+
+@keyframes abrirDato {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .seccion[data-plegable] .dato[data-abierto] {
+    animation: none;
   }
 }
 
