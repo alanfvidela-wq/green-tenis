@@ -507,7 +507,7 @@ y `liberar_pedidos_vencidos` programada con `pg_cron` cada 10 minutos
 
 ## 6. Calidad
 
-- **Tests E2E** (`e2e/`, Playwright, Chromium): quince tests.
+- **Tests E2E** (`e2e/`, Playwright, Chromium): diecisiete tests.
   - Ocho recorren la tienda: la home, la grilla de Raquetas hasta una ficha,
     grip y peso con una combinación agotada, el carrito con el total, el
     quiz, la protección de `/checkout`, el checkout de dos raquetas (una

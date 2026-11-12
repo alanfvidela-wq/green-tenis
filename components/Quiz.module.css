@@ -1,13 +1,304 @@
-/* El quiz: la barra de progreso, una pregunta por pantalla y, abajo, «Atrás»
-   y «Ver mi kit». Solo transform y opacity en lo que se mueve. */
+/* El quiz: a la izquierda, el panel con el título y las seis preguntas; a la
+   derecha, el avance, la pregunta y sus opciones, y «Anterior». En mobile (hasta
+   768px), una columna: el panel se pliega en «Tus respuestas» arriba. Solo
+   transform y opacity en lo que se mueve. */
 .quiz {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--espacio-8);
+}
+
+@media (min-width: 769px) {
+  .quiz {
+    grid-template-columns: minmax(16rem, 21rem) minmax(0, 1fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+  }
+}
+
+/* ---------- El panel ---------- */
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-6);
+}
+
+/* En desktop, un bloque hormigón que acompaña al scroll */
+@media (min-width: 769px) {
+  .panel {
+    position: sticky;
+    top: calc(var(--alto-header) + var(--espacio-6));
+    gap: var(--espacio-8);
+    padding: var(--espacio-8) var(--espacio-4) var(--espacio-4);
+    border-radius: var(--radio);
+    background: var(--hormigon);
+  }
+
+  .cabecera {
+    padding-inline: var(--espacio-2);
+  }
+}
+
+.cabecera {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+.respuestas {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+}
+
+/* El botón que despliega el resumen existe solo en mobile */
+.desplegar {
+  display: none;
+}
+
+.contador {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .resumen {
+    border-radius: var(--radio);
+    background: var(--hormigon);
+  }
+
+  .desplegar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--espacio-4);
+    width: 100%;
+    min-height: 56px;
+    padding: 0 var(--espacio-5);
+    border: 0;
+    border-radius: var(--radio);
+    background: none;
+    font-size: var(--t-dato);
+    letter-spacing: var(--tracking-nav);
+    text-align: left;
+    text-transform: uppercase;
+  }
+
+  .respuestas {
+    padding: 0 var(--espacio-2) var(--espacio-3);
+  }
+
+  .resumen:not([data-abierto]) .respuestas {
+    display: none;
+  }
+}
+
+/* Al desplegarse, la lista baja 8px y aparece, como el acordeón */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .resumen[data-abierto] .respuestas {
+    animation: abrir 0.35s var(--deslizar);
+  }
+}
+
+@keyframes abrir {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+/* El + del acordeón: abierto, la barra vertical se achica y queda − */
+.signo {
+  position: relative;
+  flex: none;
+  width: 14px;
+  height: 14px;
+}
+
+.signo::before,
+.signo::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1.5px;
+  margin-top: -0.75px;
+  background: var(--negro);
+  transition: transform 0.3s var(--deslizar);
+}
+
+.signo::after {
+  transform: rotate(90deg);
+}
+
+.resumen[data-abierto] .signo::after {
+  transform: rotate(90deg) scaleX(0);
+}
+
+/* Las preguntas: una fila por pregunta, con su marca a la izquierda */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-1);
+  list-style: none;
+}
+
+.fila {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  width: 100%;
+  min-height: 56px;
+  padding: var(--espacio-2) var(--espacio-4) var(--espacio-2) var(--espacio-2);
+  border: 0;
+  border-radius: var(--radio-pildora);
+  background: transparent;
+  line-height: 1.25;
+  text-align: left;
+  transition:
+    background-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+/* La actual, resaltada en blanco; lo respondido se pone blanco al pasar */
+.item[data-estado="actual"] .fila,
+.item[data-estado="respondida"] .fila:hover {
+  background: var(--blanco);
+}
+
+/* Lo que falta, atenuado: el negro al 60% sobre hormigón queda en 5,35:1 */
+.item[data-estado="pendiente"] .fila {
+  opacity: 0.6;
+}
+
+/* La marca: el número en un aro; la actual, en el acento; respondida, la
+   tilde en blanco sobre negro */
+.marca {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--negro);
+  border-radius: 50%;
+  font-size: var(--t-dato);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.item[data-estado="actual"] .marca {
+  border-color: var(--acento);
+  background: var(--acento);
+  color: var(--blanco);
+}
+
+.item[data-estado="respondida"] .marca {
+  background: var(--negro);
+  color: var(--blanco);
+}
+
+/* La tilde usa pathLength="1": el guion mide todo el trazo y se corre hasta 0
+   (arranca en 1,1 con un hueco de 1,2, para que la punta no asome) */
+.tilde {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1.2;
+}
+
+/* Al dejar una pregunta respondida, la marca salta con el resorte y la tilde
+   se traza */
+@media (prefers-reduced-motion: no-preference) {
+  .item[data-estado="respondida"] .marca {
+    animation: marcar 0.35s var(--resorte);
+  }
+
+  .tilde {
+    stroke-dashoffset: 1.1;
+    animation: trazar 0.3s ease-out 0.08s forwards;
+  }
+}
+
+@keyframes marcar {
+  from {
+    transform: scale(0.6);
+  }
+}
+
+@keyframes trazar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.etiqueta {
+  font-size: var(--t-texto);
+}
+
+.respuesta {
+  overflow: hidden;
+  color: var(--grafito);
+  font-size: var(--t-chico);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* «Empezar de nuevo»: un link de texto, como las migas. Sin nada respondido no
+   se ve, pero guarda su lugar */
+.reiniciar {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--espacio-3);
+  border: 0;
+  background: none;
+  font-size: var(--t-dato);
+  letter-spacing: var(--tracking-nav);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-transform: uppercase;
+  text-underline-offset: 3px;
+}
+
+.reiniciar:hover {
+  text-decoration-thickness: 2px;
+}
+
+.reiniciar:disabled {
+  visibility: hidden;
+}
+
+/* ---------- La pregunta ---------- */
+
+/* El ancho de esta columna decide cuántas opciones van por fila */
+.principal {
+  container: pregunta / inline-size;
   display: flex;
   flex-direction: column;
   gap: var(--espacio-10);
+  min-width: 0;
 }
 
-/* ---------- Progreso: el número y la barra del acento ---------- */
+@media (max-width: 768px) {
+  .principal {
+    gap: var(--espacio-8);
+  }
+}
 
+/* El avance: «Pregunta 3 de 6» y la barra del acento */
 .progreso {
   display: flex;
   align-items: center;
@@ -16,9 +307,10 @@
 
 .cuenta {
   flex-shrink: 0;
-  font-variant-numeric: tabular-nums;
   font-size: var(--t-dato);
   font-variant-numeric: tabular-nums;
+  letter-spacing: var(--tracking-nav);
+  text-transform: uppercase;
 }
 
 /* La barra es una píldora hormigón; el relleno crece con scaleX desde la
@@ -40,8 +332,6 @@
   transform-origin: left center;
   transition: transform 0.5s var(--deslizar);
 }
-
-/* ---------- La pregunta ---------- */
 
 .pregunta {
   display: flex;
@@ -89,24 +379,13 @@
   outline-offset: 6px;
 }
 
-/* ---------- Las opciones: píldoras grandes, la elegida en el acento ---------- */
+/* ---------- Las opciones: tarjetas con borde, la elegida en el acento ---------- */
 
+/* Una columna en lo angosto; dos (o tres, si son tres) cuando entran */
 .opciones {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--espacio-3);
-  max-width: 56rem;
-}
-
-@media (min-width: 700px) {
-  .opciones {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Tres opciones van en una fila */
-  .opciones[data-cantidad="3"] {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 .opcion {
@@ -115,18 +394,98 @@
   align-items: flex-start;
   justify-content: center;
   gap: var(--espacio-1);
-  min-height: 72px;
-  padding: var(--espacio-4) var(--espacio-6);
+  min-height: 80px;
+  padding: var(--espacio-4) var(--espacio-5);
   border: 1px solid var(--negro);
-  border-radius: var(--radio-pildora);
+  border-radius: var(--radio);
   background: var(--blanco);
-  line-height: 1.25;
+  line-height: 1.3;
   text-align: left;
   transition:
     background-color var(--transicion),
     border-color var(--transicion),
     color var(--transicion),
     transform 0.1s ease;
+}
+
+/* Con ícono, en una columna: el ícono a la izquierda del texto */
+.opciones[data-iconos] .opcion {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  grid-template-areas:
+    "icono texto"
+    "icono detalle";
+  align-content: center;
+  justify-items: start;
+  column-gap: var(--espacio-4);
+  row-gap: var(--espacio-1);
+}
+
+.icono {
+  grid-area: icono;
+  align-self: center;
+  width: 28px;
+  height: 28px;
+}
+
+.opcionTexto {
+  grid-area: texto;
+  font-size: var(--t-entrada);
+}
+
+.opcionDetalle {
+  grid-area: detalle;
+  color: var(--grafito);
+  font-size: var(--t-chico);
+  line-height: 1.4;
+}
+
+/* En varias columnas, el ícono arriba y el texto debajo, todo desde arriba */
+@container pregunta (min-width: 30rem) {
+  .opciones[data-cantidad="2"],
+  .opciones[data-cantidad="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .opciones:is([data-cantidad="2"], [data-cantidad="4"])[data-iconos] .opcion {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "icono"
+      "texto"
+      "detalle";
+    align-content: start;
+    padding: var(--espacio-5) var(--espacio-6) var(--espacio-6);
+  }
+
+  .opciones:is([data-cantidad="2"], [data-cantidad="4"]) .icono {
+    align-self: start;
+    width: 32px;
+    height: 32px;
+    margin-bottom: var(--espacio-4);
+  }
+}
+
+@container pregunta (min-width: 42rem) {
+  .opciones[data-cantidad="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .opciones[data-cantidad="3"][data-iconos] .opcion {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "icono"
+      "texto"
+      "detalle";
+    align-content: start;
+    padding: var(--espacio-5) var(--espacio-6) var(--espacio-6);
+  }
+
+  .opciones[data-cantidad="3"] .icono {
+    align-self: start;
+    width: 32px;
+    height: 32px;
+    margin-bottom: var(--espacio-4);
+  }
 }
 
 .opcion:hover {
@@ -145,38 +504,50 @@
   color: var(--blanco);
 }
 
-/* Al elegirla, salta un poco con el resorte y vuelve */
+.opcion[aria-pressed="true"] .opcionDetalle {
+  color: var(--blanco);
+}
+
+/* Las tarjetas entran de a una, 40ms después de la anterior; al elegirla,
+   salta un poco con el resorte y vuelve. La entrada sigue en la lista de la
+   elegida para que no se repita al cambiar de opción */
 @media (prefers-reduced-motion: no-preference) {
+  .opcion {
+    animation: subir 0.4s var(--deslizar) calc(var(--orden) * 40ms + 60ms) backwards;
+  }
+
   .opcion[aria-pressed="true"] {
-    animation: elegir 0.35s var(--resorte);
+    animation:
+      subir 0.4s var(--deslizar) calc(var(--orden) * 40ms + 60ms) backwards,
+      elegir 0.35s var(--resorte);
+  }
+}
+
+@keyframes subir {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
   }
 }
 
 @keyframes elegir {
   50% {
-    transform: scale(1.03);
+    transform: scale(1.02);
   }
 }
 
-.opcionTexto {
-  font-size: var(--t-entrada);
-}
-
-.opcionDetalle {
-  color: var(--grafito);
-  font-size: var(--t-dato);
-}
-
-.opcion[aria-pressed="true"] .opcionDetalle {
-  color: var(--blanco);
-}
-
-/* ---------- Abajo: «Atrás» y lo que sigue ---------- */
+/* ---------- Abajo: «Anterior» y lo que sigue ---------- */
 
 .pie {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   gap: var(--espacio-3);
+}
+
+.siguiente,
+.ver {
+  margin-left: auto;
 }
 
 .ver {
@@ -185,7 +556,10 @@
 
 @media (prefers-reduced-motion: reduce) {
   .relleno,
-  .opcion {
+  .opcion,
+  .fila,
+  .signo::before,
+  .signo::after {
     transition: none;
   }
 

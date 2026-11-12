@@ -9,13 +9,27 @@
   min-height: calc(100svh - var(--alto-header));
 }
 
-/* El nombre del quiz va chico, como la marca de un producto: lo grande es la
-   pregunta */
+/* El título y qué hace el quiz, arriba del panel (ver components/Quiz.js).
+   El título va en la display, pero lo grande es la pregunta */
 .nombre {
-  margin-top: var(--espacio-4);
-  font-size: var(--t-dato);
-  letter-spacing: var(--tracking-nav);
-  text-transform: uppercase;
+  font-size: 2rem;
+}
+
+.bajada {
+  max-width: 32ch;
+  color: var(--grafito);
+  font-size: var(--t-chico);
+  line-height: 1.5;
+}
+
+@media (min-width: 769px) {
+  .nombre {
+    font-size: 2.5rem;
+  }
+
+  .bajada {
+    font-size: var(--t-texto);
+  }
 }
 
 /* ---------- El resultado ---------- */

@@ -17,8 +17,10 @@ export default function PaginaQuiz() {
         <span aria-hidden="true">/</span>
         <span aria-current="page">Quiz de juego</span>
       </nav>
-      <h1 className={styles.nombre}>Quiz de juego</h1>
-      <Quiz preguntas={PREGUNTAS} />
+      <Quiz preguntas={PREGUNTAS}>
+        <h1 className={`display ${styles.nombre}`}>Quiz de juego</h1>
+        <p className={styles.bajada}>Seis preguntas y te armamos un kit para tu forma de jugar.</p>
+      </Quiz>
     </main>
   );
 }

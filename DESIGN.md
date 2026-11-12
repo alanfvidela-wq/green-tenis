@@ -192,7 +192,8 @@ cualquier acento.
 
 - **Dos radios**: `--radio` (16px) para lo que se mira (el contenedor del hero,
   las fotos de la vitrina, las celdas y los bloques de foto, las tarjetas de
-  categoría, el resumen, la tabla, los recuadros de error) y `--radio-pildora`
+  categoría y las de opción del quiz, el resumen, el panel del quiz, la tabla,
+  los recuadros de error) y `--radio-pildora`
   (50px) para lo que se toca (botones, la barra de la vitrina, el carrito,
   campos, opciones, etiquetas de estado). Nada más: ni 4, ni 8, ni 12px.
 - **Bordes**: 1px negro, solo en tablas, resúmenes, campos, el botón
@@ -589,15 +590,40 @@ solo desde «Quiz» en el header y desde la home: los listados no lo ofrecen.
   semana, desde dónde (fondo, red o toda la cancha), potencia o control, si
   quiere algo cómodo para el brazo y la superficie (polvo de ladrillo, cancha
   dura, sintético o varias).
-- **`/quiz`**: una pregunta por pantalla. Arriba, el número («02 /
-  06») y la barra de progreso, una píldora hormigón de 8px con el relleno del
-  acento. «Quiz de juego» va chico, en mayúsculas: lo grande es la pregunta,
-  en la display a `--t-display-3`. Las opciones son píldoras grandes con borde
-  de 1px (el texto y, debajo, en grafito, qué quiere decir), en una columna en
-  mobile y en dos o tres desde 700px; la elegida, en el acento con texto
-  blanco. Elegir pasa sola a la siguiente; «Atrás» vuelve sin perder lo
-  elegido (y entonces aparece «Siguiente»). En la última, «Ver mi kit», el
-  botón del acento. La página mide al menos una pantalla.
+- **`/quiz`**: dos columnas desde 769px. A la izquierda, el **panel**: un
+  bloque hormigón con radio de 16px que acompaña al scroll (sticky), con
+  «Quiz de juego» en la display a 2,5rem (lo grande sigue siendo la
+  pregunta), qué hace el quiz en grafito («Seis preguntas y te armamos un kit
+  para tu forma de jugar.») y las seis preguntas por su nombre corto
+  (`etiqueta`: Nivel, Frecuencia, Estilo, Preferencia, Brazo, Superficie), una
+  por fila en píldora. Cada fila lleva una marca de 28px: el número en un aro
+  de 1px; la actual, resaltada en blanco con el número en el acento
+  (`aria-current="step"`); las respondidas, la tilde blanca sobre negro y,
+  debajo del nombre, la respuesta en grafito. Lo que falta va al 60% de
+  opacidad (el negro queda en 5,35:1 sobre hormigón). Tocar una respondida
+  vuelve a esa pregunta; la actual y las que faltan no se tocan. Abajo,
+  «Empezar de nuevo», un link de texto en mayúsculas que no se ve hasta que
+  hay algo respondido.
+  A la derecha, «Pregunta 3 de 6» (en mayúsculas, a 13px) y la barra de
+  progreso, una píldora hormigón de 8px con el relleno del acento; la pregunta
+  en la display a `--t-display-3`; las opciones como **tarjetas** blancas con
+  borde de 1px y radio de 16px, con un ícono de línea de 1,5px
+  (`IconoOpcion`: barras para el nivel, un calendario para la frecuencia, la
+  cancha con quien juega para el estilo, la pelota o un blanco para potencia
+  y control; el brazo y la superficie van sin ícono, porque no hay uno que se
+  entienda solo), el texto y, debajo, en grafito, qué quiere decir para
+  alguien que recién empieza («Jugás la mayoría de los puntos detrás de la
+  línea»). Cuántas van por fila lo decide el ancho de la columna (container
+  query): una, con el ícono a la izquierda; dos (para dos o cuatro opciones)
+  desde 30rem o tres desde 42rem, con el ícono arriba. La elegida, en el
+  acento con texto blanco. Elegir pasa sola a la siguiente; «Anterior» vuelve
+  sin perder lo elegido (y entonces aparece «Siguiente», a la derecha). En la
+  última, «Ver mi kit», el botón del acento. La página mide al menos una
+  pantalla.
+  **En mobile** (hasta 768px), una columna: el título y la bajada arriba, y
+  el panel plegado en un bloque hormigón, «Tus respuestas (2 de 6)», que se
+  despliega con el + del acordeón; tocar una respuesta lleva a la pregunta y
+  lo vuelve a plegar. Las tarjetas, en una columna y a todo el ancho.
 - **La recomendación** (`lib/quiz.js`): reglas de puntaje, nada de IA. Cada
   respuesta suma (o resta) puntos a atributos del producto: el nivel (el
   mismo suma todo; el de al lado, la mitad), el perfil de juego, y el peso, la
@@ -623,10 +649,19 @@ solo desde «Quiz» en el header y desde la home: los listados no lo ofrecen.
   La página lo muestra igual que el resultado, con la fecha del quiz y los
   precios y el stock de hoy. Sin kit, «Hacer el quiz».
 - **Movimiento**: la pregunta nueva entra desde el costado al que se va (32px
-  y opacidad, 0,45s con `--deslizar`); la barra crece con `scaleX` (0,5s,
-  `--deslizar`); la opción apretada se hunde a 0,97 y, al elegirla, salta a
-  1,03 con `--resorte`. Las celdas del kit entran escalonadas, como en la
-  vitrina. Al pasar de pregunta, el foco va a la pregunta nueva.
+  y opacidad, 0,45s con `--deslizar`) y sus tarjetas suben 10px de a una,
+  40ms después de la anterior; la barra crece con `scaleX` (0,5s,
+  `--deslizar`); la tarjeta apretada se hunde a 0,97 y, al elegirla, salta a
+  1,02 con `--resorte`. En el panel, al dejar una pregunta respondida su
+  marca salta desde 0,6 con `--resorte` y la tilde se traza en 0,3s (como la
+  del pago aprobado); en mobile, el resumen baja 8px y aparece al
+  desplegarse. Las celdas del kit entran escalonadas, como en la vitrina.
+- **Accesibilidad**: las opciones son botones con `aria-pressed` dentro de un
+  grupo nombrado por la pregunta (no radios: con las flechas, un radio
+  elegiría y pasaría de pregunta). Al cambiar de pregunta, por la flecha, el
+  panel o «Empezar de nuevo», el foco va a la pregunta nueva, que el lector
+  lee con «Pregunta 3 de 6». El panel es una `nav` («Preguntas del quiz»);
+  las que faltan dicen «sin responder».
 
 ## Carrito
 
